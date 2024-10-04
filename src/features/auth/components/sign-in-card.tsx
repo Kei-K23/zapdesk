@@ -13,13 +13,20 @@ import { AuthFlow } from "../type";
 import { FaGithub } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useState } from "react";
 
 type SignInCardProps = {
   setAuthFlow: React.Dispatch<React.SetStateAction<AuthFlow>>;
 };
 
 export default function SignInCard({ setAuthFlow }: SignInCardProps) {
+  const [pending, setPending] = useState<boolean>(false);
   const { signIn } = useAuthActions();
+
+  const handleProviderSignIn = (provider: "github" | "google") => {
+    setPending(true);
+    signIn(provider).finally(() => setPending(false));
+  };
 
   return (
     <div>
@@ -35,6 +42,7 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
             <div className="grid gap-2">
               <Label htmlFor="email">Email</Label>
               <Input
+                disabled={pending}
                 id="email"
                 type="email"
                 placeholder="mygmail@example.com"
@@ -44,13 +52,14 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
               <Input
+                disabled={pending}
                 id="password"
                 type="password"
                 placeholder="password"
                 required
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button disabled={pending} type="submit" className="w-full">
               Sign In
             </Button>
             <div className="flex items-center gap-3">
@@ -59,15 +68,18 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
               <Separator className="flex-1" />
             </div>
             <Button
+              disabled={pending}
               variant="outline"
               className="w-full flex items-center gap-1"
+              onClick={() => void handleProviderSignIn("google")}
             >
-              <FcGoogle className="size-5" /> Login with Google
+              <FcGoogle className="size-5" /> Continue with Google
             </Button>
             <Button
+              disabled={pending}
               variant="outline"
               className="w-full flex items-center gap-1"
-              onClick={() => void signIn("github")}
+              onClick={() => void handleProviderSignIn("github")}
             >
               <FaGithub className="size-5" /> Continue with GitHub
             </Button>
