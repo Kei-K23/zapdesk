@@ -12,12 +12,15 @@ import { FcGoogle } from "react-icons/fc";
 import { AuthFlow } from "../type";
 import { FaGithub } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
+import { useAuthActions } from "@convex-dev/auth/react";
 
 type SignInCardProps = {
   setAuthFlow: React.Dispatch<React.SetStateAction<AuthFlow>>;
 };
 
 export default function SignInCard({ setAuthFlow }: SignInCardProps) {
+  const { signIn } = useAuthActions();
+
   return (
     <div>
       <Card className="mx-auto max-w-sm">
@@ -34,13 +37,18 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
               <Input
                 id="email"
                 type="email"
-                placeholder="m@example.com"
+                placeholder="mygmail@example.com"
                 required
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" required />
+              <Input
+                id="password"
+                type="password"
+                placeholder="password"
+                required
+              />
             </div>
             <Button type="submit" className="w-full">
               Sign In
@@ -59,6 +67,7 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
             <Button
               variant="outline"
               className="w-full flex items-center gap-1"
+              onClick={() => void signIn("github")}
             >
               <FaGithub className="size-5" /> Continue with GitHub
             </Button>
