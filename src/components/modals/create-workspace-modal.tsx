@@ -1,25 +1,45 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useCreateWorkspaceModalStore } from "@/features/workspaces/store/use-create-workspace-modal-store";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Button } from "../ui/button";
+import useCreateWorkspace from "@/features/workspaces/mutation/use-create-workspace";
+import { useRouter } from "next/navigation";
 
 export default function CreateWorkspaceModal() {
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [open, setOpen] = useCreateWorkspaceModalStore();
 
-  const handelClose = () => {
+  const { mutate } = useCreateWorkspace();
+
+  const handleClose = () => {
     setOpen(false);
-    // Handle form clean up
+    setName("");
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    mutate(
+      {
+        name,
+      },
+      {
+        onSuccess: (id) => {
+          router.push(`/workspaces/${id}`);
+        },
+      }
+    );
   };
 
   return (
-    <Dialog open={open} onOpenChange={handelClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add a workspace</DialogTitle>
         </DialogHeader>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Input
             disabled={false}
             placeholder="Workspace name e.g 'Personal', 'Work', 'School'"
