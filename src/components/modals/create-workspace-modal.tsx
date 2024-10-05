@@ -11,7 +11,7 @@ export default function CreateWorkspaceModal() {
   const [name, setName] = useState<string>("");
   const [open, setOpen] = useCreateWorkspaceModalStore();
 
-  const { mutate } = useCreateWorkspace();
+  const { mutate, isPending } = useCreateWorkspace();
 
   const handleClose = () => {
     setOpen(false);
@@ -23,7 +23,7 @@ export default function CreateWorkspaceModal() {
 
     mutate(
       {
-        name,
+        name: name.trim(),
       },
       {
         onSuccess: (id) => {
@@ -41,7 +41,7 @@ export default function CreateWorkspaceModal() {
         </DialogHeader>
         <form onSubmit={handleSubmit}>
           <Input
-            disabled={false}
+            disabled={isPending}
             placeholder="Workspace name e.g 'Personal', 'Work', 'School'"
             required
             value={name}
@@ -49,7 +49,7 @@ export default function CreateWorkspaceModal() {
             onChange={(e) => setName(e.target.value)}
           />
           <div className="mt-4 flex justify-end">
-            <Button>Create</Button>
+            <Button disabled={isPending}>Create</Button>
           </div>
         </form>
       </DialogContent>
