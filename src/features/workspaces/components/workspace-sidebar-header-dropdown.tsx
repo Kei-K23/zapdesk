@@ -26,7 +26,7 @@ export default function WorkspaceSidebarHeaderDropdown({
           variant={"transp"}
           className="flex items-center gap-1 outline-none"
         >
-          <span className="text-lg font-bold">{workspace?.name}</span>
+          <span className="text-[16px] font-bold">{workspace?.name}</span>
           <ChevronDown />
         </Button>
       </DropdownMenuTrigger>
