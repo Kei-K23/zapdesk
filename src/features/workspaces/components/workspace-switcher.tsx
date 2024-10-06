@@ -27,11 +27,13 @@ export default function WorkspaceSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none" asChild>
-        <Button variant={"secondary"} className="text-lg font-bold h-10">
+        <Button size={"sm"} variant={"secondary"} className="font-[500] h-10">
           {currentWorkspace ? (
-            currentWorkspace?.name.charAt(0).toUpperCase()
+            <span className="text-2xl">
+              {currentWorkspace?.name.charAt(0).toUpperCase()}
+            </span>
           ) : (
-            <Loader2 className="size-4 animate-spin" />
+            <Loader2 className="size-5 animate-spin" />
           )}
         </Button>
       </DropdownMenuTrigger>
