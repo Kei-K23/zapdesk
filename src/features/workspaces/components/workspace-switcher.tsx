@@ -37,7 +37,7 @@ export default function WorkspaceSwitcher() {
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" side="bottom" className="w-60 p-2">
+      <DropdownMenuContent align="start" side="bottom" className="w-60 p-2">
         <div>
           <h2 className="font-bold line-clamp-1">{currentWorkspace?.name}</h2>
           <span className=" text-gray-500 text-sm">Active workspace</span>

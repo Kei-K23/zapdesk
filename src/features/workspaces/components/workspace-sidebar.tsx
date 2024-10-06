@@ -32,8 +32,11 @@ export default function WorkspaceSidebar() {
   }
 
   return (
-    <aside className="h-full px-4 py-2 text-white">
-      <WorkspaceSidebarHeader />
+    <aside className="h-full p-2  text-white">
+      <WorkspaceSidebarHeader
+        workspace={currentWorkspace}
+        isAdmin={currentMember.role === "admin"}
+      />
     </aside>
   );
 }
