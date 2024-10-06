@@ -1,10 +1,10 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useCreateWorkspaceModalStore } from "@/features/workspaces/store/use-create-workspace-modal-store";
 import { Input } from "../ui/input";
 import { FormEvent, useState } from "react";
 import { Button } from "../ui/button";
 import useCreateWorkspace from "@/features/workspaces/mutation/use-create-workspace";
 import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 
 export default function CreateWorkspaceModal() {
   const router = useRouter();
@@ -28,6 +28,7 @@ export default function CreateWorkspaceModal() {
       {
         onSuccess: (id) => {
           router.push(`/workspaces/${id}`);
+          handleClose();
         },
       }
     );

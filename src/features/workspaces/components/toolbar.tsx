@@ -17,10 +17,11 @@ export default function Toolbar() {
       <div className="min-w-[280px] w-[620px] grow-[2] shrink">
         <Button
           size={"sm"}
-          className="bg-accent/25 hover:bg-accent/35 w-full transition-all flex justify-start"
+          variant={"transparent"}
+          className="w-full transition-all flex justify-start"
         >
           <Search className="size-4 mr-2" />
-          <span className="font-bold">Search {data?.name}</span>
+          <span className="font-bold line-clamp-1">Search {data?.name}</span>
         </Button>
       </div>
       <div className="flex-1 flex justify-end">
