@@ -7,6 +7,7 @@ import { Trash2Icon } from "lucide-react";
 import EditWorkspaceModal from "./edit-workspace-modal";
 import useDeleteWorkspace from "@/features/workspaces/mutation/use-delete-workspace";
 import { useRouter } from "next/navigation";
+import useConfirm from "@/hooks/use-confirm";
 
 interface PreferencesWorkspaceModalProps {
   workspace: Doc<"workspaces">;
@@ -22,6 +23,10 @@ export default function PreferencesWorkspaceModal({
   const { toast } = useToast();
   const router = useRouter();
   const [openEdit, setOpenEdit] = useState(false);
+  const [ConfirmDialog, confirm] = useConfirm(
+    "Are you sure?",
+    "This process will delete permanently the workspace"
+  );
 
   const { mutate, isPending } = useDeleteWorkspace();
 
@@ -29,7 +34,11 @@ export default function PreferencesWorkspaceModal({
     setOpen(false);
   };
 
-  const handleOnDelete = () => {
+  const handleOnDelete = async () => {
+    const ok = await confirm();
+
+    if (!ok) return;
+
     mutate(
       {
         id: workspace._id,
@@ -52,39 +61,42 @@ export default function PreferencesWorkspaceModal({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{workspace.name}</DialogTitle>
-        </DialogHeader>
-        <div className="mt-4 border px-4 py-2 bg-neutral-900 rounded-lg flex items-center justify-between">
-          <div>
-            <p className="mb-1 text-sm">Workspace name</p>
-            <p className="text-lg font-bold">{workspace.name}</p>
+    <>
+      <ConfirmDialog />
+      <Dialog open={open} onOpenChange={handleClose}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{workspace.name}</DialogTitle>
+          </DialogHeader>
+          <div className="mt-4 border px-4 py-2 bg-neutral-900 rounded-lg flex items-center justify-between">
+            <div>
+              <p className="mb-1 text-sm">Workspace name</p>
+              <p className="text-lg font-bold">{workspace.name}</p>
+            </div>
+            <Button
+              disabled={isPending}
+              size={"sm"}
+              variant={"transparent"}
+              onClick={() => setOpenEdit(true)}
+            >
+              Edit
+            </Button>
+            <EditWorkspaceModal
+              id={workspace._id}
+              value={workspace.name}
+              open={openEdit}
+              setOpen={setOpenEdit}
+            />
           </div>
           <Button
             disabled={isPending}
-            size={"sm"}
-            variant={"transparent"}
-            onClick={() => setOpenEdit(true)}
+            variant={"destructive"}
+            onClick={handleOnDelete}
           >
-            Edit
+            <Trash2Icon className="size-5 mr-2" /> Delete the workspace
           </Button>
-          <EditWorkspaceModal
-            id={workspace._id}
-            value={workspace.name}
-            open={openEdit}
-            setOpen={setOpenEdit}
-          />
-        </div>
-        <Button
-          disabled={isPending}
-          variant={"destructive"}
-          onClick={handleOnDelete}
-        >
-          <Trash2Icon className="size-5 mr-2" /> Delete the workspace
-        </Button>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
