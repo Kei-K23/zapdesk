@@ -40,7 +40,7 @@ export default function WorkspaceSwitcher() {
       <DropdownMenuContent align="start" side="bottom" className="w-60 p-2">
         <div>
           <h2 className="font-bold line-clamp-1">{currentWorkspace?.name}</h2>
-          <span className=" text-gray-500 text-sm">Active workspace</span>
+          <span className="text-neutral-200 text-sm">Active workspace</span>
         </div>
         <Separator className="my-2" />
         {filteredWorkspaces?.length > 0 ? (
@@ -51,16 +51,16 @@ export default function WorkspaceSwitcher() {
               onClick={() => router.push(`/workspaces/${w?._id}`)}
             >
               <Button
-                className="bg-gray-700/70 group-hover:bg-gray-700/80 hover:bg-gray-700/80 text-lg font-bold h-9"
+                className="bg-gray-700/70 group-hover:bg-gray-800/80 hover:bg-gray-800/80 text-lg font-bold h-9 text-white"
                 size={"sm"}
               >
                 {w?.name.charAt(0).toUpperCase()}
               </Button>
-              <p className="text-[16px] font-[500] line-clamp-1">{w?.name}</p>
+              <p className="text-[16px] font-[600] line-clamp-1">{w?.name}</p>
             </DropdownMenuItem>
           ))
         ) : (
-          <p className="text-gray-500 text-sm">No other workspace</p>
+          <p className="text-neutral-200 text-sm">No other workspace</p>
         )}
         <Separator className="my-2" />
         <DropdownMenuItem

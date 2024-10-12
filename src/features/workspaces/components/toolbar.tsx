@@ -11,7 +11,7 @@ export default function Toolbar() {
   const { data } = useGetWorkspace({ id: workspaceId });
 
   return (
-    <nav className="bg-[#481349] text-white flex items-center justify-between h-10 py-2 px-4">
+    <nav className="bg-neutral-900/80 text-white flex items-center justify-between h-10 py-2 px-4 border-b border-b-neutral-700">
       {/* Placeholder element */}
       <div className="flex-1" />
       <div className="min-w-[280px] w-[620px] grow-[2] shrink">

@@ -21,7 +21,7 @@ export default function UserButton() {
     return null;
   }
 
-  const { image, name, email } = data;
+  const { image, name } = data;
 
   const fallbackAvatar = name?.charAt(0).toUpperCase();
   return (
@@ -29,7 +29,7 @@ export default function UserButton() {
       <DropdownMenuTrigger className="outline-none">
         <Avatar className="size-10 hover:opacity-75 transition-all">
           <AvatarImage src={image} alt={name} />
-          <AvatarFallback className="text-black text-2xl">
+          <AvatarFallback className="text-white text-2xl">
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>

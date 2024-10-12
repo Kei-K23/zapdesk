@@ -18,7 +18,7 @@ export default function AuthScreen() {
           <p className="text-lg md:text-xl text-gray-300">
             All your conversations, files, and tools in one place.{" "}
             <span className="text-violet-500">ZapDesk</span> makes it easy to
-            collaborate and get work done.
+            collaborate and get work done in real-time.
           </p>
         </div>
         <div className="md:h-auto pb-10 lg:pb-0 w-full lg:w-1/2">

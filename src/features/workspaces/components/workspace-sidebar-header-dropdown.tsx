@@ -33,17 +33,17 @@ export default function WorkspaceSidebarHeaderDropdown({
       <DropdownMenuContent align="start" side="bottom" className="w-60 p-2">
         <div>
           <h2 className="font-bold line-clamp-1">{workspace?.name}</h2>
-          <span className=" text-gray-500 text-sm">Active workspace</span>
+          <span className=" text-neutral-200 text-sm">Active workspace</span>
         </div>
         <Separator className="my-2" />
         {isAdmin && (
           <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-            <Send className="size-5" />
+            <Send className="size-4" />
             <p className="font-semibold">Invite new member</p>
           </DropdownMenuItem>
         )}
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-          <PaintbrushIcon className="size-5" />
+          <PaintbrushIcon className="size-4" />
           <p className="font-semibold">Preferences</p>
         </DropdownMenuItem>
       </DropdownMenuContent>

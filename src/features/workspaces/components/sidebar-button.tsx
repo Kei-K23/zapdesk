@@ -20,13 +20,13 @@ export default function SidebarButton({
       <Button
         size={"sm"}
         className={cn(
-          "font-bold h-10 mb-1 transition-all bg-transparent group-hover:bg-accent/25",
-          isActive && "bg-accent/25"
+          "font-bold h-10 mb-1 transition-all bg-transparent hover:bg-neutral-400/25",
+          isActive && "bg-neutral-400/25"
         )}
       >
-        <Icon className="size-6" />
+        <Icon className="size-6 text-white" />
       </Button>
-      <span className="text-white text-sm">{label}</span>
+      <span className="text-neutral-100 text-sm">{label}</span>
     </div>
   );
 }

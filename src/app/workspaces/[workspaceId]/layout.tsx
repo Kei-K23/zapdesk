@@ -26,7 +26,7 @@ export default function WorkspaceIdPageLayout({
           <ResizablePanel
             defaultSize={20}
             minSize={12}
-            className="bg-[#5E2C5f]"
+            className="bg-neutral-800/70"
           >
             <WorkspaceSidebar />
           </ResizablePanel>
