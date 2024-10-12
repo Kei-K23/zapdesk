@@ -59,6 +59,23 @@ export const updateWorkspace = mutation({
   },
 });
 
+export const deleteWorkspace = mutation({
+  args: {
+    id: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
+
 export const getWorkspace = query({
   args: {},
   handler: async (ctx) => {
