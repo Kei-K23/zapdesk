@@ -5,9 +5,11 @@ import { Button } from "../ui/button";
 import useCreateWorkspace from "@/features/workspaces/mutation/use-create-workspace";
 import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { useToast } from "@/hooks/use-toast";
 
 export default function CreateWorkspaceModal() {
   const router = useRouter();
+  const { toast } = useToast();
   const [name, setName] = useState<string>("");
   const [open, setOpen] = useCreateWorkspaceModalStore();
 
@@ -29,6 +31,14 @@ export default function CreateWorkspaceModal() {
         onSuccess: (id) => {
           router.push(`/workspaces/${id}`);
           handleClose();
+          toast({
+            title: "Successfully created new workspace",
+          });
+        },
+        onError: () => {
+          toast({
+            title: "Error when creating workspace",
+          });
         },
       }
     );

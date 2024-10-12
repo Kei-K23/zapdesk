@@ -25,8 +25,8 @@ export default function Toolbar() {
         </Button>
       </div>
       <div className="flex-1 flex justify-end">
-        <Button variant={"transparent"} size={"iconSm"}>
-          <CircleAlert />
+        <Button variant={"transp"} size={"iconSm"}>
+          <CircleAlert className="size-5" />
         </Button>
       </div>
     </nav>

@@ -52,7 +52,7 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
 
   return (
     <div>
-      <Card className="mx-auto max-w-sm">
+      <Card className="mx-auto max-w-md shadow-lg drop-shadow-xl shadow-violet-500/15">
         <CardHeader>
           <CardTitle className="text-2xl">Sign In</CardTitle>
           <CardDescription>

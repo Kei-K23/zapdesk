@@ -62,7 +62,7 @@ export default function SignUpCard({ setAuthFlow }: SignUpCardProps) {
 
   return (
     <div>
-      <Card className="mx-auto max-w-sm">
+      <Card className="mx-auto max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl">Sign Up</CardTitle>
           <CardDescription>Enter your email below to sign up</CardDescription>
