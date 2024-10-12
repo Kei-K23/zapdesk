@@ -39,6 +39,26 @@ export const createWorkspace = mutation({
   },
 });
 
+export const updateWorkspace = mutation({
+  args: {
+    id: v.id("workspaces"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(args.id, {
+      name: args.name,
+    });
+
+    return args.id;
+  },
+});
+
 export const getWorkspace = query({
   args: {},
   handler: async (ctx) => {

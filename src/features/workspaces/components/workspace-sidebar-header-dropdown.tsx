@@ -20,14 +20,14 @@ export default function WorkspaceSidebarHeaderDropdown({
   workspace,
   isAdmin,
 }: WorkspaceSidebarHeaderDropdownProps) {
-  const [open, setOpen] = useState(false);
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
 
   return (
     <>
       <PreferencesWorkspaceModal
         workspace={workspace}
-        open={open}
-        setOpen={setOpen}
+        open={preferencesOpen}
+        setOpen={setPreferencesOpen}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="outline-none">
@@ -53,7 +53,7 @@ export default function WorkspaceSidebarHeaderDropdown({
           )}
           <DropdownMenuItem
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => setOpen(true)}
+            onClick={() => setPreferencesOpen(true)}
           >
             <PaintbrushIcon className="size-4" />
             <p className="font-semibold">Preferences</p>
