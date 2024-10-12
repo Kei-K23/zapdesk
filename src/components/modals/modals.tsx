@@ -14,5 +14,9 @@ export default function Modals() {
     return null;
   }
 
-  return <CreateWorkspaceModal />;
+  return (
+    <>
+      <CreateWorkspaceModal />
+    </>
+  );
 }
