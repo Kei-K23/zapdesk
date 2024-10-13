@@ -35,6 +35,12 @@ export const createWorkspace = mutation({
       role: "admin",
     });
 
+    // Create default general channel for this workspace
+    await ctx.db.insert("channels", {
+      name: "general",
+      workspaceId,
+    });
+
     return workspaceId;
   },
 });
@@ -70,6 +76,29 @@ export const deleteWorkspace = mutation({
       throw new Error("Unauthorized");
     }
 
+    // Delete the all related channel
+    const channels = await ctx.db
+      .query("channels")
+      .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+      .collect();
+
+    const channelIds = channels.length > 0 ? channels.map((ch) => ch._id) : [];
+    for (const channelId of channelIds) {
+      await ctx.db.delete(channelId);
+    }
+
+    // Delete the all related members
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) => q.eq("workspaceId", args.id))
+      .collect();
+
+    const memberIds = members.length > 0 ? members.map((ch) => ch._id) : [];
+    for (const memberId of memberIds) {
+      await ctx.db.delete(memberId);
+    }
+
+    // Delete the workspace
     await ctx.db.delete(args.id);
 
     return args.id;

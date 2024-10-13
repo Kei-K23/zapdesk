@@ -22,11 +22,13 @@ export const getChannels = query({
       return [];
     }
 
-    return await ctx.db
+    const channels = await ctx.db
       .query("channels")
       .withIndex("by_workspace_id", (q) =>
         q.eq("workspaceId", args.workspaceId)
       )
       .collect();
+
+    return channels;
   },
 });
