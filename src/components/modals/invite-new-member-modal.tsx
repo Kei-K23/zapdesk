@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -11,12 +10,10 @@ import {
 } from "../ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Doc } from "../../../convex/_generated/dataModel";
-import { Link, Recycle, Trash2Icon } from "lucide-react";
-import EditWorkspaceModal from "./edit-workspace-modal";
-import useDeleteWorkspace from "@/features/workspaces/mutation/use-delete-workspace";
-import { useRouter } from "next/navigation";
+import { Link, Recycle } from "lucide-react";
 import useConfirm from "@/hooks/use-confirm";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
+import useUpdateJoinCode from "@/features/workspaces/mutation/use-update-join-code";
 
 interface InviteNewMemberModalProps {
   workspace: Doc<"workspaces">;
@@ -31,7 +28,12 @@ export default function InviteNewMemberModal({
 }: InviteNewMemberModalProps) {
   const workspaceId = useWorkspaceId();
   const { toast } = useToast();
-  const router = useRouter();
+
+  const [UpdateJoinCodeConfirmDialog, confirm] = useConfirm(
+    "Are you sure?",
+    "This process will deactivate the current join code and generate new join code for father joining to this workspace."
+  );
+  const { mutate, isPending } = useUpdateJoinCode();
 
   const handleCopy = () => {
     const invitationLink = `${window.location.origin}/join/${workspaceId}`;
@@ -45,8 +47,30 @@ export default function InviteNewMemberModal({
     setOpen(false);
   };
 
+  const handleOnUpdateJoinCode = async () => {
+    const ok = await confirm();
+    if (!ok) return;
+
+    mutate(
+      { id: workspaceId },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Successfully generated new join code",
+          });
+        },
+        onError: () => {
+          toast({
+            title: "Error generating new join code",
+          });
+        },
+      }
+    );
+  };
+
   return (
     <>
+      <UpdateJoinCodeConfirmDialog />
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
@@ -62,16 +86,24 @@ export default function InviteNewMemberModal({
             <p className="text-center font-extrabold text-4xl mb-4">
               {workspace.joinCode.toUpperCase()}
             </p>
-            <Button variant={"transparent"} onClick={handleCopy}>
+            <Button
+              disabled={isPending}
+              variant={"transparent"}
+              onClick={handleCopy}
+            >
               Copy link <Link className="ml-2 size-4" />
             </Button>
           </div>
           <DialogFooter>
             <div className="w-full flex items-center justify-between gap-x-4">
-              <Button variant={"transparent"}>
+              <Button
+                disabled={isPending}
+                variant={"transparent"}
+                onClick={handleOnUpdateJoinCode}
+              >
                 New code <Recycle className="ml-2 size-4" />
               </Button>
-              <DialogClose asChild>
+              <DialogClose disabled={isPending} asChild>
                 <Button>Close</Button>
               </DialogClose>
             </div>
