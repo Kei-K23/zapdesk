@@ -17,9 +17,12 @@ import { useGetChannels } from "@/features/channel/query/use-get-channels";
 import WorkspaceSection from "./workspace-section";
 import useGetMembers from "../query/use-get-members";
 import MemberItem from "./member-item";
+import { useCreateChannelModalStore } from "@/features/channel/store/use-create-channel-modal-store";
 
 export default function WorkspaceSidebar() {
   const workspaceId = useWorkspaceId();
+  const [_channelCreateModalOpen, setChannelCreateModalOpen] =
+    useCreateChannelModalStore();
   const { data: currentWorkspace, isLoading: currentWorkspaceLoading } =
     useGetWorkspace({ id: workspaceId });
   const { data: currentMember, isLoading: currentMemberLoading } =
@@ -59,7 +62,11 @@ export default function WorkspaceSidebar() {
         <SidebarItem label="Drafts & Sent" id="thread" icon={SendHorizonal} />
       </div>
       <WorkspaceSection
-        onNew={() => {}}
+        onNew={
+          currentMember.role === "admin"
+            ? () => setChannelCreateModalOpen(true)
+            : undefined
+        }
         label="Channels"
         hint="Create new channel"
       >

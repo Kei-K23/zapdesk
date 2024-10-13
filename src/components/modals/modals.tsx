@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CreateWorkspaceModal from "./create-workspace-modal";
+import CreateChannelModal from "./create-channel-modal";
 
 export default function Modals() {
   const [mounted, setMounted] = useState(false);
@@ -17,6 +18,7 @@ export default function Modals() {
   return (
     <>
       <CreateWorkspaceModal />
+      <CreateChannelModal />
     </>
   );
 }
