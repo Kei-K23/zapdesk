@@ -10,6 +10,7 @@ import {
 import { ChevronDown, PaintbrushIcon, Send } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import PreferencesWorkspaceModal from "@/components/modals/preferences-workspace-modal";
+import InviteNewMemberModal from "@/components/modals/invite-new-member-modal";
 
 type WorkspaceSidebarHeaderDropdownProps = {
   workspace: Doc<"workspaces">;
@@ -21,6 +22,7 @@ export default function WorkspaceSidebarHeaderDropdown({
   isAdmin,
 }: WorkspaceSidebarHeaderDropdownProps) {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
+  const [inviteMemberOpen, setInviteMemberOpen] = useState(false);
 
   return (
     <>
@@ -28,6 +30,11 @@ export default function WorkspaceSidebarHeaderDropdown({
         workspace={workspace}
         open={preferencesOpen}
         setOpen={setPreferencesOpen}
+      />
+      <InviteNewMemberModal
+        workspace={workspace}
+        open={inviteMemberOpen}
+        setOpen={setInviteMemberOpen}
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="outline-none">
@@ -46,7 +53,10 @@ export default function WorkspaceSidebarHeaderDropdown({
           </div>
           <Separator className="my-2" />
           {isAdmin && (
-            <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+            <DropdownMenuItem
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setInviteMemberOpen(true)}
+            >
               <Send className="size-4" />
               <p className="font-semibold">Invite new member</p>
             </DropdownMenuItem>
