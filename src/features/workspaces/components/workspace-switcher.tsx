@@ -27,7 +27,7 @@ export default function WorkspaceSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="outline-none" asChild>
-        <Button size={"sm"} variant={"secondary"} className="font-[500] h-10">
+        <Button size={"sm"} variant={"transparent"} className="font-[500] h-10">
           {currentWorkspace ? (
             <span className="text-2xl">
               {currentWorkspace?.name.charAt(0).toUpperCase()}

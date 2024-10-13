@@ -25,13 +25,18 @@ export default function WorkspaceIdPageLayout({
         >
           <ResizablePanel
             defaultSize={20}
-            minSize={12}
-            className="bg-neutral-800/70"
+            minSize={18}
+            maxSize={30}
+            className="bg-neutral-800/50"
           >
             <WorkspaceSidebar />
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={60} minSize={30}>
+          <ResizablePanel
+            defaultSize={60}
+            minSize={30}
+            className="bg-neutral-700/50"
+          >
             {children}
           </ResizablePanel>
         </ResizablePanelGroup>

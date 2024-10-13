@@ -24,7 +24,7 @@ export default function SidebarButton({
           isActive && "bg-neutral-400/25"
         )}
       >
-        <Icon className="size-6 text-white" />
+        <Icon className="size-5 text-white" />
       </Button>
       <span className="text-neutral-100 text-sm">{label}</span>
     </div>

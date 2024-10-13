@@ -32,7 +32,7 @@ export default function WorkspaceSidebar() {
   }
 
   return (
-    <aside className="h-full p-2  text-white">
+    <aside className="h-full p-2 text-white">
       <WorkspaceSidebarHeader
         workspace={currentWorkspace}
         isAdmin={currentMember.role === "admin"}
