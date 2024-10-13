@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import SidebarItem from "./sidebar-item";
 import { useGetChannels } from "@/features/channel/query/use-get-channels";
+import WorkspaceSection from "./workspace-section";
 
 export default function WorkspaceSidebar() {
   const workspaceId = useWorkspaceId();
@@ -51,6 +52,12 @@ export default function WorkspaceSidebar() {
       <div className="flex flex-col px-2 mt-3">
         <SidebarItem label="Threads" id="thread" icon={MessageSquareText} />
         <SidebarItem label="Drafts & Sent" id="thread" icon={SendHorizonal} />
+      </div>
+      <WorkspaceSection
+        onNew={() => {}}
+        label="Channels"
+        hint="Create new channel"
+      >
         {currentChannels?.map((channel) => (
           <SidebarItem
             key={channel._id}
@@ -59,7 +66,7 @@ export default function WorkspaceSidebar() {
             icon={HashIcon}
           />
         ))}
-      </div>
+      </WorkspaceSection>
     </aside>
   );
 }
