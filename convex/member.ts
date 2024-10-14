@@ -63,3 +63,30 @@ export const getMembers = query({
     return membersData;
   },
 });
+
+export const getAdminMember = query({
+  args: {
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return null;
+    }
+
+    const adminMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id", (q) =>
+        q.eq("workspaceId", args.workspaceId)
+      )
+      .filter((q) => q.eq(q.field("role"), "admin"))
+      .unique();
+
+    if (!adminMember) {
+      return null;
+    }
+
+    return await getUserDataById(ctx, adminMember.userId);
+  },
+});

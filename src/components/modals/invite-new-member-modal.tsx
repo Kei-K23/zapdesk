@@ -36,7 +36,7 @@ export default function InviteNewMemberModal({
   const { mutate, isPending } = useUpdateJoinCode();
 
   const handleCopy = () => {
-    const invitationLink = `${window.location.origin}/join/${workspaceId}`;
+    const invitationLink = `${window.location.origin}/join/${workspaceId}/join-code/${workspace.joinCode}`;
 
     window.navigator.clipboard
       .writeText(invitationLink)
@@ -75,10 +75,10 @@ export default function InviteNewMemberModal({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              Invite new member to &apos;{workspace.name}&apos;
+              Invite people to &apos;{workspace.name}&apos;
             </DialogTitle>
             <DialogDescription>
-              Please use below invitation code to invite new member to this
+              Please use below invitation code to invite people to this
               workspace.
             </DialogDescription>
           </DialogHeader>

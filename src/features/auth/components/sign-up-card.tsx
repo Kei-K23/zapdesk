@@ -61,107 +61,105 @@ export default function SignUpCard({ setAuthFlow }: SignUpCardProps) {
   };
 
   return (
-    <div>
-      <Card className="mx-auto max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
-          <CardDescription>Enter your email below to sign up</CardDescription>
-        </CardHeader>
-        {!!error && (
-          <div className="bg-destructive/15 rounded-md mx-6 px-3 py-2 text-destructive flex items-center gap-2 text-sm mb-4">
-            <FaExclamationTriangle />
-            {error}
-          </div>
-        )}
-        <CardContent>
-          <div className="grid gap-4">
-            <form className="space-y-4" onSubmit={handlePasswordSignUp}>
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  disabled={pending}
-                  id="name"
-                  type="text"
-                  placeholder="John Doe"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  disabled={pending}
-                  id="email"
-                  type="email"
-                  placeholder="mygmail@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  disabled={pending}
-                  id="password"
-                  type="password"
-                  required
-                  placeholder="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Confirm password</Label>
-                <Input
-                  disabled={pending}
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-              <Button disabled={pending} type="submit" className="w-full">
-                Sign Up
-              </Button>
-            </form>
-            <div className="flex items-center gap-3">
-              <Separator className="flex-1" />
-              <span>or</span>
-              <Separator className="flex-1" />
+    <Card className="mx-auto max-w-md shadow-lg drop-shadow-xl shadow-indigo-500/40">
+      <CardHeader>
+        <CardTitle className="text-2xl">Sign Up</CardTitle>
+        <CardDescription>Enter your email below to sign up</CardDescription>
+      </CardHeader>
+      {!!error && (
+        <div className="bg-destructive/15 rounded-md mx-6 px-3 py-2 text-destructive flex items-center gap-2 text-sm mb-4">
+          <FaExclamationTriangle />
+          {error}
+        </div>
+      )}
+      <CardContent>
+        <div className="grid gap-4">
+          <form className="space-y-4" onSubmit={handlePasswordSignUp}>
+            <div className="grid gap-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                disabled={pending}
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
             </div>
-            <Button
-              disabled={pending}
-              variant="outline"
-              className="w-full flex items-center gap-1"
-              onClick={() => handleProviderSignUp("google")}
-            >
-              <FcGoogle className="size-5" /> Continue with Google
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                disabled={pending}
+                id="email"
+                type="email"
+                placeholder="mygmail@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                disabled={pending}
+                id="password"
+                type="password"
+                required
+                placeholder="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="confirmPassword">Confirm password</Label>
+              <Input
+                disabled={pending}
+                id="confirmPassword"
+                type="password"
+                placeholder="password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <Button disabled={pending} type="submit" className="w-full">
+              Sign Up
             </Button>
-            <Button
-              disabled={pending}
-              variant="outline"
-              className="w-full flex items-center gap-1"
-              onClick={() => handleProviderSignUp("github")}
-            >
-              <FaGithub className="size-5" /> Continue with GitHub
-            </Button>
+          </form>
+          <div className="flex items-center gap-3">
+            <Separator className="flex-1" />
+            <span>or</span>
+            <Separator className="flex-1" />
           </div>
-          <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
-            <Button
-              variant={"link"}
-              className="p-0"
-              onClick={() => setAuthFlow("signIn")}
-            >
-              Sign in
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          <Button
+            disabled={pending}
+            variant="outline"
+            className="w-full flex items-center gap-1"
+            onClick={() => handleProviderSignUp("google")}
+          >
+            <FcGoogle className="size-5" /> Continue with Google
+          </Button>
+          <Button
+            disabled={pending}
+            variant="outline"
+            className="w-full flex items-center gap-1"
+            onClick={() => handleProviderSignUp("github")}
+          >
+            <FaGithub className="size-5" /> Continue with GitHub
+          </Button>
+        </div>
+        <div className="mt-4 text-center text-sm">
+          Already have an account?{" "}
+          <Button
+            variant={"link"}
+            className="p-0"
+            onClick={() => setAuthFlow("signIn")}
+          >
+            Sign in
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
