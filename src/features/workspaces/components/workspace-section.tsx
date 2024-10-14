@@ -29,7 +29,7 @@ export default function WorkspaceSection({
               className={cn("size-4 transition-all", !on && "-rotate-90")}
             />
           </Button>
-          <span>{label}</span>
+          <span className="truncate">{label}</span>
         </div>
         {!!onNew && (
           <Hint label={hint}>
@@ -39,7 +39,7 @@ export default function WorkspaceSection({
           </Hint>
         )}
       </div>
-      {on && <div className="px-2 transition-all">{children}</div>}
+      {on && <div className="px-2 transition-all space-y-1">{children}</div>}
     </div>
   );
 }

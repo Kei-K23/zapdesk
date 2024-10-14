@@ -7,10 +7,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 interface MemberItemProps {
   name: string;
   avatar: string;
+  isAdmin: boolean;
   id: string;
 }
 
-export default function MemberItem({ name, avatar, id }: MemberItemProps) {
+export default function MemberItem({
+  name,
+  avatar,
+  id,
+  isAdmin,
+}: MemberItemProps) {
   const workspaceId = useWorkspaceId();
   const fallbackAvatar = name.charAt(0).toUpperCase();
 

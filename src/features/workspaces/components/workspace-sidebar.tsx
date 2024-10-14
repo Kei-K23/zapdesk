@@ -80,7 +80,11 @@ export default function WorkspaceSidebar() {
         ))}
       </WorkspaceSection>
       <WorkspaceSection
-        onNew={() => {}}
+        onNew={
+          currentMember.role === "admin"
+            ? () => setChannelCreateModalOpen(true)
+            : undefined
+        }
         label="Direct Messages"
         hint="Create new channel"
       >
@@ -90,6 +94,7 @@ export default function WorkspaceSidebar() {
             id={member.member._id}
             name={member.user?.name || ""}
             avatar={member.user?.image || ""}
+            isAdmin={member.member.role === "admin"}
           />
         ))}
       </WorkspaceSection>

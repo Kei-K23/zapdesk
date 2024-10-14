@@ -28,7 +28,7 @@ export const currentMember = query({
 });
 
 export const createNewMember = mutation({
-  args: { id: v.id("workspaces") },
+  args: { workspaceId: v.id("workspaces"), joinCode: v.string() },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
 
@@ -36,10 +36,20 @@ export const createNewMember = mutation({
       throw new Error("Unauthorized");
     }
 
+    const workspace = await ctx.db
+      .query("workspaces")
+      .withIndex("by_id", (q) => q.eq("_id", args.workspaceId))
+      .filter((q) => q.eq(q.field("joinCode"), args.joinCode))
+      .unique();
+
+    if (!workspace) {
+      throw new Error("Could not found the workspace to join");
+    }
+
     const existingMember = await ctx.db
       .query("members")
       .withIndex("by_workspace_id_user_id", (q) =>
-        q.eq("workspaceId", args.id).eq("userId", userId)
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )
       .unique();
 
@@ -49,7 +59,7 @@ export const createNewMember = mutation({
 
     return await ctx.db.insert("members", {
       userId,
-      workspaceId: args.id,
+      workspaceId: args.workspaceId,
       role: "member",
     });
   },
