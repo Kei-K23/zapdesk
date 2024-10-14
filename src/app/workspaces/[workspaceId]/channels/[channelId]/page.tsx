@@ -1,11 +1,5 @@
-import React from "react";
+import ChannelScreen from "@/features/channel/components/channel-screen";
 
-interface ChannelIdPageProps {
-  params: {
-    channelId: string;
-  };
-}
-
-export default function ChannelIdPage({ params }: ChannelIdPageProps) {
-  return <div>Channel id page - {params.channelId}</div>;
+export default function ChannelIdPage() {
+  return <ChannelScreen />;
 }

@@ -35,7 +35,12 @@ export default function WorkspaceSidebar() {
     workspaceId,
   });
 
-  if (currentMemberLoading || currentWorkspaceLoading) {
+  if (
+    currentMemberLoading ||
+    currentWorkspaceLoading ||
+    currentChannelLoading ||
+    membersLoading
+  ) {
     return (
       <div className="h-full flex flex-col items-center justify-center gap-y-1 text-white">
         <p>Loading the workspace...</p>

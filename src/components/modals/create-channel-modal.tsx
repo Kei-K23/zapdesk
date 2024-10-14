@@ -43,7 +43,7 @@ export default function CreateChannelModal() {
           });
           router.replace(`/workspaces/${workspaceId}/channels/${id}`);
         },
-        onError: () => {
+        onError: (e) => {
           toast({
             title: "Error when creating channel",
           });

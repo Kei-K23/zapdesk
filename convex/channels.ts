@@ -36,6 +36,21 @@ export const getChannels = query({
   },
 });
 
+export const getChannel = query({
+  args: {
+    id: v.id("channels"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return null;
+    }
+
+    return await ctx.db.get(args.id);
+  },
+});
+
 export const createChannel = mutation({
   args: {
     name: v.string(),
@@ -50,7 +65,9 @@ export const createChannel = mutation({
 
     const currentMember = await ctx.db
       .query("members")
-      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
       .unique();
 
     if (!currentMember) {
