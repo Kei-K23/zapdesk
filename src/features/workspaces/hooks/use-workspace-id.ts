@@ -1,5 +1,4 @@
 import { useParams } from "next/navigation";
-import React from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 export default function useWorkspaceId() {

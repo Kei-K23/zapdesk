@@ -6,9 +6,11 @@ import { useToast } from "@/hooks/use-toast";
 import { useCreateChannelModalStore } from "@/features/channel/store/use-create-channel-modal-store";
 import useCreateChannel from "@/features/channel/mutation/use-create-channel";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
+import { useRouter } from "next/navigation";
 
 export default function CreateChannelModal() {
   const workspaceId = useWorkspaceId();
+  const router = useRouter();
   const { toast } = useToast();
   const [name, setName] = useState<string>("");
   const [open, setOpen] = useCreateChannelModalStore();
@@ -35,11 +37,11 @@ export default function CreateChannelModal() {
       },
       {
         onSuccess: (id) => {
-          // TODO: Redirect to newly created channel
           handleClose();
           toast({
             title: "Successfully created new channel",
           });
+          router.replace(`/workspaces/${workspaceId}/channels/${id}`);
         },
         onError: () => {
           toast({
