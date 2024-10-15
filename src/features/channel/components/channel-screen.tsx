@@ -28,7 +28,7 @@ export default function ChannelScreen() {
     <div className="flex flex-col h-full">
       <ChannelHeader channel={channelData} channelLoading={channelLoading} />
       <div className="flex-1" />
-      <ChatInput />
+      <ChatInput placeholder={`Message # ${channelData?.name}`} />
     </div>
   );
 }
