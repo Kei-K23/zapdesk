@@ -62,6 +62,8 @@ export default function PreferencesChannelModal({
     );
   };
 
+  const isLoading = isPending || channelLoading;
+
   return (
     <>
       <ConfirmDialog />
@@ -76,7 +78,7 @@ export default function PreferencesChannelModal({
               <p className="text-lg font-bold">{channel?.name}</p>
             </div>
             <Button
-              disabled={isPending}
+              disabled={isLoading}
               size={"sm"}
               variant={"transparent"}
               onClick={() => setOpenEdit(true)}
@@ -91,7 +93,7 @@ export default function PreferencesChannelModal({
             />
           </div>
           <Button
-            disabled={isPending}
+            disabled={isLoading}
             variant={"destructive"}
             onClick={handleOnDelete}
           >

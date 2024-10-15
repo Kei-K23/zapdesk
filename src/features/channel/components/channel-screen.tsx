@@ -6,6 +6,7 @@ import { useGetChannel } from "../query/use-get-channel";
 import { useRouter } from "next/navigation";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
 import ChannelHeader from "./channel-header";
+import ChatInput from "./chat-input";
 
 export default function ChannelScreen() {
   const channelId = useChannelId();
@@ -24,8 +25,10 @@ export default function ChannelScreen() {
   }, [channelData, channelLoading, router, workspaceId]);
 
   return (
-    <div>
+    <div className="flex flex-col h-full">
       <ChannelHeader channel={channelData} channelLoading={channelLoading} />
+      <div className="flex-1" />
+      <ChatInput />
     </div>
   );
 }
