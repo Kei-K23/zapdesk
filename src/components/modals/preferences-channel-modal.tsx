@@ -4,10 +4,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { Trash2Icon } from "lucide-react";
-import EditWorkspaceModal from "./preferences-channel-modal";
 import { useRouter } from "next/navigation";
 import useConfirm from "@/hooks/use-confirm";
 import useDeleteChannel from "@/features/channel/mutation/use-delete-channel";
+import EditChannelModal from "./edit-channel-modal";
 
 interface PreferencesChannelModalProps {
   channel: Doc<"channels">;
@@ -81,7 +81,7 @@ export default function PreferencesChannelModal({
             >
               Edit
             </Button>
-            <EditWorkspaceModal
+            <EditChannelModal
               id={channel._id}
               value={channel.name}
               open={openEdit}

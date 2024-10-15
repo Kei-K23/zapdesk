@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Id } from "../../../convex/_generated/dataModel";
+import useUpdateChannel from "@/features/channel/mutation/use-update-channel";
 
 interface EditChannelModalProps {
   id: Id<"channels">;
@@ -21,7 +22,7 @@ export default function EditChannelModal({
   const { toast } = useToast();
   const [name, setName] = useState<string>(value);
 
-  const { mutate, isPending } = useUpdateWorkspace();
+  const { mutate, isPending } = useUpdateChannel();
 
   const handleClose = () => {
     setOpen(false);
