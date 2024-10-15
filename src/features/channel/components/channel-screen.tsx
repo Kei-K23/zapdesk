@@ -21,11 +21,11 @@ export default function ChannelScreen() {
     if (!channelData) {
       router.replace(`/workspaces/${workspaceId}`);
     }
-  }, []);
+  }, [channelData, channelLoading, router, workspaceId]);
 
   return (
     <div>
-      <ChannelHeader name={channelData?.name || ""} />
+      <ChannelHeader channel={channelData} channelLoading={channelLoading} />
     </div>
   );
 }

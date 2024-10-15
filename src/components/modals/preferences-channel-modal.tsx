@@ -13,11 +13,13 @@ interface PreferencesChannelModalProps {
   channel: Doc<"channels">;
   open: boolean;
   setOpen: (open: boolean) => void;
+  channelLoading: boolean;
 }
 
 export default function PreferencesChannelModal({
   channel,
   open,
+  channelLoading,
   setOpen,
 }: PreferencesChannelModalProps) {
   const { toast } = useToast();
@@ -41,7 +43,7 @@ export default function PreferencesChannelModal({
 
     mutate(
       {
-        id: channel._id,
+        id: channel?._id,
       },
       {
         onSuccess: () => {
@@ -66,12 +68,12 @@ export default function PreferencesChannelModal({
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{channel.name}</DialogTitle>
+            <DialogTitle>{channel?.name}</DialogTitle>
           </DialogHeader>
           <div className="mt-4 border px-4 py-2 bg-neutral-900 rounded-lg flex items-center justify-between">
             <div>
               <p className="mb-1 text-sm">Channel name</p>
-              <p className="text-lg font-bold">{channel.name}</p>
+              <p className="text-lg font-bold">{channel?.name}</p>
             </div>
             <Button
               disabled={isPending}
@@ -82,8 +84,8 @@ export default function PreferencesChannelModal({
               Edit
             </Button>
             <EditChannelModal
-              id={channel._id}
-              value={channel.name}
+              id={channel?._id}
+              value={channel?.name}
               open={openEdit}
               setOpen={setOpenEdit}
             />
