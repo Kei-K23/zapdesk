@@ -9,12 +9,13 @@ import {
 } from "react";
 import { Button } from "./ui/button";
 import { PiTextAa } from "react-icons/pi";
-import { ImageIcon, Smile } from "lucide-react";
+import { ImageIcon, Smile, X } from "lucide-react";
 import { MdSend } from "react-icons/md";
 import Hint from "./hint";
 import { Delta, Op } from "quill/core";
 import { cn } from "@/lib/utils";
 import EmojiProvider from "./emoji-provider";
+import Image from "next/image";
 
 type EditorValue = {
   image: File | null;
@@ -41,12 +42,15 @@ export default function Editor({
   onCancel,
 }: EditorProps) {
   const [text, setText] = useState<string>("");
+  const [image, setImage] = useState<File | null>(null);
   const [isToolbarVisible, setIsToolbarVisible] = useState<boolean>(true);
+
   const containerRef = useRef<HTMLDivElement>(null);
   const submitRef = useRef(onSubmit);
   const quillRef = useRef<Quill | null>(null);
   const defaultValueRef = useRef(defaultValue);
   const disabledRef = useRef(disabled);
+  const imageElementRef = useRef<HTMLInputElement | null>(null);
 
   useLayoutEffect(() => {
     submitRef.current = onSubmit;
@@ -153,8 +157,38 @@ export default function Editor({
 
   return (
     <div className="flex flex-col">
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setImage(e.target.files![0])}
+        ref={imageElementRef}
+        className="hidden"
+      />
       <div className="flex flex-col border border-neutral-700/80 rounded-lg overflow-hidden focus-within:shadow-sm transition-all bg-neutral-900/80">
         <div ref={containerRef} className="h-full ql-custom" />
+        {!!image && (
+          <div className="p-2">
+            <div className="relative size-[80px] rounded-md flex items-center justify-center group/image">
+              <Hint label="Remove image">
+                <button
+                  onClick={() => {
+                    setImage(null);
+                    imageElementRef.current!.value = "";
+                  }}
+                  className="bg-neutral-200 hidden group-hover/image:flex rounded-full p-0.5 hover:bg-neutral-200/90 transition-all absolute z-10 -top-2 -right-1"
+                >
+                  <X className="size-4 text-black" />
+                </button>
+              </Hint>
+              <Image
+                src={URL.createObjectURL(image)}
+                alt="uploaded image"
+                fill
+                className="object-cover rounded-xl overflow-hidden"
+              />
+            </div>
+          </div>
+        )}
         <div className="flex px-2 pb-2 z-[5]">
           <Hint
             label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
@@ -185,7 +219,9 @@ export default function Editor({
                   disabled={false}
                   size={"iconSm"}
                   variant={"ghost"}
-                  onClick={() => {}}
+                  onClick={() => {
+                    imageElementRef?.current?.click();
+                  }}
                 >
                   <ImageIcon className="size-4" />
                 </Button>
