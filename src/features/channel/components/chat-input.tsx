@@ -89,6 +89,7 @@ export default function ChatInput({ placeholder }: ChatInputProps) {
           onSuccess: () => {
             // Clear the editor by re-rendering the state
             setRerenderEditor((prev) => prev + 1);
+            imageElementRef.current!.value = "";
             setImage(null);
           },
           onError: () => {
