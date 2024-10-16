@@ -13,6 +13,8 @@ import { ImageIcon, Smile } from "lucide-react";
 import { MdSend } from "react-icons/md";
 import Hint from "./hint";
 import { Delta, Op } from "quill/core";
+import { cn } from "@/lib/utils";
+import EmojiProvider from "./emoji-provider";
 
 type EditorValue = {
   image: File | null;
@@ -140,6 +142,15 @@ export default function Editor({
 
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
+  //! Emoji picker component does not provide proper data type for emoji, that why use  any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onEmojiSelect = (emoji: any) => {
+    quillRef?.current?.insertText(
+      quillRef?.current?.getSelection()?.index || 0,
+      emoji.native
+    );
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col border border-neutral-700/80 rounded-lg overflow-hidden focus-within:shadow-sm transition-all bg-neutral-900/80">
@@ -157,7 +168,7 @@ export default function Editor({
               <PiTextAa className="size-4" />
             </Button>
           </Hint>
-          <Hint label="Smile">
+          <EmojiProvider hint="Smile" onEmojiSelect={onEmojiSelect}>
             <Button
               disabled={false}
               size={"iconSm"}
@@ -166,7 +177,7 @@ export default function Editor({
             >
               <Smile className="size-4" />
             </Button>
-          </Hint>
+          </EmojiProvider>
           {variant === "create" && (
             <>
               <Hint label="Image">
@@ -213,7 +224,12 @@ export default function Editor({
           )}
         </div>
       </div>
-      <div className="p-2 text-[10px] text-muted-foreground flex justify-end">
+      <div
+        className={cn(
+          "p-2 text-[10px] text-muted-foreground flex justify-end",
+          isEmpty ? "opacity-0" : "opacity-100"
+        )}
+      >
         <p>
           <strong>Shift + Return</strong> to add new line
         </p>
