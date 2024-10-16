@@ -20,6 +20,7 @@ import type * as channels from "../channels.js";
 import type * as http from "../http.js";
 import type * as member from "../member.js";
 import type * as messages from "../messages.js";
+import type * as upload from "../upload.js";
 import type * as users from "../users.js";
 import type * as workspaces from "../workspaces.js";
 
@@ -37,6 +38,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   member: typeof member;
   messages: typeof messages;
+  upload: typeof upload;
   users: typeof users;
   workspaces: typeof workspaces;
 }>;

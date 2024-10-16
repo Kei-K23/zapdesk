@@ -28,9 +28,12 @@ interface EditorProps {
   defaultValue?: Delta | Op[];
   disabled?: boolean;
   innerRef?: MutableRefObject<Quill | null>;
+  imageRef: MutableRefObject<HTMLInputElement | null>;
   variant?: "create" | "update";
+  image: File | null;
   onSubmit: ({ image, body }: EditorValue) => void;
   onCancel?: () => void;
+  setImage: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 export default function Editor({
@@ -39,14 +42,15 @@ export default function Editor({
   disabled = false,
   defaultValue = [],
   innerRef,
+  imageRef,
   rerenderEditor,
+  image,
+  setImage,
   onSubmit,
   onCancel,
 }: EditorProps) {
   const [text, setText] = useState<string>("");
-  const [image, setImage] = useState<File | null>(null);
   const [isToolbarVisible, setIsToolbarVisible] = useState<boolean>(true);
-
   const containerRef = useRef<HTMLDivElement>(null);
   const submitRef = useRef(onSubmit);
   const quillRef = useRef<Quill | null>(null);
@@ -58,6 +62,7 @@ export default function Editor({
     submitRef.current = onSubmit;
     defaultValueRef.current = defaultValue;
     disabledRef.current = disabled;
+    imageRef.current = imageElementRef.current;
   }, [
     submitRef,
     defaultValueRef,
@@ -65,6 +70,7 @@ export default function Editor({
     placeholder,
     defaultValue,
     disabled,
+    imageRef,
     onSubmit,
   ]);
 
