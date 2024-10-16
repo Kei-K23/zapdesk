@@ -17,19 +17,20 @@ import { cn } from "@/lib/utils";
 import EmojiProvider from "./emoji-provider";
 import Image from "next/image";
 
-type EditorValue = {
+export type EditorValue = {
   image: File | null;
   body: string;
 };
 
 interface EditorProps {
-  onSubmit: ({ image, body }: EditorValue) => void;
-  onCancel?: () => void;
+  rerenderEditor: number;
   placeholder?: string;
   defaultValue?: Delta | Op[];
   disabled?: boolean;
   innerRef?: MutableRefObject<Quill | null>;
   variant?: "create" | "update";
+  onSubmit: ({ image, body }: EditorValue) => void;
+  onCancel?: () => void;
 }
 
 export default function Editor({
@@ -38,6 +39,7 @@ export default function Editor({
   disabled = false,
   defaultValue = [],
   innerRef,
+  rerenderEditor,
   onSubmit,
   onCancel,
 }: EditorProps) {
@@ -97,7 +99,15 @@ export default function Editor({
             enter: {
               key: "Enter",
               handler: () => {
-                return;
+                const text = quill.getText();
+                const addedImage = imageElementRef?.current?.files![0] || null;
+                const isEmpty =
+                  text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
+
+                if (isEmpty) return;
+
+                const body = JSON.stringify(quill.getContents());
+                submitRef?.current({ body, image: addedImage });
               },
             },
             shift_enter: {
@@ -142,7 +152,7 @@ export default function Editor({
         innerRef.current = null;
       }
     };
-  }, [placeholder, innerRef]);
+  }, [placeholder, innerRef, rerenderEditor]);
 
   const isEmpty = text.replace(/<(.|\n)*?>/g, "").trim().length === 0;
 
@@ -164,7 +174,12 @@ export default function Editor({
         ref={imageElementRef}
         className="hidden"
       />
-      <div className="flex flex-col border border-neutral-700/80 rounded-lg overflow-hidden focus-within:shadow-sm transition-all bg-neutral-900/80">
+      <div
+        className={cn(
+          "flex flex-col border border-neutral-700/80 rounded-lg overflow-hidden focus-within:shadow-sm opacity-100 transition-all bg-neutral-900/80",
+          disabled && "opacity-50"
+        )}
+      >
         <div ref={containerRef} className="h-full ql-custom" />
         {!!image && (
           <div className="p-2">
@@ -194,7 +209,7 @@ export default function Editor({
             label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
           >
             <Button
-              disabled={false}
+              disabled={disabled}
               size={"iconSm"}
               variant={"ghost"}
               onClick={toggleToolbar}
@@ -203,12 +218,7 @@ export default function Editor({
             </Button>
           </Hint>
           <EmojiProvider hint="Smile" onEmojiSelect={onEmojiSelect}>
-            <Button
-              disabled={false}
-              size={"iconSm"}
-              variant={"ghost"}
-              onClick={() => {}}
-            >
+            <Button disabled={disabled} size={"iconSm"} variant={"ghost"}>
               <Smile className="size-4" />
             </Button>
           </EmojiProvider>
@@ -216,7 +226,7 @@ export default function Editor({
             <>
               <Hint label="Image">
                 <Button
-                  disabled={false}
+                  disabled={disabled}
                   size={"iconSm"}
                   variant={"ghost"}
                   onClick={() => {
@@ -230,7 +240,12 @@ export default function Editor({
                 disabled={disabled || isEmpty}
                 size={"iconSm"}
                 variant={"primary"}
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  });
+                }}
                 className="ml-auto"
               >
                 <MdSend className="size-4" />
@@ -240,10 +255,10 @@ export default function Editor({
           {variant === "update" && (
             <>
               <Button
-                disabled={false}
+                disabled={disabled}
                 size={"iconSm"}
                 variant={"ghost"}
-                onClick={() => {}}
+                onClick={onCancel}
               >
                 Cancel
               </Button>
@@ -251,7 +266,12 @@ export default function Editor({
                 disabled={disabled || isEmpty}
                 size={"iconSm"}
                 variant={"primary"}
-                onClick={() => {}}
+                onClick={() => {
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image,
+                  });
+                }}
                 className="ml-auto"
               >
                 Save
