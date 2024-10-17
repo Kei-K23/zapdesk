@@ -57,6 +57,7 @@ export default function MessageToolbar({
                 variant={"ghostDestructive"}
                 size={"iconSm"}
                 disabled={isPending}
+                onClick={handleDelete}
               >
                 <Trash2 className="size-4" />
               </Button>
