@@ -132,6 +132,10 @@ body {
   padding: 0 !important;
 }
 
+.ql-renderer p {
+  font-size: 15px;
+}
+
 .ql-editor::before {
   left: 12px !important;
   font-family: "Lato", sans-serif !important;
