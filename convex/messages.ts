@@ -222,3 +222,60 @@ export const getMessages = query({
     };
   },
 });
+
+export const updateMessage = mutation({
+  args: {
+    id: v.id("messages"),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const message = await ctx.db.get(args.id);
+    if (!message) {
+      throw new Error("Cannot find the message");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+
+    if (!member || message.memberId !== member._id) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.patch(args.id, {
+      body: args.body,
+    });
+
+    return args.id;
+  },
+});
+
+export const deleteMessage = mutation({
+  args: {
+    id: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const message = await ctx.db.get(args.id);
+    if (!message) {
+      throw new Error("Cannot find the message");
+    }
+
+    const member = await getMember(ctx, message.workspaceId, userId);
+
+    if (!member || message.memberId !== member._id) {
+      throw new Error("Unauthorized");
+    }
+
+    await ctx.db.delete(args.id);
+
+    return args.id;
+  },
+});
