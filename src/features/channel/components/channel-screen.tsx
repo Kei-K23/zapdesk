@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
 import ChannelHeader from "./channel-header";
 import ChatInput from "./chat-input";
+import { useGetMessages } from "@/features/messages/query/use-get-messages";
 
 export default function ChannelScreen() {
   const channelId = useChannelId();
@@ -15,6 +16,9 @@ export default function ChannelScreen() {
 
   const { data: channelData, isLoading: channelLoading } =
     useGetChannel(channelId);
+  const { results } = useGetMessages({
+    channelId,
+  });
 
   useEffect(() => {
     if (channelLoading) return;
@@ -27,7 +31,7 @@ export default function ChannelScreen() {
   return (
     <div className="flex flex-col h-full">
       <ChannelHeader channel={channelData} channelLoading={channelLoading} />
-      <div className="flex-1" />
+      <div className="flex-1">{JSON.stringify(results)}</div>
       <ChatInput placeholder={`Message # ${channelData?.name}`} />
     </div>
   );
