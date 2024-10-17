@@ -1,4 +1,7 @@
+import dynamic from "next/dynamic";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
+
+const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 
 interface MessageItemProps {
   id?: Id<"messages">;
@@ -25,6 +28,28 @@ interface MessageItemProps {
   threadTimestamp?: number;
 }
 
-export default function MessageItem({}: MessageItemProps) {
-  return <div></div>;
+export default function MessageItem({
+  id,
+  memberId,
+  authorImage,
+  authorName = "Member",
+  body,
+  image,
+  reactions,
+  isCompact,
+  isAuthor,
+  isEditing,
+  hideThreadButton,
+  updatedAt,
+  createdAt,
+  threadCount,
+  threadImage,
+  threadTimestamp,
+  setEditing,
+}: MessageItemProps) {
+  return (
+    <div>
+      <Renderer value={body} />
+    </div>
+  );
 }
