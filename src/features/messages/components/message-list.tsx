@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { GetMessagesReturnType } from "../query/use-get-messages";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import MessageItem from "./message-item";
 import ChannelHero from "@/features/channel/components/channel-hero";
+import { Id } from "../../../../convex/_generated/dataModel";
+import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
+import useGetCurrentMember from "@/features/workspaces/query/use-get-current-member";
 
 const TIME_THRESHOLD = 2;
 
@@ -36,6 +39,11 @@ export default function MessageList({
   isLoadingMore,
   loadMore,
 }: MessageListProps) {
+  const workspaceId = useWorkspaceId();
+  const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
+
+  const { data: currentMemberData } = useGetCurrentMember({ workspaceId });
+
   const groupedData = data?.reduce(
     (acc, message) => {
       // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
@@ -83,11 +91,11 @@ export default function MessageList({
                 body={message?.body}
                 image={message?.image}
                 reactions={message?.reactions}
-                isAuthor={false}
+                isAuthor={message.memberId === currentMemberData?._id}
                 isCompact={isCompact}
-                isEditing={false}
-                hideThreadButton={false}
-                setEditing={() => {}}
+                isEditing={editingId === message?._id}
+                hideThreadButton={variant === "thread"}
+                setEditing={setEditingId}
                 updatedAt={message?.updatedAt}
                 createdAt={message?._creationTime}
                 threadCount={message?.threadCount}
