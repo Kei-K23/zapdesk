@@ -141,3 +141,8 @@ body {
   font-weight: 400 !important;
   @apply truncate
 }
+
+.message-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #333 #444;
+}
