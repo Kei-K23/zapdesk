@@ -68,7 +68,7 @@ export default function PreferencesChannelModal({
     <>
       <ConfirmDialog />
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent>
+        <DialogContent className="bg-black">
           <DialogHeader>
             <DialogTitle>{channel?.name}</DialogTitle>
           </DialogHeader>

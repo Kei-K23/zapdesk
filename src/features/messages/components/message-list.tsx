@@ -2,6 +2,7 @@ import React from "react";
 import { GetMessagesReturnType } from "../query/use-get-messages";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import MessageItem from "./message-item";
+import ChannelHero from "@/features/channel/components/channel-hero";
 
 const TIME_THRESHOLD = 2;
 
@@ -97,6 +98,9 @@ export default function MessageList({
           })}
         </div>
       ))}
+      {variant === "channel" && channelName && channelCreationTime && (
+        <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
     </div>
   );
 }

@@ -54,7 +54,7 @@ export default function CreateChannelModal() {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent>
+      <DialogContent className="bg-black">
         <DialogHeader>
           <DialogTitle>Add new channel</DialogTitle>
         </DialogHeader>

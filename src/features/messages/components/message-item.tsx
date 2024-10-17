@@ -64,7 +64,12 @@ export default function MessageItem({
             {format(new Date(createdAt!), "hh:mm a")}
           </button>
         </div>
-        <Renderer value={body} />
+        <div className="mt-1 flex flex-col w-full">
+          <Renderer value={body} />
+          {updatedAt && (
+            <span className="text-sm text-muted-foreground">(edited)</span>
+          )}
+        </div>
       </div>
     );
   }
@@ -74,14 +79,16 @@ export default function MessageItem({
       <div>
         <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
           <AvatarImage src={authorImage} alt={authorName} />
-          <AvatarFallback className="text-white text-[16px] bg-indigo-600 font-bold">
+          <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>
       </div>
       <div>
         <div className="flex items-start gap-2">
-          <span className="text-sm truncate">{authorName}</span>
+          <span className="text-sm truncate hover:underline cursor-pointer">
+            {authorName}
+          </span>
           <Hint label={formatFulltime(new Date(createdAt!))}>
             <button className=" text-sm text-muted-foreground">
               {format(new Date(createdAt!), "hh:mm a")}
@@ -91,7 +98,7 @@ export default function MessageItem({
         <div className="mt-1 flex flex-col w-full">
           <Renderer value={body} />
           {image && <MessageThumbnail image={image} />}
-          {true && (
+          {updatedAt && (
             <span className="text-sm text-muted-foreground">(edited)</span>
           )}
         </div>

@@ -72,7 +72,7 @@ export default function InviteNewMemberModal({
     <>
       <UpdateJoinCodeConfirmDialog />
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent>
+        <DialogContent className="bg-black">
           <DialogHeader>
             <DialogTitle>
               Invite people to &apos;{workspace.name}&apos;

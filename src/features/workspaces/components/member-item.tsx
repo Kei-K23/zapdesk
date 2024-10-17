@@ -30,7 +30,7 @@ export default function MemberItem({
       <Link href={`/workspaces/${workspaceId}/members/${id}`}>
         <Avatar className="size-6 hover:opacity-75 transition-all mr-2 rounded-md">
           <AvatarImage src={avatar} alt={name} />
-          <AvatarFallback className="text-white text-[16px] bg-indigo-600 font-bold">
+          <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>

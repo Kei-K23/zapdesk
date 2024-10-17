@@ -64,7 +64,7 @@ export default function PreferencesWorkspaceModal({
     <>
       <ConfirmDialog />
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent>
+        <DialogContent className="bg-black">
           <DialogHeader>
             <DialogTitle>{workspace.name}</DialogTitle>
           </DialogHeader>
