@@ -5,8 +5,13 @@ import Hint from "@/components/hint";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MessageThumbnail from "./message-thumbnail";
 import MessageToolbar from "./message-toolbar";
+import useUpdateMessage from "../mutation/use-update-message";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+import { EditorValue } from "@/components/editor";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
+const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
 
 const formatFulltime = (date: Date) =>
   `${isToday(date) ? "Today" : isYesterday(date) ? "Yesterday" : format(date, "MMM d, yyyy")} at ${format(date, "h:mm:ss a")}`;
@@ -55,28 +60,89 @@ export default function MessageItem({
   threadTimestamp,
   setEditing,
 }: MessageItemProps) {
+  const { toast } = useToast();
   const fallbackAvatar = authorName.charAt(0).toUpperCase();
+  const { mutate: updateMessageMutation, isPending: updateMessagePending } =
+    useUpdateMessage();
+
+  const isPending = updateMessagePending;
+
+  const handleUpdateMessage = ({ body, image }: EditorValue) => {
+    updateMessageMutation(
+      { id: id!, body },
+      {
+        onSuccess: () => {
+          toast({ title: "Message updated" });
+          setEditing(null);
+        },
+        onError: (e) => {
+          console.log(e);
+
+          toast({ title: "Error when updating the message" });
+        },
+      }
+    );
+  };
 
   if (isCompact) {
     return (
-      <div className="flex items-center gap-3 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40">
-        <div className="group-hover:opacity-100 opacity-0 items-start gap-2">
+      <div
+        className={cn(
+          "flex items-start gap-5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
+          isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40"
+        )}
+      >
+        <div
+          className={cn(
+            "group-hover:opacity-100 opacity-0 items-start gap-2",
+            isEditing && "opacity-0 group-hover:opacity-0"
+          )}
+        >
           <button className="w-14 text-xs text-muted-foreground">
             {format(new Date(createdAt!), "hh:mm a")}
           </button>
         </div>
-        <div className="mt-1 flex flex-col w-full">
-          <Renderer value={body} />
-          {updatedAt && (
-            <span className="text-sm text-muted-foreground">(edited)</span>
-          )}
-        </div>
+        {isEditing ? (
+          <div className="w-full">
+            <Editor
+              onSubmit={handleUpdateMessage}
+              disabled={isPending}
+              defaultValue={JSON.parse(body!)}
+              onCancel={() => setEditing(null)}
+              variant="update"
+            />
+          </div>
+        ) : (
+          <div className="mt-1 flex flex-col w-full">
+            <Renderer value={body} />
+            {updatedAt && (
+              <span className="text-sm text-muted-foreground">(edited)</span>
+            )}
+          </div>
+        )}
+
+        {!isEditing && (
+          <MessageToolbar
+            isAuthor={isAuthor}
+            isPending={isPending}
+            isHideThreadButton={hideThreadButton}
+            handleEdit={() => setEditing(id!)}
+            handleDelete={() => {}}
+            handleReactions={() => {}}
+            handleThread={() => {}}
+          />
+        )}
       </div>
     );
   }
 
   return (
-    <div className="flex gap-1.5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40">
+    <div
+      className={cn(
+        "flex items-start gap-3 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
+        isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40"
+      )}
+    >
       <div>
         <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
           <AvatarImage src={authorImage} alt={authorName} />
@@ -85,29 +151,42 @@ export default function MessageItem({
           </AvatarFallback>
         </Avatar>
       </div>
-      <div>
-        <div className="flex items-start gap-2">
-          <span className="text-sm truncate hover:underline cursor-pointer">
-            {authorName}
-          </span>
-          <Hint label={formatFulltime(new Date(createdAt!))}>
-            <button className=" text-sm text-muted-foreground">
-              {format(new Date(createdAt!), "hh:mm a")}
-            </button>
-          </Hint>
+      {isEditing ? (
+        <div className="w-full">
+          <Editor
+            onSubmit={handleUpdateMessage}
+            disabled={isPending}
+            defaultValue={JSON.parse(body!)}
+            onCancel={() => setEditing(null)}
+            variant="update"
+          />
         </div>
-        <div className="mt-1 flex flex-col w-full">
-          <Renderer value={body} />
-          {image && <MessageThumbnail image={image} />}
-          {updatedAt && (
-            <span className="text-sm text-muted-foreground">(edited)</span>
-          )}
+      ) : (
+        <div>
+          <div className="flex items-start gap-2">
+            <span className="text-sm truncate hover:underline cursor-pointer">
+              {authorName}
+            </span>
+            <Hint label={formatFulltime(new Date(createdAt!))}>
+              <button className=" text-sm text-muted-foreground">
+                {format(new Date(createdAt!), "hh:mm a")}
+              </button>
+            </Hint>
+          </div>
+          <div className="mt-1 flex flex-col w-full">
+            <Renderer value={body} />
+            {image && <MessageThumbnail image={image} />}
+            {updatedAt && (
+              <span className="text-sm text-muted-foreground">(edited)</span>
+            )}
+          </div>
         </div>
-      </div>
+      )}
+
       {!isEditing && (
         <MessageToolbar
           isAuthor={isAuthor}
-          isPending={false}
+          isPending={isPending}
           isHideThreadButton={hideThreadButton}
           handleEdit={() => setEditing(id!)}
           handleDelete={() => {}}

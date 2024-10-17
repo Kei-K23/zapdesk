@@ -23,17 +23,17 @@ export type EditorValue = {
 };
 
 interface EditorProps {
-  rerenderEditor: number;
+  rerenderEditor?: number;
   placeholder?: string;
   defaultValue?: Delta | Op[];
   disabled?: boolean;
   innerRef?: MutableRefObject<Quill | null>;
-  imageRef: MutableRefObject<HTMLInputElement | null>;
+  imageRef?: MutableRefObject<HTMLInputElement | null>;
   variant?: "create" | "update";
-  image: File | null;
-  onSubmit: ({ image, body }: EditorValue) => void;
+  image?: File | null;
+  onSubmit?: ({ image, body }: EditorValue) => void;
   onCancel?: () => void;
-  setImage: React.Dispatch<React.SetStateAction<File | null>>;
+  setImage?: React.Dispatch<React.SetStateAction<File | null>>;
 }
 
 export default function Editor({
@@ -62,7 +62,9 @@ export default function Editor({
     submitRef.current = onSubmit;
     defaultValueRef.current = defaultValue;
     disabledRef.current = disabled;
-    imageRef.current = imageElementRef.current;
+    if (imageRef) {
+      imageRef.current = imageElementRef.current;
+    }
   }, [
     submitRef,
     defaultValueRef,
@@ -113,7 +115,9 @@ export default function Editor({
                 if (isEmpty) return;
 
                 const body = JSON.stringify(quill.getContents());
-                submitRef?.current({ body, image: addedImage });
+                if (!!submitRef) {
+                  submitRef?.current?.({ body, image: addedImage });
+                }
               },
             },
             shift_enter: {
@@ -176,7 +180,7 @@ export default function Editor({
       <input
         type="file"
         accept="image/*"
-        onChange={(e) => setImage(e.target.files![0])}
+        onChange={(e) => setImage?.(e.target.files![0])}
         ref={imageElementRef}
         className="hidden"
       />
@@ -186,14 +190,14 @@ export default function Editor({
           disabled && "opacity-50"
         )}
       >
-        <div ref={containerRef} className="h-full ql-custom" />
+        <div ref={containerRef} className="h-full w-full ql-custom" />
         {!!image && (
           <div className="p-2">
             <div className="relative size-[80px] rounded-md flex items-center justify-center group/image">
               <Hint label="Remove image">
                 <button
                   onClick={() => {
-                    setImage(null);
+                    setImage?.(null);
                     imageElementRef.current!.value = "";
                   }}
                   className="bg-neutral-200 hidden group-hover/image:flex rounded-full p-0.5 hover:bg-neutral-200/90 transition-all absolute z-10 -top-2 -right-1"
@@ -210,26 +214,26 @@ export default function Editor({
             </div>
           </div>
         )}
-        <div className="flex px-2 pb-2 z-[5]">
-          <Hint
-            label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
-          >
-            <Button
-              disabled={disabled}
-              size={"iconSm"}
-              variant={"ghost"}
-              onClick={toggleToolbar}
+        <div className="flex justify-between items-center px-2 pb-2 z-[5]">
+          <div>
+            <Hint
+              label={isToolbarVisible ? "Hide formatting" : "Show formatting"}
             >
-              <PiTextAa className="size-4" />
-            </Button>
-          </Hint>
-          <EmojiProvider hint="Smile" onEmojiSelect={onEmojiSelect}>
-            <Button disabled={disabled} size={"iconSm"} variant={"ghost"}>
-              <Smile className="size-4" />
-            </Button>
-          </EmojiProvider>
-          {variant === "create" && (
-            <>
+              <Button
+                disabled={disabled}
+                size={"iconSm"}
+                variant={"ghost"}
+                onClick={toggleToolbar}
+              >
+                <PiTextAa className="size-4" />
+              </Button>
+            </Hint>
+            <EmojiProvider hint="Smile" onEmojiSelect={onEmojiSelect}>
+              <Button disabled={disabled} size={"iconSm"} variant={"ghost"}>
+                <Smile className="size-4" />
+              </Button>
+            </EmojiProvider>
+            {variant === "create" && (
               <Hint label="Image">
                 <Button
                   disabled={disabled}
@@ -242,48 +246,51 @@ export default function Editor({
                   <ImageIcon className="size-4" />
                 </Button>
               </Hint>
-              <Button
-                disabled={disabled || isEmpty}
-                size={"iconSm"}
-                variant={"primary"}
-                onClick={() => {
-                  onSubmit({
-                    body: JSON.stringify(quillRef.current?.getContents()),
-                    image,
-                  });
-                }}
-                className="ml-auto"
-              >
-                <MdSend className="size-4" />
-              </Button>
-            </>
-          )}
-          {variant === "update" && (
-            <>
-              <Button
-                disabled={disabled}
-                size={"iconSm"}
-                variant={"ghost"}
-                onClick={onCancel}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={disabled || isEmpty}
-                size={"iconSm"}
-                variant={"primary"}
-                onClick={() => {
-                  onSubmit({
-                    body: JSON.stringify(quillRef.current?.getContents()),
-                    image,
-                  });
-                }}
-                className="ml-auto"
-              >
-                Save
-              </Button>
-            </>
-          )}
+            )}
+          </div>
+          <div>
+            {variant === "create" && (
+              <>
+                <Button
+                  disabled={disabled || isEmpty}
+                  size={"iconSm"}
+                  variant={"primary"}
+                  onClick={() => {
+                    onSubmit?.({
+                      body: JSON.stringify(quillRef.current?.getContents()),
+                      image: image!,
+                    });
+                  }}
+                  className="ml-auto"
+                >
+                  <MdSend className="size-4" />
+                </Button>
+              </>
+            )}
+            {variant === "update" && (
+              <div className="flex items-center gap-3">
+                <Button
+                  disabled={disabled}
+                  variant={"ghost"}
+                  onClick={onCancel}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  disabled={disabled || isEmpty}
+                  variant={"primary"}
+                  onClick={() => {
+                    onSubmit?.({
+                      body: JSON.stringify(quillRef.current?.getContents()),
+                      image: image!,
+                    });
+                  }}
+                >
+                  Save
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
       <div

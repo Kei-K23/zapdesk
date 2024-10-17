@@ -43,7 +43,12 @@ export default function MessageToolbar({
         {isAuthor && (
           <>
             <Hint label="Edit the message">
-              <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+              <Button
+                variant={"ghost"}
+                size={"iconSm"}
+                disabled={isPending}
+                onClick={handleEdit}
+              >
                 <Pencil className="size-4" />
               </Button>
             </Hint>

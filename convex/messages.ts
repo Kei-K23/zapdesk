@@ -247,6 +247,7 @@ export const updateMessage = mutation({
 
     await ctx.db.patch(args.id, {
       body: args.body,
+      updatedAt: Date.now(),
     });
 
     return args.id;
