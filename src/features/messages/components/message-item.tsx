@@ -132,7 +132,7 @@ export default function MessageItem({
         <ConfirmDialog />
         <div
           className={cn(
-            "flex items-start gap-5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
+            "flex items-start gap-5 mx-5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
             isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
             deleteMessagePending &&
               "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
@@ -188,7 +188,7 @@ export default function MessageItem({
       <ConfirmDialog />
       <div
         className={cn(
-          "flex items-start gap-3 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
+          "flex items-start gap-3 mx-5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
           isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
           deleteMessagePending &&
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
