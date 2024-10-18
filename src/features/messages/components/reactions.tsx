@@ -2,6 +2,8 @@ import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import useGetCurrentMember from "@/features/workspaces/query/use-get-current-member";
 import { cn } from "@/lib/utils";
+import { SmilePlus } from "lucide-react";
+import EmojiProvider from "@/components/emoji-provider";
 
 interface ReactionsProps {
   data: Array<
@@ -40,6 +42,15 @@ export default function Reactions({ data, onChange }: ReactionsProps) {
           <span className={cn("ml-1 text-xs font-bold")}>{reaction.count}</span>
         </button>
       ))}
+      <EmojiProvider hint="Emoji" onEmojiSelect={(e) => onChange(e.native)}>
+        <button
+          className={cn(
+            "px-3 py-1 bg-neutral-700 border border-neutral-600 rounded-xl flex items-center"
+          )}
+        >
+          <SmilePlus className="size-4" />
+        </button>
+      </EmojiProvider>
     </div>
   );
 }

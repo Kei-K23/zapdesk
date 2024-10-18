@@ -123,7 +123,7 @@ export default function MessageItem({
     toggleReactionMutation(
       { messageId: id, value },
       {
-        onError: () => {
+        onError: (e) => {
           toast({ title: "Error when react to the message" });
         },
       }
@@ -226,11 +226,11 @@ export default function MessageItem({
               <span className="text-sm truncate hover:underline cursor-pointer">
                 {authorName}
               </span>
-              {/* <Hint label={formatFulltime(new Date(createdAt!))}>
+              <Hint label={formatFulltime(new Date(createdAt!))}>
                 <button className=" text-sm text-muted-foreground">
                   {format(new Date(createdAt!), "hh:mm a")}
                 </button>
-              </Hint> */}
+              </Hint>
             </div>
             <div className="mt-1 flex flex-col w-full">
               <Renderer value={body} />
