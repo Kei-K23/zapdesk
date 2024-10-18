@@ -20,6 +20,7 @@ interface MessageListProps {
   canLoadMore: boolean;
   isLoadingMore: boolean;
   loadMore: () => void;
+  parentMessageItem?: () => React.JSX.Element;
 }
 
 const formatDateLabel = (dateStr: string): string => {
@@ -39,6 +40,7 @@ export default function MessageList({
   canLoadMore,
   isLoadingMore,
   loadMore,
+  parentMessageItem,
 }: MessageListProps) {
   const workspaceId = useWorkspaceId();
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
@@ -137,7 +139,7 @@ export default function MessageList({
           </div>
         </div>
       )}
-
+      {variant === "thread" && !!parentMessageItem && parentMessageItem()}
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
       )}
