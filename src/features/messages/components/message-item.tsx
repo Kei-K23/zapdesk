@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 import { EditorValue } from "@/components/editor";
 import useDeleteMessage from "../mutation/use-delete-message";
 import useConfirm from "@/hooks/use-confirm";
+import useToggleReaction from "../mutation/use-toggle-reaction";
+import Reactions from "./reactions";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -72,6 +74,8 @@ export default function MessageItem({
     useUpdateMessage();
   const { mutate: deleteMessageMutation, isPending: deleteMessagePending } =
     useDeleteMessage();
+  const { mutate: toggleReactionMutation, isPending: toggleReactionPending } =
+    useToggleReaction();
 
   const isPending = updateMessagePending || deleteMessagePending;
 
@@ -104,6 +108,19 @@ export default function MessageItem({
         },
         onError: (e) => {
           toast({ title: "Error when deleting the message" });
+        },
+      }
+    );
+  };
+
+  const handleToggleReaction = async (value: string) => {
+    if (!id) return;
+
+    toggleReactionMutation(
+      { messageId: id, value },
+      {
+        onError: () => {
+          toast({ title: "Error when react to the message" });
         },
       }
     );
@@ -157,7 +174,7 @@ export default function MessageItem({
               isHideThreadButton={hideThreadButton}
               handleEdit={() => setEditing(id!)}
               handleDelete={handleDeleteMessage}
-              handleReactions={() => {}}
+              handleReactions={handleToggleReaction}
               handleThread={() => {}}
             />
           )}
@@ -213,6 +230,10 @@ export default function MessageItem({
               {updatedAt && (
                 <span className="text-sm text-muted-foreground">(edited)</span>
               )}
+              <Reactions
+                data={reactions || []}
+                onChange={handleToggleReaction}
+              />
             </div>
           </div>
         )}
@@ -224,7 +245,7 @@ export default function MessageItem({
             isHideThreadButton={hideThreadButton}
             handleEdit={() => setEditing(id!)}
             handleDelete={handleDeleteMessage}
-            handleReactions={() => {}}
+            handleReactions={handleToggleReaction}
             handleThread={() => {}}
           />
         )}

@@ -297,12 +297,17 @@ export const toggleReaction = mutation({
       throw new Error("Cannot find the message");
     }
 
+    const currentMember = await getMember(ctx, message.workspaceId, userId);
+    if (!currentMember) {
+      throw new Error("Unauthorized");
+    }
+
     const existingReaction = await ctx.db
       .query("reactions")
       .filter((q) =>
         q.and(
           q.eq(q.field("messageId"), args.messageId),
-          q.eq(q.field("memberId"), message.memberId),
+          q.eq(q.field("memberId"), currentMember._id),
           q.eq(q.field("value"), args.value)
         )
       )
@@ -314,7 +319,7 @@ export const toggleReaction = mutation({
     } else {
       return await ctx.db.insert("reactions", {
         value: args.value,
-        memberId: message.memberId,
+        memberId: currentMember._id,
         messageId: message._id,
         workspaceId: message.workspaceId,
       });
