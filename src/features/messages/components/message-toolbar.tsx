@@ -35,7 +35,12 @@ export default function MessageToolbar({
         </EmojiProvider>
         {!isHideThreadButton && (
           <Hint label="Reply in thread">
-            <Button variant={"ghost"} size={"iconSm"} disabled={isPending}>
+            <Button
+              variant={"ghost"}
+              size={"iconSm"}
+              disabled={isPending}
+              onClick={handleThread}
+            >
               <MessageSquareText className="size-4" />
             </Button>
           </Hint>

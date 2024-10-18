@@ -326,3 +326,75 @@ export const toggleReaction = mutation({
     }
   },
 });
+
+export const getMessageById = query({
+  args: {
+    messageId: v.id("messages"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      return null;
+    }
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) {
+      return null;
+    }
+
+    const currentMember = await getMember(ctx, message.workspaceId, userId);
+    if (!currentMember) {
+      return null;
+    }
+
+    const member = await populateMember(ctx, message.memberId);
+    if (!member) {
+      return null;
+    }
+
+    const user = await populateUser(ctx, member.userId);
+    if (!user) {
+      return null;
+    }
+
+    const reactions = await populateReactions(ctx, message._id);
+    const reactionsWithCounts = reactions.map((reaction) => ({
+      ...reaction,
+      count: reactions.filter((r) => r.value === reaction.value).length,
+    }));
+
+    const dedupedReactions = reactionsWithCounts.reduce(
+      (acc, reaction) => {
+        const existingReaction = acc.find((r) => r.value === reaction.value);
+
+        if (existingReaction) {
+          existingReaction.memberIds = Array.from(
+            new Set([...existingReaction.memberIds, reaction.memberId])
+          );
+        } else {
+          acc.push({ ...reaction, memberIds: [reaction.memberId] });
+        }
+
+        return acc;
+      },
+      [] as (Doc<"reactions"> & {
+        count: number;
+        memberIds: Id<"members">[];
+      })[]
+    );
+
+    const reactionsWithoutMemberIdProperty = dedupedReactions.map(
+      ({ memberId, ...rest }) => rest
+    );
+
+    return {
+      ...message,
+      member,
+      image: message.image
+        ? await ctx.storage.getUrl(message.image)
+        : undefined,
+      user,
+      reactions: reactionsWithoutMemberIdProperty,
+    };
+  },
+});

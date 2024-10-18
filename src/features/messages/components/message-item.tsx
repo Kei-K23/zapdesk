@@ -13,6 +13,7 @@ import useDeleteMessage from "../mutation/use-delete-message";
 import useConfirm from "@/hooks/use-confirm";
 import useToggleReaction from "../mutation/use-toggle-reaction";
 import Reactions from "./reactions";
+import { usePanel } from "@/hooks/use-panel";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -65,6 +66,7 @@ export default function MessageItem({
   setEditing,
 }: MessageItemProps) {
   const { toast } = useToast();
+  const { onOpenMessage, parentMessageId, onClose } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This process will permanently delete the message and cannot undo."
@@ -101,10 +103,12 @@ export default function MessageItem({
     deleteMessageMutation(
       { id: id! },
       {
-        onSuccess: () => {
+        onSuccess: (id) => {
           toast({ title: "Message deleted" });
 
-          // TODO: Close thread open
+          if (parentMessageId === id) {
+            onClose();
+          }
         },
         onError: (e) => {
           toast({ title: "Error when deleting the message" });
@@ -132,7 +136,7 @@ export default function MessageItem({
         <ConfirmDialog />
         <div
           className={cn(
-            "flex items-start gap-5 mx-5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
+            "flex items-start gap-5 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
             isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
             deleteMessagePending &&
               "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
@@ -164,6 +168,10 @@ export default function MessageItem({
               {updatedAt && (
                 <span className="text-sm text-muted-foreground">(edited)</span>
               )}
+              <Reactions
+                data={reactions || []}
+                onChange={handleToggleReaction}
+              />
             </div>
           )}
 
@@ -175,7 +183,7 @@ export default function MessageItem({
               handleEdit={() => setEditing(id!)}
               handleDelete={handleDeleteMessage}
               handleReactions={handleToggleReaction}
-              handleThread={() => {}}
+              handleThread={() => onOpenMessage(id!)}
             />
           )}
         </div>
@@ -188,7 +196,7 @@ export default function MessageItem({
       <ConfirmDialog />
       <div
         className={cn(
-          "flex items-start gap-3 mx-5 px-5 p-1.5 transition-all group relative hover:bg-neutral-700/40",
+          "flex items-start gap-3 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
           isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
           deleteMessagePending &&
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
@@ -218,11 +226,11 @@ export default function MessageItem({
               <span className="text-sm truncate hover:underline cursor-pointer">
                 {authorName}
               </span>
-              <Hint label={formatFulltime(new Date(createdAt!))}>
+              {/* <Hint label={formatFulltime(new Date(createdAt!))}>
                 <button className=" text-sm text-muted-foreground">
                   {format(new Date(createdAt!), "hh:mm a")}
                 </button>
-              </Hint>
+              </Hint> */}
             </div>
             <div className="mt-1 flex flex-col w-full">
               <Renderer value={body} />
@@ -246,7 +254,7 @@ export default function MessageItem({
             handleEdit={() => setEditing(id!)}
             handleDelete={handleDeleteMessage}
             handleReactions={handleToggleReaction}
-            handleThread={() => {}}
+            handleThread={() => onOpenMessage(id!)}
           />
         )}
       </div>
