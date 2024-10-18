@@ -280,3 +280,44 @@ export const deleteMessage = mutation({
     return args.id;
   },
 });
+
+export const toggleReaction = mutation({
+  args: {
+    messageId: v.id("messages"),
+    value: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const message = await ctx.db.get(args.messageId);
+    if (!message) {
+      throw new Error("Cannot find the message");
+    }
+
+    const existingReaction = await ctx.db
+      .query("reactions")
+      .filter((q) =>
+        q.and(
+          q.eq(q.field("messageId"), args.messageId),
+          q.eq(q.field("memberId"), message.memberId),
+          q.eq(q.field("value"), args.value)
+        )
+      )
+      .first();
+
+    if (existingReaction) {
+      await ctx.db.delete(existingReaction._id);
+      return existingReaction._id;
+    } else {
+      return await ctx.db.insert("reactions", {
+        value: args.value,
+        memberId: message.memberId,
+        messageId: message._id,
+        workspaceId: message.workspaceId,
+      });
+    }
+  },
+});
