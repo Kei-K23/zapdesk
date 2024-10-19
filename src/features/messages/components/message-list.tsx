@@ -7,6 +7,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
 import useGetCurrentMember from "@/features/workspaces/query/use-get-current-member";
 import { Loader } from "lucide-react";
+import ConversationHero from "@/features/conversations/components/conversation-hero";
 
 const TIME_THRESHOLD = 2;
 
@@ -142,6 +143,9 @@ export default function MessageList({
       {variant === "thread" && !!parentMessageItem && parentMessageItem()}
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
+      )}
+      {variant === "conversation" && memberName && memberImage && (
+        <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>
   );

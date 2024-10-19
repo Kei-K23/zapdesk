@@ -149,7 +149,7 @@ export const getMessages = query({
         q
           .eq("channelId", args.channelId)
           .eq("parentMessageId", args.parentMessageId)
-          .eq("conversationId", args.conversationId)
+          .eq("conversationId", conversationId)
       )
       .order("desc")
       .paginate(args.paginationOpts);

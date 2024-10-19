@@ -16,14 +16,14 @@ export default function ConversationHeader({
 
   return (
     <>
-      <div className="bg-neutral-700/50 border-b border-b-neutral-600 shadow-md px-6 py-2 flex items-center justify-between">
+      <div className="bg-neutral-700/50 border-b border-b-neutral-600 shadow-md px-6 h-[50px] py-2 flex items-center justify-between">
         {memberLoading ? (
           <>
             <Loader2 className="size-4 text-muted-foreground animate-spin" />
           </>
         ) : (
           <>
-            <Avatar className="size-6 hover:opacity-75 transition-all mr-2 rounded-md">
+            <Avatar className="size-8 hover:opacity-75 transition-all mr-2 rounded-md">
               <AvatarImage src={memberProfile} alt={memberName} />
               <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
                 {fallbackAvatar}

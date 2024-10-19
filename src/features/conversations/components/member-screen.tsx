@@ -63,9 +63,5 @@ export default function MemberScreen() {
     );
   }
 
-  return (
-    <div>
-      <Conversation id={conversationId} />
-    </div>
-  );
+  return <Conversation id={conversationId} />;
 }

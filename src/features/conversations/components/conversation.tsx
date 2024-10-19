@@ -3,9 +3,9 @@ import { Id } from "../../../../convex/_generated/dataModel";
 import useMemberId from "../hooks/use-member-id";
 import { useGetMember } from "../query/use-get-member";
 import { Loader2 } from "lucide-react";
-import ChatInput from "@/features/channel/components/chat-input";
 import MessageList from "@/features/messages/components/message-list";
 import ConversationHeader from "./conversation-header";
+import ChatInput from "./chat-input";
 
 interface ConversationProps {
   id: Id<"conversations">;
@@ -31,25 +31,25 @@ export default function Conversation({ id }: ConversationProps) {
   }
 
   return (
-    <div>
-      <div className="flex flex-col h-full">
-        <ConversationHeader
-          memberName={member?.user?.name}
-          memberProfile={member?.user?.image}
-          memberLoading={memberLoading}
-        />
-        {/* <MessageList
-          channelName={channelData?.name}
-          channelCreationTime={channelData?._creationTime}
-          data={results}
-          loadMore={loadMore}
-          canLoadMore={status === "CanLoadMore"}
-          isLoadingMore={status === "LoadingMore"}
-        /> */}
-        <ChatInput
-          placeholder={`Message between you and ${member?.user?.name}`}
-        />
-      </div>
+    <div className="flex flex-col h-full">
+      <ConversationHeader
+        memberName={member?.user?.name}
+        memberProfile={member?.user?.image}
+        memberLoading={memberLoading}
+      />
+      <MessageList
+        data={results}
+        loadMore={loadMore}
+        canLoadMore={status === "CanLoadMore"}
+        isLoadingMore={status === "LoadingMore"}
+        memberImage={member?.user?.image}
+        memberName={member?.user?.name}
+        variant="conversation"
+      />
+      <ChatInput
+        id={id}
+        placeholder={`Message between you and ${member?.user?.name}`}
+      />
     </div>
   );
 }

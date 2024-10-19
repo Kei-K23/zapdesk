@@ -24,7 +24,7 @@ export default function ChannelHeader({
         channelLoading={channelLoading}
         setOpen={setOpen}
       />
-      <div className="bg-neutral-700/50 border-b border-b-neutral-600 shadow-md px-6 py-2 flex items-center justify-between">
+      <div className="bg-neutral-700/50 border-b border-b-neutral-600 shadow-md px-6 py-2 h-[50px] flex items-center justify-between">
         {channelLoading ? (
           <>
             <Loader2 className="size-4 text-muted-foreground animate-spin" />
