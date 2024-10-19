@@ -102,6 +102,47 @@ export const getMembers = query({
   },
 });
 
+export const getMemberById = query({
+  args: {
+    id: v.id("members"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return null;
+    }
+
+    const member = await ctx.db.get(args.id);
+
+    if (!member) {
+      return null;
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", member.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!currentMember) {
+      return null;
+    }
+
+    const currentUser = await getUserDataById(ctx, member.userId);
+
+    if (!currentUser) {
+      return null;
+    }
+
+    return {
+      user: currentUser,
+      member: currentMember,
+    };
+  },
+});
+
 export const getAdminMember = query({
   args: {
     workspaceId: v.id("workspaces"),
