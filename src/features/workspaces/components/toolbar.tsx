@@ -16,8 +16,11 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useGetChannelsAndMembers } from "../query/user-get-channels-and-members";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Toolbar() {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const workspaceId = useWorkspaceId();
   const { data } = useGetWorkspace({ id: workspaceId });
@@ -41,9 +44,16 @@ export default function Toolbar() {
             channelsAndMembersData.channels.length > 0 && (
               <CommandGroup heading="Channels">
                 {channelsAndMembersData.channels.map((channel) => (
-                  <CommandItem key={channel._id} className="truncate">
-                    # {channel.name}
-                  </CommandItem>
+                  <Link
+                    key={channel._id}
+                    href={`/workspaces/${workspaceId}/channels/${channel?._id}`}
+                    onClick={() => setOpen(false)}
+                    className="cursor-pointer"
+                  >
+                    <CommandItem className="truncate">
+                      # {channel.name}
+                    </CommandItem>
+                  </Link>
                 ))}
               </CommandGroup>
             )}
@@ -53,9 +63,16 @@ export default function Toolbar() {
             channelsAndMembersData.members.length > 0 && (
               <CommandGroup heading="Members">
                 {channelsAndMembersData.members.map((member) => (
-                  <CommandItem key={member?.member?._id} className="truncate">
-                    {member?.user?.name}
-                  </CommandItem>
+                  <Link
+                    key={member?.member?._id}
+                    href={`/workspaces/${workspaceId}/members/${member?.member?._id}`}
+                    onClick={() => setOpen(false)}
+                    className="cursor-pointer"
+                  >
+                    <CommandItem className="truncate">
+                      {member?.user?.name}
+                    </CommandItem>
+                  </Link>
                 ))}
               </CommandGroup>
             )}

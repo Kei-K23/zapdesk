@@ -20,7 +20,7 @@ export default function WorkspaceSidebarHeader({
         workspace={workspace}
         memberRole={memberRole}
       />
-      <div className="flex items-center gap-x-2">
+      {/* <div className="flex items-center gap-x-2">
         <Hint label="Filter conversations" side="bottom">
           <Button variant={"transp"} size={"iconSm"}>
             <Filter className="size-4" />
@@ -31,7 +31,7 @@ export default function WorkspaceSidebarHeader({
             <Edit className="size-4" />
           </Button>
         </Hint>
-      </div>
+      </div> */}
     </div>
   );
 }
