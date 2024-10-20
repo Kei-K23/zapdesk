@@ -19,10 +19,12 @@ import useGetMembers from "../query/use-get-members";
 import MemberItem from "./member-item";
 import { useCreateChannelModalStore } from "@/features/channel/store/use-create-channel-modal-store";
 import useChannelId from "@/features/channel/hooks/use-channel-id";
+import useMemberId from "@/features/conversations/hooks/use-member-id";
 
 export default function WorkspaceSidebar() {
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
+  const memberId = useMemberId();
   const [_channelCreateModalOpen, setChannelCreateModalOpen] =
     useCreateChannelModalStore();
   const { data: currentWorkspace, isLoading: currentWorkspaceLoading } =
@@ -103,6 +105,7 @@ export default function WorkspaceSidebar() {
             name={member.user?.name || ""}
             avatar={member.user?.image || ""}
             isAdmin={member.member.role === "admin"}
+            isActive={member.member._id === memberId}
           />
         ))}
       </WorkspaceSection>

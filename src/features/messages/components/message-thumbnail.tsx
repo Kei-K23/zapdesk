@@ -9,7 +9,7 @@ export default function MessageThumbnail({ image }: MessageThumbnailProps) {
   return (
     <Dialog>
       <DialogTrigger>
-        <div className="w-[300px] h-[250px] relative overflow-hidden border border-lg my-2 cursor-zoom-in">
+        <div className="max-w-[300px] max-h-[250px] relative overflow-hidden border border-lg my-2 cursor-zoom-in">
           <img
             src={image}
             alt="message thumbnail"

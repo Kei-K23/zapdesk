@@ -9,6 +9,7 @@ interface MemberItemProps {
   avatar: string;
   isAdmin: boolean;
   id: string;
+  isActive: boolean;
 }
 
 export default function MemberItem({
@@ -16,6 +17,7 @@ export default function MemberItem({
   avatar,
   id,
   isAdmin,
+  isActive,
 }: MemberItemProps) {
   const workspaceId = useWorkspaceId();
   const fallbackAvatar = name.charAt(0).toUpperCase();
@@ -23,7 +25,7 @@ export default function MemberItem({
   return (
     <Button
       asChild
-      variant={"transp"}
+      variant={isActive ? "primary" : "transp"}
       size={"sm"}
       className="flex justify-start"
     >

@@ -14,6 +14,7 @@ import useConfirm from "@/hooks/use-confirm";
 import useToggleReaction from "../mutation/use-toggle-reaction";
 import Reactions from "./reactions";
 import { usePanel } from "@/hooks/use-panel";
+import ThreadBar from "./thread-bar";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -165,13 +166,21 @@ export default function MessageItem({
           ) : (
             <div className="mt-1 flex flex-col w-full">
               <Renderer value={body} />
-              {updatedAt && (
-                <span className="text-sm text-muted-foreground">(edited)</span>
-              )}
+              {image && <MessageThumbnail image={image} />}
               <Reactions
                 data={reactions || []}
                 onChange={handleToggleReaction}
               />
+              <ThreadBar
+                memberName={authorName}
+                image={threadImage}
+                count={threadCount}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id!)}
+              />
+              {updatedAt && (
+                <span className="text-sm text-muted-foreground">(edited)</span>
+              )}
             </div>
           )}
 
@@ -235,13 +244,20 @@ export default function MessageItem({
             <div className="mt-1 flex flex-col w-full">
               <Renderer value={body} />
               {image && <MessageThumbnail image={image} />}
-              {updatedAt && (
-                <span className="text-sm text-muted-foreground">(edited)</span>
-              )}
               <Reactions
                 data={reactions || []}
                 onChange={handleToggleReaction}
               />
+              <ThreadBar
+                memberName={authorName}
+                image={threadImage}
+                count={threadCount}
+                timestamp={threadTimestamp}
+                onClick={() => onOpenMessage(id!)}
+              />
+              {updatedAt && (
+                <span className="text-sm text-muted-foreground">(edited)</span>
+              )}
             </div>
           </div>
         )}
