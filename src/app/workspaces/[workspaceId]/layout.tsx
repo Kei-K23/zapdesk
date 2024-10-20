@@ -14,6 +14,8 @@ import { usePanel } from "@/hooks/use-panel";
 import { Loader } from "lucide-react";
 import Thread from "@/features/messages/components/thread";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
+import MemberProfilePanel from "@/features/workspaces/components/member-profile-panel";
 
 export default function WorkspaceIdPageLayout({
   children,
@@ -22,6 +24,9 @@ export default function WorkspaceIdPageLayout({
 }) {
   const { parentMessageId, onClose } = usePanel();
   const openPanel = !!parentMessageId;
+  const { memberProfileId, onClose: memberProfileClose } =
+    useMemberProfilePanel();
+  const openMemberProfilePanel = !!memberProfileId;
 
   return (
     <div className="h-full">
@@ -60,6 +65,27 @@ export default function WorkspaceIdPageLayout({
                   <Thread
                     messageId={parentMessageId as Id<"messages">}
                     onClose={onClose}
+                  />
+                ) : (
+                  <div>
+                    <Loader />
+                  </div>
+                )}
+              </ResizablePanel>
+            </>
+          )}
+          {openMemberProfilePanel && (
+            <>
+              <ResizableHandle withHandle className="bg-neutral-600" />
+              <ResizablePanel
+                defaultSize={29}
+                minSize={20}
+                className="bg-neutral-700/50"
+              >
+                {memberProfileId ? (
+                  <MemberProfilePanel
+                    memberId={memberProfileId as Id<"members">}
+                    onClose={memberProfileClose}
                   />
                 ) : (
                   <div>

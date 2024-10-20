@@ -33,7 +33,7 @@ export default function ThreadBar({
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>
-        <span className="font-semibold text-sky-500">
+        <span className="text-[13.5px] font-semibold text-sky-500">
           {count > 1 ? `${count} replies` : `${count} reply`}
         </span>
       </div>

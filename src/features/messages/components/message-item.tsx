@@ -15,6 +15,7 @@ import useToggleReaction from "../mutation/use-toggle-reaction";
 import Reactions from "./reactions";
 import { usePanel } from "@/hooks/use-panel";
 import ThreadBar from "./thread-bar";
+import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -68,6 +69,7 @@ export default function MessageItem({
 }: MessageItemProps) {
   const { toast } = useToast();
   const { onOpenMessage, parentMessageId, onClose } = usePanel();
+  const { onOpenMemberProfile } = useMemberProfilePanel();
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This process will permanently delete the message and cannot undo."
@@ -211,14 +213,15 @@ export default function MessageItem({
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
         )}
       >
-        <div>
-          <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
-            <AvatarImage src={authorImage} alt={authorName} />
-            <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
-              {fallbackAvatar}
-            </AvatarFallback>
-          </Avatar>
-        </div>
+        <Avatar
+          className="size-14 hover:opacity-75 transition-all mr-2 rounded-md"
+          onClick={() => onOpenMemberProfile(memberId as string)}
+        >
+          <AvatarImage src={authorImage} alt={authorName} />
+          <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
+            {fallbackAvatar}
+          </AvatarFallback>
+        </Avatar>
         {isEditing ? (
           <div className="w-full">
             <Editor
@@ -232,7 +235,10 @@ export default function MessageItem({
         ) : (
           <div>
             <div className="flex items-start gap-2">
-              <span className="text-sm truncate hover:underline cursor-pointer">
+              <span
+                onClick={() => onOpenMemberProfile(memberId as string)}
+                className="text-sm truncate hover:underline cursor-pointer"
+              >
                 {authorName}
               </span>
               <Hint label={formatFulltime(new Date(createdAt!))}>
