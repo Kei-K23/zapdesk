@@ -179,3 +179,40 @@ export const getWorkspaceById = query({
     return await ctx.db.get(args.id);
   },
 });
+
+export const getChannelsAndMembers = query({
+  args: {
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return [];
+    }
+
+    const [channels, members] = await Promise.all([
+      await ctx.db
+        .query("channels")
+        .withIndex("by_workspace_id", (q) =>
+          q.eq("workspaceId", args.workspaceId)
+        )
+        .collect(),
+      await ctx.db
+        .query("members")
+        .withIndex("by_workspace_id", (q) =>
+          q.eq("workspaceId", args.workspaceId)
+        )
+        .collect(),
+    ]);
+
+    if (!channels.length || !members.length) {
+      return [];
+    }
+
+    return {
+      channels,
+      members,
+    };
+  },
+});
