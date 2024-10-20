@@ -7,16 +7,19 @@ import Hint from "@/components/hint";
 
 type WorkspaceSidebarHeaderProps = {
   workspace: Doc<"workspaces">;
-  isAdmin: boolean;
+  memberRole: "member" | "admin" | "moderator";
 };
 
 export default function WorkspaceSidebarHeader({
   workspace,
-  isAdmin,
+  memberRole,
 }: WorkspaceSidebarHeaderProps) {
   return (
     <div className="flex items-center justify-between gap-4">
-      <WorkspaceSidebarHeaderDropdown workspace={workspace} isAdmin={isAdmin} />
+      <WorkspaceSidebarHeaderDropdown
+        workspace={workspace}
+        memberRole={memberRole}
+      />
       <div className="flex items-center gap-x-2">
         <Hint label="Filter conversations" side="bottom">
           <Button variant={"transp"} size={"iconSm"}>

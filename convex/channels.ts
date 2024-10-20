@@ -74,7 +74,7 @@ export const createChannel = mutation({
       throw new Error("Unauthorized");
     }
 
-    if (currentMember.role !== "admin") {
+    if (currentMember.role === "member") {
       throw new Error("Unauthorized");
     }
 

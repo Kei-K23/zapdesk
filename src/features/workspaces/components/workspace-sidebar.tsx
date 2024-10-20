@@ -64,7 +64,7 @@ export default function WorkspaceSidebar() {
     <aside className="h-full p-2 text-white">
       <WorkspaceSidebarHeader
         workspace={currentWorkspace}
-        isAdmin={currentMember.role === "admin"}
+        memberRole={currentMember.role}
       />
       <div className="flex flex-col px-2 mt-3">
         <SidebarItem label="Threads" id="thread" icon={MessageSquareText} />
@@ -72,7 +72,7 @@ export default function WorkspaceSidebar() {
       </div>
       <WorkspaceSection
         onNew={
-          currentMember.role === "admin"
+          currentMember.role !== "member"
             ? () => setChannelCreateModalOpen(true)
             : undefined
         }
@@ -90,11 +90,7 @@ export default function WorkspaceSidebar() {
         ))}
       </WorkspaceSection>
       <WorkspaceSection
-        onNew={
-          currentMember.role === "admin"
-            ? () => setChannelCreateModalOpen(true)
-            : undefined
-        }
+        onNew={undefined}
         label="Direct Messages"
         hint="Create new channel"
       >

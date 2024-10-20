@@ -147,31 +147,38 @@ export default function Thread({ messageId, onClose }: ThreadProps) {
     />
   );
 
-  return (
-    <div className="flex flex-col h-full">
-      <ThreadHeader onClose={onClose} />
-      {threadMessageLoading ? (
+  if (threadMessageLoading || currentMemberDataLoading) {
+    return (
+      <div className="flex-1 h-full flex flex-col justify-center items-center">
+        <Loader2 className="size-4 animate-spin text-muted-foreground" />
+        <span>Loading message...</span>
+      </div>
+    );
+  }
+
+  if (!threadMessage) {
+    return (
+      <div className="flex flex-col h-full">
+        <ThreadHeader onClose={onClose} />
         <div className="flex-1 h-full flex flex-col justify-center items-center">
-          <Loader2 className="size-4 animate-spin text-muted-foreground" />
-          <span>Loading the message</span>
-        </div>
-      ) : !!threadMessage ? (
-        <>
-          <MessageList
-            data={results}
-            loadMore={loadMore}
-            canLoadMore={status === "CanLoadMore"}
-            isLoadingMore={status === "LoadingMore"}
-            parentMessageItem={parentMessageItem}
-            variant="thread"
-          />
-        </>
-      ) : (
-        <div className="flex-1 flex flex-col justify-center items-center">
           <AlertTriangleIcon className="size-4 text-muted-foreground" />
           <span>No message found</span>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-full">
+      <ThreadHeader onClose={onClose} />
+      <MessageList
+        data={results}
+        loadMore={loadMore}
+        canLoadMore={status === "CanLoadMore"}
+        isLoadingMore={status === "LoadingMore"}
+        parentMessageItem={parentMessageItem}
+        variant="thread"
+      />
       <div className="px-5 w-full">
         <Editor
           image={image}

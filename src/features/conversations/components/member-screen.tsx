@@ -63,5 +63,14 @@ export default function MemberScreen() {
     );
   }
 
+  if (!data) {
+    <div className="flex flex-col h-full w-full justify-center items-center">
+      <AlertTriangle className="size-6 text-muted-foreground" />
+      <p className="text-sm text-muted-foreground text-center">
+        Conversation not found
+      </p>
+    </div>;
+  }
+
   return <Conversation id={conversationId} />;
 }

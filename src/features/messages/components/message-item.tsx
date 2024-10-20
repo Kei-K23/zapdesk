@@ -214,7 +214,7 @@ export default function MessageItem({
         )}
       >
         <Avatar
-          className="size-14 hover:opacity-75 transition-all mr-2 rounded-md"
+          className="size-14 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
           onClick={() => onOpenMemberProfile(memberId as string)}
         >
           <AvatarImage src={authorImage} alt={authorName} />

@@ -4,17 +4,22 @@ import { FaChevronDown } from "react-icons/fa";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ChannelHeaderProps {
   channel: Doc<"channels"> | undefined | null;
   channelLoading: boolean;
+  memberRole: "admin" | "member" | "moderator" | undefined;
 }
 
 export default function ChannelHeader({
   channel,
   channelLoading,
+  memberRole,
 }: ChannelHeaderProps) {
   const [open, setOpen] = useState(false);
+
+  const isMember = memberRole === "member";
 
   return (
     <>
@@ -34,8 +39,11 @@ export default function ChannelHeader({
             disabled={channelLoading}
             variant={"transp"}
             size={"sm"}
-            className="text-[16px] font-semibold flex items-center gap-1"
-            onClick={() => setOpen(true)}
+            className={cn(
+              "text-[16px] font-semibold flex items-center gap-1",
+              isMember && "cursor-default"
+            )}
+            onClick={!isMember ? () => setOpen(true) : undefined}
           >
             # {channel?.name}
             <FaChevronDown className="size-4" />

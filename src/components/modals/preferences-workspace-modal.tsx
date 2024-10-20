@@ -8,6 +8,7 @@ import EditWorkspaceModal from "./edit-workspace-modal";
 import useDeleteWorkspace from "@/features/workspaces/mutation/use-delete-workspace";
 import { useRouter } from "next/navigation";
 import useConfirm from "@/hooks/use-confirm";
+import useGetCurrentMember from "@/features/workspaces/query/use-get-current-member";
 
 interface PreferencesWorkspaceModalProps {
   workspace: Doc<"workspaces">;
@@ -27,8 +28,14 @@ export default function PreferencesWorkspaceModal({
     "Are you sure?",
     "This process will delete permanently the workspace"
   );
+  const { data: currentMember, isLoading: currentMemberLoading } =
+    useGetCurrentMember({ workspaceId: workspace._id });
 
   const { mutate, isPending } = useDeleteWorkspace();
+
+  const isLoading = isPending || currentMemberLoading;
+  const isAdmin = currentMember?.role === "admin";
+  const isModerator = currentMember?.role === "moderator";
 
   const handleClose = () => {
     setOpen(false);
@@ -73,28 +80,34 @@ export default function PreferencesWorkspaceModal({
               <p className="mb-1 text-sm">Workspace name</p>
               <p className="text-lg font-bold">{workspace.name}</p>
             </div>
-            <Button
-              disabled={isPending}
-              size={"sm"}
-              variant={"transparent"}
-              onClick={() => setOpenEdit(true)}
-            >
-              Edit
-            </Button>
-            <EditWorkspaceModal
-              id={workspace._id}
-              value={workspace.name}
-              open={openEdit}
-              setOpen={setOpenEdit}
-            />
+            {(isModerator || isAdmin) && (
+              <>
+                <Button
+                  disabled={isLoading}
+                  size={"sm"}
+                  variant={"transparent"}
+                  onClick={() => setOpenEdit(true)}
+                >
+                  Edit
+                </Button>
+                <EditWorkspaceModal
+                  id={workspace._id}
+                  value={workspace.name}
+                  open={openEdit}
+                  setOpen={setOpenEdit}
+                />
+              </>
+            )}
           </div>
-          <Button
-            disabled={isPending}
-            variant={"destructive"}
-            onClick={handleOnDelete}
-          >
-            <Trash2Icon className="size-5 mr-2" /> Delete the workspace
-          </Button>
+          {isAdmin && (
+            <Button
+              disabled={isLoading}
+              variant={"destructive"}
+              onClick={handleOnDelete}
+            >
+              <Trash2Icon className="size-5 mr-2" /> Delete the workspace
+            </Button>
+          )}
         </DialogContent>
       </Dialog>
     </>

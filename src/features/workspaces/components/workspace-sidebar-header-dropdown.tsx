@@ -14,15 +14,17 @@ import InviteNewMemberModal from "@/components/modals/invite-new-member-modal";
 
 type WorkspaceSidebarHeaderDropdownProps = {
   workspace: Doc<"workspaces">;
-  isAdmin: boolean;
+  memberRole: "member" | "admin" | "moderator";
 };
 
 export default function WorkspaceSidebarHeaderDropdown({
   workspace,
-  isAdmin,
+  memberRole,
 }: WorkspaceSidebarHeaderDropdownProps) {
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [inviteMemberOpen, setInviteMemberOpen] = useState(false);
+
+  const isMember = memberRole === "member";
 
   return (
     <>
@@ -52,7 +54,7 @@ export default function WorkspaceSidebarHeaderDropdown({
             <span className=" text-neutral-200 text-sm">Active workspace</span>
           </div>
           <Separator className="my-2" />
-          {isAdmin && (
+          {!isMember && (
             <DropdownMenuItem
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setInviteMemberOpen(true)}
@@ -61,13 +63,15 @@ export default function WorkspaceSidebarHeaderDropdown({
               <p className="font-semibold">Invite new member</p>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            className="flex items-center gap-2 cursor-pointer"
-            onClick={() => setPreferencesOpen(true)}
-          >
-            <PaintbrushIcon className="size-4" />
-            <p className="font-semibold">Preferences</p>
-          </DropdownMenuItem>
+          {!isMember && (
+            <DropdownMenuItem
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={() => setPreferencesOpen(true)}
+            >
+              <PaintbrushIcon className="size-4" />
+              <p className="font-semibold">Preferences</p>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

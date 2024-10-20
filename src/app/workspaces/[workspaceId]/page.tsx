@@ -24,8 +24,6 @@ export default function WorkspaceIdPage() {
 
   const channelId = useMemo(() => channelData?.[0]?._id, [channelData]);
   const isAdmin = useMemo(() => memberData?.role === "admin", [memberData]);
-  console.log(channelData, "channel ");
-  console.log(workspaceData, "workspace");
 
   useEffect(() => {
     if (
