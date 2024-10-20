@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Doc } from "./_generated/dataModel";
 
 const generateCode = () =>
   Array.from(
@@ -188,7 +189,7 @@ export const getChannelsAndMembers = query({
     const userId = await getAuthUserId(ctx);
 
     if (!userId) {
-      return [];
+      return {};
     }
 
     const [channels, members] = await Promise.all([
@@ -207,12 +208,26 @@ export const getChannelsAndMembers = query({
     ]);
 
     if (!channels.length || !members.length) {
-      return [];
+      return {};
+    }
+
+    const membersWithUser: { user: Doc<"users">; member: Doc<"members"> }[] =
+      [];
+
+    for (const member of members) {
+      const user = await ctx.db.get(member.userId);
+      if (user) {
+        const result = {
+          user,
+          member,
+        };
+        membersWithUser.push(result);
+      }
     }
 
     return {
       channels,
-      members,
+      members: membersWithUser,
     };
   },
 });
