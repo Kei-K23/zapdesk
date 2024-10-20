@@ -169,3 +169,105 @@ export const getAdminMember = query({
     return await getUserDataById(ctx, adminMember.userId);
   },
 });
+
+export const updateMember = mutation({
+  args: {
+    memberId: v.id("members"),
+    workspaceId: v.id("workspaces"),
+    role: v.union(
+      v.literal("admin"),
+      v.literal("member"),
+      v.literal("moderator")
+    ),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const currentMember = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!currentMember || currentMember.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db.get(args.memberId);
+    if (!member) {
+      throw new Error("Member not found to update");
+    }
+
+    await ctx.db.patch(member._id, {
+      role: args.role,
+    });
+
+    return member._id;
+  },
+});
+
+export const deleteMember = mutation({
+  args: {
+    memberId: v.id("members"),
+    workspaceId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db.get(args.memberId);
+
+    if (!member) {
+      throw new Error("Member not found to delete");
+    }
+
+    if (member.role === "admin") {
+      throw new Error("Admin cannot delete their self");
+    }
+
+    // Delete all related data with deleted member messages, reactions and conversations
+
+    const messages = await ctx.db
+      .query("messages")
+      .filter((q) => q.eq(q.field("memberId"), member._id))
+      .filter((q) => q.eq(q.field("workspaceId"), args.workspaceId))
+      .collect();
+
+    const reactions = await ctx.db
+      .query("reactions")
+      .filter((q) => q.eq(q.field("memberId"), member._id))
+      .filter((q) => q.eq(q.field("workspaceId"), args.workspaceId))
+      .collect();
+
+    const conversations = await ctx.db
+      .query("conversations")
+      .filter((q) => q.eq(q.field("memberOneId"), member._id))
+      .filter((q) => q.eq(q.field("memberTwoId"), member._id))
+      .filter((q) => q.eq(q.field("workspaceId"), args.workspaceId))
+      .collect();
+
+    for (const message of messages) {
+      await ctx.db.delete(message._id);
+    }
+
+    for (const reaction of reactions) {
+      await ctx.db.delete(reaction._id);
+    }
+
+    for (const conversation of conversations) {
+      await ctx.db.delete(conversation._id);
+    }
+
+    await ctx.db.delete(member._id);
+
+    return member._id;
+  },
+});
