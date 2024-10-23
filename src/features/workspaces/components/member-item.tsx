@@ -3,11 +3,12 @@ import Link from "next/link";
 import React from "react";
 import useWorkspaceId from "../hooks/use-workspace-id";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import RoleIndicator from "@/components/role-indicator";
 
 interface MemberItemProps {
   name: string;
   avatar: string;
-  isAdmin: boolean;
+  role: "admin" | "member" | "moderator";
   id: string;
   isActive: boolean;
 }
@@ -16,7 +17,7 @@ export default function MemberItem({
   name,
   avatar,
   id,
-  isAdmin,
+  role,
   isActive,
 }: MemberItemProps) {
   const workspaceId = useWorkspaceId();
@@ -36,7 +37,10 @@ export default function MemberItem({
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>
-        <span className="text-sm truncate">{name}</span>
+        <div className="flex items-center gap-x-1">
+          <span className="text-sm truncate">{name}</span>
+          <RoleIndicator role={role} />
+        </div>
       </Link>
     </Button>
   );

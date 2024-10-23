@@ -1,16 +1,19 @@
 import { Loader2 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import RoleIndicator from "@/components/role-indicator";
 
 interface ConversationHeaderProps {
   memberName: string | undefined;
   memberProfile: string | undefined;
   memberLoading: boolean;
+  role?: "admin" | "member" | "moderator";
 }
 
 export default function ConversationHeader({
   memberName,
   memberProfile,
   memberLoading,
+  role,
 }: ConversationHeaderProps) {
   const fallbackAvatar = memberName?.charAt(0).toUpperCase();
 
@@ -29,7 +32,10 @@ export default function ConversationHeader({
                 {fallbackAvatar}
               </AvatarFallback>
             </Avatar>
-            <span className="text-sm truncate">{memberName}</span>
+            <div className="flex items-center gap-x-1">
+              <span className="text-lg truncate">{memberName}</span>
+              <RoleIndicator role={role!} className="size-5" />
+            </div>
           </>
         )}
         <div className="flex-1" />

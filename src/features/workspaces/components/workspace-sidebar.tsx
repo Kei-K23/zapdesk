@@ -100,7 +100,7 @@ export default function WorkspaceSidebar() {
             id={member.member._id}
             name={member.user?.name || ""}
             avatar={member.user?.image || ""}
-            isAdmin={member.member.role === "admin"}
+            role={member.member.role}
             isActive={member.member._id === memberId}
           />
         ))}

@@ -36,6 +36,7 @@ export default function Conversation({ id }: ConversationProps) {
         memberName={member?.user?.name}
         memberProfile={member?.user?.image}
         memberLoading={memberLoading}
+        role={member?.member?.role}
       />
       <MessageList
         data={results}
