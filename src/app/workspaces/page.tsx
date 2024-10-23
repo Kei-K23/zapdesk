@@ -18,8 +18,14 @@ export default function WorkspacePage() {
       !workspacesData ||
       workspacesDataLoading ||
       userDataLoading
-    )
+    ) {
       return;
+    }
+
+    if (!userData) {
+      router.replace(`/auth`);
+      return;
+    }
 
     if (
       userData &&

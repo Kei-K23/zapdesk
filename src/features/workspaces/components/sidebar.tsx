@@ -7,6 +7,7 @@ import SidebarButton from "./sidebar-button";
 import { Home } from "lucide-react";
 import { FaChalkboard } from "react-icons/fa";
 import { usePathname, useRouter } from "next/navigation";
+import Hint from "@/components/hint";
 
 export default function Sidebar() {
   const router = useRouter();
@@ -20,11 +21,13 @@ export default function Sidebar() {
           icon={Home}
           isActive={pathname.includes("/workspaces")}
         />
-        <SidebarButton
-          label="Wb"
-          icon={FaChalkboard}
-          handleClick={() => router.replace("/whiteboard")}
-        />
+        <Hint label="Collaborative Whiteboard">
+          <SidebarButton
+            label="Wb"
+            icon={FaChalkboard}
+            handleClick={() => router.replace("/whiteboard")}
+          />
+        </Hint>
       </div>
       <div className="mt-auto flex items-center mb-6">
         <UserButton />

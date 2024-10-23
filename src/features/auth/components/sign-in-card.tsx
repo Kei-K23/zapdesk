@@ -14,12 +14,14 @@ import { FaExclamationTriangle, FaGithub } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type SignInCardProps = {
   setAuthFlow: React.Dispatch<React.SetStateAction<AuthFlow>>;
 };
 
 export default function SignInCard({ setAuthFlow }: SignInCardProps) {
+  const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
@@ -43,11 +45,17 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
         setError("Invalid email or password");
       })
       .finally(() => setPending(false));
+    setTimeout(() => {
+      router.replace("/workspaces");
+    }, 1000);
   };
 
   const handleProviderSignIn = (provider: "github" | "google") => {
     setPending(true);
     signIn(provider).finally(() => setPending(false));
+    setTimeout(() => {
+      router.replace("/workspaces");
+    }, 1000);
   };
 
   return (
@@ -59,7 +67,7 @@ export default function SignInCard({ setAuthFlow }: SignInCardProps) {
         </CardDescription>
       </CardHeader>
       {!!error && (
-        <div className="bg-destructive/15 rounded-md mx-6 px-3 py-2 text-destructive flex items-center gap-2 text-sm mb-4">
+        <div className="bg-destructive/50 rounded-md mx-6 px-3 py-2 text-rose-500 flex items-center gap-2 text-sm mb-4">
           <FaExclamationTriangle />
           {error}
         </div>

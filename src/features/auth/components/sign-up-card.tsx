@@ -14,12 +14,14 @@ import { FaExclamationTriangle, FaGithub } from "react-icons/fa";
 import { Separator } from "@/components/ui/separator";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 type SignUpCardProps = {
   setAuthFlow: React.Dispatch<React.SetStateAction<AuthFlow>>;
 };
 
 export default function SignUpCard({ setAuthFlow }: SignUpCardProps) {
+  const router = useRouter();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -53,11 +55,17 @@ export default function SignUpCard({ setAuthFlow }: SignUpCardProps) {
         setError("Invalid email or password");
       })
       .finally(() => setPending(false));
+    setTimeout(() => {
+      router.replace("/workspaces");
+    }, 1000);
   };
 
   const handleProviderSignUp = (provider: "github" | "google") => {
     setPending(true);
     signIn(provider).finally(() => setPending(false));
+    setTimeout(() => {
+      router.replace("/workspaces");
+    }, 1000);
   };
 
   return (

@@ -9,8 +9,10 @@ import React from "react";
 import { useCurrentUser } from "../query/use-current-user";
 import { Loader2, LogOut } from "lucide-react";
 import { useAuthActions } from "@convex-dev/auth/react";
+import { useRouter } from "next/navigation";
 
 export default function UserButton() {
+  const router = useRouter();
   const { signOut } = useAuthActions();
   const { isLoading, data } = useCurrentUser();
   if (isLoading) {
@@ -37,7 +39,12 @@ export default function UserButton() {
       <DropdownMenuContent align="center" side="right" className="w-60">
         <DropdownMenuItem
           className="flex items-center gap-2 cursor-pointer"
-          onClick={() => signOut()}
+          onClick={() => {
+            signOut();
+            setTimeout(() => {
+              router.replace("/auth");
+            }, 1000);
+          }}
         >
           <LogOut />
           Logout

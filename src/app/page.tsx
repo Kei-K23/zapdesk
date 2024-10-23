@@ -1,6 +1,5 @@
 "use client";
 
-import UserButton from "@/features/auth/components/user-button";
 import { useGetWorkspaces } from "@/features/workspaces/query/user-get-workspaces";
 import { useCreateWorkspaceModalStore } from "@/features/workspaces/store/use-create-workspace-modal-store";
 import { useRouter } from "next/navigation";
