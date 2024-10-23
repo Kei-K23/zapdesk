@@ -8,12 +8,14 @@ type SidebarButtonProps = {
   icon: LucideIcon | IconType;
   label: string;
   isActive?: boolean;
+  handleClick?: () => void;
 };
 
 export default function SidebarButton({
   icon: Icon,
   label,
   isActive,
+  handleClick,
 }: SidebarButtonProps) {
   return (
     <div className="flex flex-col items-center justify-center group">
@@ -23,6 +25,7 @@ export default function SidebarButton({
           "font-bold h-10 mb-1 transition-all bg-transparent hover:bg-neutral-400/25",
           isActive && "bg-neutral-400/25"
         )}
+        onClick={handleClick}
       >
         <Icon className="size-5 text-white" />
       </Button>

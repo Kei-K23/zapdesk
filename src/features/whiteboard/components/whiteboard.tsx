@@ -37,7 +37,6 @@ import {
 } from "../utils/utils";
 import SelectionBox from "./SelectionBox";
 import { nanoid } from "nanoid";
-import { useRouter } from "next/router";
 import LayerComponent from "./LayerComponent";
 import SelectionTools from "./SelectionTools";
 import useDisableScrollBounce from "../hooks/useDisableScrollBounce";
@@ -46,6 +45,10 @@ import MultiplayerGuides from "./MultiplayerGuides";
 import Path from "./Path";
 import ToolsBar from "./ToolsBar";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import Hint from "@/components/hint";
+import { useRouter } from "next/navigation";
 
 const MAX_LAYERS = 100;
 
@@ -84,6 +87,7 @@ function Loading() {
 }
 
 function Canvas() {
+  const router = useRouter();
   const layerIds = useStorage((root) => root.layerIds);
 
   const pencilDraft = useSelf((me) => me.presence.pencilDraft);
@@ -487,6 +491,16 @@ function Canvas() {
   return (
     <>
       <div className={styles.canvas}>
+        <Hint label="Leave">
+          <Button
+            variant={"transparent"}
+            className="text-black absolute top-3 left-3"
+            onClick={() => router.back()}
+          >
+            <ChevronsLeft className="size-6" />
+          </Button>
+        </Hint>
+
         <SelectionTools
           isAnimated={
             canvasState.mode !== CanvasMode.Translating &&
@@ -563,11 +577,11 @@ function Canvas() {
  * This function is used when deploying an example on liveblocks.io.
  * You can ignore it completely if you run the example locally.
  */
-function useExampleRoomId(roomId: string) {
-  const { query } = useRouter();
-  const exampleRoomId = useMemo(() => {
-    return query?.exampleId ? `${roomId}-${query.exampleId}` : roomId;
-  }, [query, roomId]);
+// function useExampleRoomId(roomId: string) {
+//   const { query } = useRouter();
+//   const exampleRoomId = useMemo(() => {
+//     return query?.exampleId ? `${roomId}-${query.exampleId}` : roomId;
+//   }, [query, roomId]);
 
-  return exampleRoomId;
-}
+//   return exampleRoomId;
+// }
