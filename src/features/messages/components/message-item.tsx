@@ -16,6 +16,7 @@ import Reactions from "./reactions";
 import { usePanel } from "@/hooks/use-panel";
 import ThreadBar from "./thread-bar";
 import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
+import RoleIndicator from "@/components/role-indicator";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -26,6 +27,7 @@ const formatFulltime = (date: Date) =>
 interface MessageItemProps {
   id?: Id<"messages">;
   memberId?: Id<"members">;
+  role?: "admin" | "member" | "moderator";
   authorImage?: string;
   authorName?: string;
   body?: Doc<"messages">["body"];
@@ -53,6 +55,7 @@ export default function MessageItem({
   memberId,
   authorImage,
   authorName = "Member",
+  role,
   body,
   image,
   reactions,
@@ -139,7 +142,7 @@ export default function MessageItem({
         <ConfirmDialog />
         <div
           className={cn(
-            "flex items-start gap-5 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
+            "flex items-start gap-3 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
             isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
             deleteMessagePending &&
               "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
@@ -207,7 +210,7 @@ export default function MessageItem({
       <ConfirmDialog />
       <div
         className={cn(
-          "flex items-start gap-3 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
+          "flex items-start gap-x-1 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
           isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
           deleteMessagePending &&
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
@@ -218,7 +221,7 @@ export default function MessageItem({
           onClick={() => onOpenMemberProfile(memberId as string)}
         >
           <AvatarImage src={authorImage} alt={authorName} />
-          <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
+          <AvatarFallback className="text-white rounded-md text-[16px] md:text-xl bg-indigo-600 font-bold">
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>
@@ -234,13 +237,14 @@ export default function MessageItem({
           </div>
         ) : (
           <div>
-            <div className="flex items-start gap-2">
+            <div className="flex items-center gap-2">
               <span
                 onClick={() => onOpenMemberProfile(memberId as string)}
-                className="text-sm truncate hover:underline cursor-pointer"
+                className="text-[16px] truncate hover:underline cursor-pointer"
               >
                 {authorName}
               </span>
+              <RoleIndicator role={role!} />
               <Hint label={formatFulltime(new Date(createdAt!))}>
                 <button className=" text-sm text-muted-foreground">
                   {format(new Date(createdAt!), "hh:mm a")}

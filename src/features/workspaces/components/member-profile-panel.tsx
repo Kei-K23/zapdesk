@@ -23,6 +23,7 @@ import useDeleteMember from "../mutation/use-delete-member";
 import useConfirm from "@/hooks/use-confirm";
 import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
 import { useRouter } from "next/navigation";
+import RoleIndicator from "@/components/role-indicator";
 
 interface MemberProfilePanelProps {
   memberId: Id<"members">;
@@ -188,14 +189,18 @@ export default function MemberProfilePanel({
               src={memberData?.user?.image}
               alt={memberData?.user?.name}
             />
-            <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
+            <AvatarFallback className="text-white rounded-md text-lg md:text-4xl bg-indigo-600 font-bold">
               {fallbackAvatar}
             </AvatarFallback>
           </Avatar>
         </div>
-        <h2 className="px-4 font-bold text-lg md:text-xl truncate">
-          {memberData?.user?.name} {isCurrentMemberIsSelf && <span>(You)</span>}
-        </h2>
+        <div className="px-4 flex items-center gap-x-2">
+          <h2 className=" font-bold text-lg md:text-xl truncate">
+            {memberData?.user?.name}{" "}
+            {isCurrentMemberIsSelf && <span>(You)</span>}
+          </h2>
+          <RoleIndicator role={memberData.member?.role} className="size-5" />
+        </div>
         <div className="px-4 flex items-center gap-x-4 mt-4">
           {currentMember.role === "admin" &&
           currentMember._id !== memberData.member._id ? (
