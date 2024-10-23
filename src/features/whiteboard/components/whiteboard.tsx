@@ -1,3 +1,7 @@
+//! Intentionally disable type checking for this file because of liveblocks package
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
 import {
   useMutation,
   RoomProvider,
@@ -145,7 +149,7 @@ function Canvas() {
       history.pause();
       e.stopPropagation();
       const point = pointerEventToCanvasPoint(e, camera);
-      if (!self.presence.selection.includes(layerId)) {
+      if (!self?.presence?.selection?.includes(layerId)) {
         setMyPresence({ selection: [layerId] }, { addToHistory: true });
       }
       setState({ mode: CanvasMode.Translating, current: point });

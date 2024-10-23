@@ -145,7 +145,7 @@ export default function MessageList({
       {variant === "channel" && channelName && channelCreationTime && (
         <ChannelHero name={channelName} creationTime={channelCreationTime} />
       )}
-      {variant === "conversation" && memberName && memberImage && (
+      {variant === "conversation" && memberName && (
         <ConversationHero name={memberName} image={memberImage} />
       )}
     </div>

@@ -30,7 +30,9 @@ export default function SidebarItem({
     >
       <Link href={`/workspaces/${workspaceId}/channels/${id}`}>
         <Icon className="size-4 mr-2" />
-        <span className="text-sm truncate">{label}</span>
+        <span className={cn("text-sm truncate", isActive && "font-semibold")}>
+          {label}
+        </span>
       </Link>
     </Button>
   );

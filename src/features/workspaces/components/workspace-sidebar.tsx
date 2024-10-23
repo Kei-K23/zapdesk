@@ -5,13 +5,7 @@ import WorkspaceSidebarHeader from "./workspace-sidebar-header";
 import useWorkspaceId from "../hooks/use-workspace-id";
 import useGetCurrentMember from "../query/use-get-current-member";
 import { useGetWorkspace } from "../query/user-get-workspace";
-import {
-  AlertTriangle,
-  HashIcon,
-  Loader2,
-  MessageSquareText,
-  SendHorizonal,
-} from "lucide-react";
+import { AlertTriangle, HashIcon, Loader2 } from "lucide-react";
 import SidebarItem from "./sidebar-item";
 import { useGetChannels } from "@/features/channel/query/use-get-channels";
 import WorkspaceSection from "./workspace-section";
@@ -66,10 +60,6 @@ export default function WorkspaceSidebar() {
         workspace={currentWorkspace}
         memberRole={currentMember.role}
       />
-      <div className="flex flex-col px-2 mt-3">
-        <SidebarItem label="Threads" id="thread" icon={MessageSquareText} />
-        <SidebarItem label="Drafts & Sent" id="thread" icon={SendHorizonal} />
-      </div>
       <WorkspaceSection
         onNew={
           currentMember.role !== "member"
@@ -92,7 +82,7 @@ export default function WorkspaceSidebar() {
       <WorkspaceSection
         onNew={undefined}
         label="Direct Messages"
-        hint="Create new channel"
+        hint="Direct Messages"
       >
         {members?.map((member) => (
           <MemberItem

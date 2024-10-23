@@ -4,6 +4,7 @@ import React from "react";
 import useWorkspaceId from "../hooks/use-workspace-id";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import RoleIndicator from "@/components/role-indicator";
+import { cn } from "@/lib/utils";
 
 interface MemberItemProps {
   name: string;
@@ -28,7 +29,7 @@ export default function MemberItem({
       asChild
       variant={isActive ? "primary" : "transp"}
       size={"sm"}
-      className="flex justify-start"
+      className="flex justify-start py-4"
     >
       <Link href={`/workspaces/${workspaceId}/members/${id}`}>
         <Avatar className="size-7 hover:opacity-75 transition-all mr-2 rounded-md">
@@ -38,7 +39,11 @@ export default function MemberItem({
           </AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-x-1">
-          <span className="text-[16px] truncate">{name}</span>
+          <span
+            className={cn("text-[16px] truncate", isActive && "font-semibold")}
+          >
+            {name}
+          </span>
           <RoleIndicator role={role} />
         </div>
       </Link>

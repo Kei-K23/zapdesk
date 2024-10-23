@@ -146,6 +146,10 @@ body {
   @apply truncate
 }
 
+.ql-editor.ql-blank::before {
+  color: rgb(197, 197, 197) !important;
+}
+
 .message-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: #333 #444;

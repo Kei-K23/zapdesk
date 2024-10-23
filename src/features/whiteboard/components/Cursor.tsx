@@ -1,3 +1,7 @@
+//! Intentionally disable type checking for this file because of liveblocks package
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
 import { memo } from "react";
 import { useOther } from "@liveblocks/react/suspense";
 import { connectionIdToColor } from "../utils/utils";

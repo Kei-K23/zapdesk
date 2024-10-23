@@ -1,3 +1,7 @@
+//! Intentionally disable type checking for this file because of liveblocks package
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
 import { useSelf, useMutation } from "@liveblocks/react/suspense";
 
 /**

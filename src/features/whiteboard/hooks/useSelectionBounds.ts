@@ -1,3 +1,7 @@
+//! Intentionally disable type checking for this file because of liveblocks package
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-nocheck
+
 import { useStorage, useSelf } from "@liveblocks/react/suspense";
 import { Layer, XYWH } from "../types";
 import { shallow } from "@liveblocks/react";

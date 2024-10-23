@@ -12,20 +12,24 @@ export default function RoleIndicator({ role, className }: RoleIndicatorProps) {
     case "admin":
       return (
         <Hint label="Admin">
-          <ShieldAlert className={cn("size-4 text-red-500", className)} />
+          <ShieldAlert
+            className={cn("ml-0.5 size-4 text-red-500", className)}
+          />
         </Hint>
       );
 
     case "moderator":
       return (
         <Hint label="Moderator">
-          <ShieldIcon className={cn("size-4 text-blue-500", className)} />
+          <ShieldIcon
+            className={cn("ml-0.5 size-4 text-blue-500", className)}
+          />
         </Hint>
       );
     case "member":
       return (
         <Hint label="Member">
-          <Leaf className={cn("size-4 text-emerald-500", className)} />
+          <Leaf className={cn("ml-0.5 size-4 text-emerald-500", className)} />
         </Hint>
       );
     default:
