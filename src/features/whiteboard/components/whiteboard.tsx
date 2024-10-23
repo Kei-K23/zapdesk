@@ -21,7 +21,7 @@ import {
   Side,
   XYWH,
   Point,
-} from "./types";
+} from "../types";
 import styles from "./index.module.css";
 import {
   colorToCss,
@@ -30,25 +30,22 @@ import {
   penPointsToPathLayer,
   pointerEventToCanvasPoint,
   resizeBounds,
-} from "./utils";
-import SelectionBox from "./components/SelectionBox";
+} from "../utils/utils";
+import SelectionBox from "./SelectionBox";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/router";
-import LayerComponent from "./components/LayerComponent";
-import SelectionTools from "./components/SelectionTools";
-import useDisableScrollBounce from "./hooks/useDisableScrollBounce";
-import useDeleteLayers from "./hooks/useDeleteLayers";
-import MultiplayerGuides from "./components/MultiplayerGuides";
-import Path from "./components/Path";
-import ToolsBar from "./components/ToolsBar";
+import LayerComponent from "./LayerComponent";
+import SelectionTools from "./SelectionTools";
+import useDisableScrollBounce from "../hooks/useDisableScrollBounce";
+import useDeleteLayers from "../hooks/useDeleteLayers";
+import MultiplayerGuides from "./MultiplayerGuides";
+import Path from "./Path";
+import ToolsBar from "./ToolsBar";
+import { cn } from "@/lib/utils";
 
 const MAX_LAYERS = 100;
 
-export default function Room() {
-  const roomId = useExampleRoomId(
-    "liveblocks:examples:nextjs-whiteboard-advanced"
-  );
-
+export default function Whiteboard({ roomId }: { roomId: string }) {
   return (
     <RoomProvider
       id={roomId}
@@ -63,7 +60,7 @@ export default function Room() {
         layerIds: new LiveList([]),
       }}
     >
-      <div className={styles.container}>
+      <div className={cn(styles.container, "h-full w-full")}>
         <ClientSideSuspense fallback={<Loading />}>
           <Canvas />
         </ClientSideSuspense>
@@ -181,7 +178,8 @@ function Canvas() {
       position: Point
     ) => {
       const liveLayers = storage.get("layers");
-      if (liveLayers.size >= MAX_LAYERS) {
+
+      if (!liveLayers || liveLayers?.size >= MAX_LAYERS) {
         return;
       }
 
