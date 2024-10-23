@@ -31,14 +31,14 @@ export default function MemberItem({
       className="flex justify-start"
     >
       <Link href={`/workspaces/${workspaceId}/members/${id}`}>
-        <Avatar className="size-6 hover:opacity-75 transition-all mr-2 rounded-md">
+        <Avatar className="size-7 hover:opacity-75 transition-all mr-2 rounded-md">
           <AvatarImage src={avatar} alt={name} />
           <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
             {fallbackAvatar}
           </AvatarFallback>
         </Avatar>
         <div className="flex items-center gap-x-1">
-          <span className="text-sm truncate">{name}</span>
+          <span className="text-[16px] truncate">{name}</span>
           <RoleIndicator role={role} />
         </div>
       </Link>

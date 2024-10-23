@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ShieldAlert, ShieldIcon } from "lucide-react";
-import { PiMemberOf } from "react-icons/pi";
+import { Leaf, ShieldAlert, ShieldIcon } from "lucide-react";
 import Hint from "./hint";
 
 interface RoleIndicatorProps {
@@ -23,10 +22,10 @@ export default function RoleIndicator({ role, className }: RoleIndicatorProps) {
           <ShieldIcon className={cn("size-4 text-blue-500", className)} />
         </Hint>
       );
-    case "moderator":
+    case "member":
       return (
         <Hint label="Member">
-          <PiMemberOf className={cn("size-4", className)} />
+          <Leaf className={cn("size-4 text-emerald-500", className)} />
         </Hint>
       );
     default:

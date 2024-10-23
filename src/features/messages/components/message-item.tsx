@@ -217,7 +217,7 @@ export default function MessageItem({
         )}
       >
         <Avatar
-          className="size-14 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
+          className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
           onClick={() => onOpenMemberProfile(memberId as string)}
         >
           <AvatarImage src={authorImage} alt={authorName} />
@@ -237,16 +237,16 @@ export default function MessageItem({
           </div>
         ) : (
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-x-2">
               <span
                 onClick={() => onOpenMemberProfile(memberId as string)}
-                className="text-[16px] truncate hover:underline cursor-pointer"
+                className="text-[16px] md:text-lg truncate hover:underline cursor-pointer"
               >
                 {authorName}
               </span>
               <RoleIndicator role={role!} />
               <Hint label={formatFulltime(new Date(createdAt!))}>
-                <button className=" text-sm text-muted-foreground">
+                <button className="text-sm text-muted-foreground">
                   {format(new Date(createdAt!), "hh:mm a")}
                 </button>
               </Hint>

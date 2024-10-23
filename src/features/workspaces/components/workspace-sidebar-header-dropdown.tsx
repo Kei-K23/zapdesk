@@ -44,8 +44,8 @@ export default function WorkspaceSidebarHeaderDropdown({
             variant={"transp"}
             className="flex items-center gap-1 outline-none"
           >
-            <span className="text-[16px] font-bold">{workspace?.name}</span>
-            <ChevronDown className="size-5" />
+            <span className="text-sm font-bold">{workspace?.name}</span>
+            <ChevronDown className="size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" side="bottom" className="w-60 p-2">
