@@ -13,6 +13,7 @@ import { useGetWorkspaces } from "../query/user-get-workspaces";
 import { Separator } from "@/components/ui/separator";
 import { useCreateWorkspaceModalStore } from "../store/use-create-workspace-modal-store";
 import { useRouter } from "next/navigation";
+import Hint from "@/components/hint";
 
 export default function WorkspaceSwitcher() {
   const router = useRouter();
@@ -26,17 +27,24 @@ export default function WorkspaceSwitcher() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="outline-none" asChild>
-        <Button size={"sm"} variant={"transparent"} className="font-[500] h-10">
-          {currentWorkspace ? (
-            <span className="text-2xl">
-              {currentWorkspace?.name.charAt(0).toUpperCase()}
-            </span>
-          ) : (
-            <Loader2 className="size-5 animate-spin" />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
+      {/* TODO: Check for hint component for UX */}
+      <Hint label="Switch workspace">
+        <DropdownMenuTrigger className="outline-none" asChild>
+          <Button
+            size={"sm"}
+            variant={"transparent"}
+            className="font-[500] h-10"
+          >
+            {currentWorkspace ? (
+              <span className="text-2xl">
+                {currentWorkspace?.name.charAt(0).toUpperCase()}
+              </span>
+            ) : (
+              <Loader2 className="size-5 animate-spin" />
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+      </Hint>
       <DropdownMenuContent align="start" side="bottom" className="w-60 p-2">
         <div>
           <h2 className="font-bold line-clamp-1">{currentWorkspace?.name}</h2>

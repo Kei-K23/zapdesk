@@ -4,6 +4,7 @@ import WorkspaceSidebarHeaderDropdown from "./workspace-sidebar-header-dropdown"
 import { Button } from "@/components/ui/button";
 import { Edit, Filter } from "lucide-react";
 import Hint from "@/components/hint";
+import WorkspaceSwitcher from "./workspace-switcher";
 
 type WorkspaceSidebarHeaderProps = {
   workspace: Doc<"workspaces">;
@@ -16,6 +17,7 @@ export default function WorkspaceSidebarHeader({
 }: WorkspaceSidebarHeaderProps) {
   return (
     <div className="flex items-center justify-between gap-4">
+      <WorkspaceSwitcher />
       <WorkspaceSidebarHeaderDropdown
         workspace={workspace}
         memberRole={memberRole}
