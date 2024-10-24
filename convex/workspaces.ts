@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { Doc } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 
 const generateCode = () =>
   Array.from(
@@ -229,5 +229,71 @@ export const getChannelsAndMembers = query({
       channels,
       members: membersWithUser,
     };
+  },
+});
+
+export const getMutualWorkspaces = query({
+  args: {
+    userId: v.id("workspaces"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return [];
+    }
+
+    const currentUserMembers = await ctx.db
+      .query("members")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .collect();
+
+    const currentUserWorkspaceIds = currentUserMembers.map(
+      (m) => m.workspaceId
+    );
+    const currentUserWorkspaces: {
+      _id: Id<"workspaces">;
+      _creationTime: number;
+      name: string;
+      userId: Id<"users">;
+      joinCode: string;
+    }[] = [];
+
+    for (const workspaceId of currentUserWorkspaceIds) {
+      const workspace = await ctx.db.get(workspaceId);
+      if (workspace) {
+        currentUserWorkspaces.push(workspace);
+      }
+    }
+
+    const otherUserMembers = await ctx.db
+      .query("members")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .collect();
+
+    const otherUserWorkspaceIds = otherUserMembers.map((m) => m.workspaceId);
+    const otherUserWorkspaces: {
+      _id: Id<"workspaces">;
+      _creationTime: number;
+      name: string;
+      userId: Id<"users">;
+      joinCode: string;
+    }[] = [];
+
+    for (const workspaceId of otherUserWorkspaceIds) {
+      const workspace = await ctx.db.get(workspaceId);
+      if (workspace) {
+        otherUserWorkspaces.push(workspace);
+      }
+    }
+
+    // Find mutual workspaces
+    const mutualWorkspaces = currentUserWorkspaces.filter((currentWorkspace) =>
+      otherUserWorkspaces.some(
+        (otherWorkspace) => otherWorkspace._id === currentWorkspace._id
+      )
+    );
+
+    return mutualWorkspaces;
   },
 });

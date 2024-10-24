@@ -12,7 +12,7 @@ export default function MemberProfilePanelHeader({
 }: MemberProfilePanelHeaderProps) {
   return (
     <div className="bg-neutral-700/50 border-b border-b-neutral-600 shadow-md px-6 py-1.5 h-[50px] flex items-center justify-between">
-      <h3 className="font-bold">Profile</h3>
+      <h3 className="font-bold">Workspace Profile</h3>
       <Hint label="Close thread">
         <Button size={"iconSm"} variant={"ghost"} onClick={onClose}>
           <X className="size-5" />

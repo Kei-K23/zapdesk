@@ -5,6 +5,7 @@ import useWorkspaceId from "../hooks/use-workspace-id";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import RoleIndicator from "@/components/role-indicator";
 import { cn } from "@/lib/utils";
+import UserHoverCard from "@/components/user/user-hover-card";
 
 interface MemberItemProps {
   name: string;
@@ -32,12 +33,14 @@ export default function MemberItem({
       className="flex justify-start py-4"
     >
       <Link href={`/workspaces/${workspaceId}/members/${id}`}>
-        <Avatar className="size-7 hover:opacity-75 transition-all mr-2 rounded-md">
-          <AvatarImage src={avatar} alt={name} />
-          <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
-            {fallbackAvatar}
-          </AvatarFallback>
-        </Avatar>
+        <UserHoverCard name={name} avatar={avatar}>
+          <Avatar className="size-7 hover:opacity-75 transition-all mr-2 rounded-md">
+            <AvatarImage src={avatar} alt={name} />
+            <AvatarFallback className="text-white rounded-md text-[16px] bg-indigo-600 font-bold">
+              {fallbackAvatar}
+            </AvatarFallback>
+          </Avatar>
+        </UserHoverCard>
         <div className="flex items-center gap-x-1">
           <span
             className={cn("text-[15px] truncate", isActive && "font-semibold")}
