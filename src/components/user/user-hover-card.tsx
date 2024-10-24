@@ -4,15 +4,13 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Doc } from "../../../convex/_generated/dataModel";
 
 interface UserHoverCardProps {
   children: React.ReactNode;
   name: string;
   avatar?: string;
-  workspaces?: {
-    name: string;
-    image?: string;
-  };
+  workspaces?: Doc<"workspaces">[];
 }
 
 export default function UserHoverCard({
@@ -37,6 +35,15 @@ export default function UserHoverCard({
             <span className={"text-lg font-semibold truncate"}>{name}</span>
           </div>
         </div>
+        {/* TODO: Also show workspace server image */}
+        {workspaces && workspaces?.length > 0 && (
+          <div className="mt-3">
+            <span className="text-muted-foreground">
+              {workspaces.length} Mutual{" "}
+              {workspaces.length > 1 ? "workspaces" : "workspace"}
+            </span>
+          </div>
+        )}
       </HoverCardContent>
     </HoverCard>
   );

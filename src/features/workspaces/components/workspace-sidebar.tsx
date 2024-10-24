@@ -88,6 +88,7 @@ export default function WorkspaceSidebar() {
           <MemberItem
             key={member.member._id}
             id={member.member._id}
+            userId={member.user._id}
             name={member.user?.name || ""}
             avatar={member.user?.image || ""}
             role={member.member.role}

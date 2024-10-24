@@ -17,6 +17,9 @@ import { usePanel } from "@/hooks/use-panel";
 import ThreadBar from "./thread-bar";
 import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
 import RoleIndicator from "@/components/role-indicator";
+import UserHoverCard from "@/components/user/user-hover-card";
+import useGetMutualWorkspaces from "@/features/workspaces/query/use-get-mutual-workspaces";
+import { useCurrentUser } from "@/features/auth/query/use-current-user";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -27,6 +30,7 @@ const formatFulltime = (date: Date) =>
 interface MessageItemProps {
   id?: Id<"messages">;
   memberId?: Id<"members">;
+  userId: Id<"users">;
   role?: "admin" | "member" | "moderator";
   authorImage?: string;
   authorName?: string;
@@ -53,6 +57,7 @@ interface MessageItemProps {
 export default function MessageItem({
   id,
   memberId,
+  userId,
   authorImage,
   authorName = "Member",
   role,
@@ -73,6 +78,8 @@ export default function MessageItem({
   const { toast } = useToast();
   const { onOpenMessage, parentMessageId, onClose } = usePanel();
   const { onOpenMemberProfile } = useMemberProfilePanel();
+  const { data: currentUser } = useCurrentUser();
+  const { data: mutualWorkspaces } = useGetMutualWorkspaces({ userId });
   const [ConfirmDialog, confirm] = useConfirm(
     "Are you sure?",
     "This process will permanently delete the message and cannot undo."
@@ -82,8 +89,7 @@ export default function MessageItem({
     useUpdateMessage();
   const { mutate: deleteMessageMutation, isPending: deleteMessagePending } =
     useDeleteMessage();
-  const { mutate: toggleReactionMutation, isPending: toggleReactionPending } =
-    useToggleReaction();
+  const { mutate: toggleReactionMutation } = useToggleReaction();
 
   const isPending = updateMessagePending || deleteMessagePending;
 
@@ -216,15 +222,21 @@ export default function MessageItem({
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
         )}
       >
-        <Avatar
-          className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
-          onClick={() => onOpenMemberProfile(memberId as string)}
+        <UserHoverCard
+          name={authorName}
+          avatar={authorImage}
+          workspaces={currentUser?._id === userId ? [] : mutualWorkspaces}
         >
-          <AvatarImage src={authorImage} alt={authorName} />
-          <AvatarFallback className="text-white rounded-md text-[16px] md:text-xl bg-indigo-600 font-bold">
-            {fallbackAvatar}
-          </AvatarFallback>
-        </Avatar>
+          <Avatar
+            className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
+            onClick={() => onOpenMemberProfile(memberId as string)}
+          >
+            <AvatarImage src={authorImage} alt={authorName} />
+            <AvatarFallback className="text-white rounded-md text-[16px] md:text-xl bg-indigo-600 font-bold">
+              {fallbackAvatar}
+            </AvatarFallback>
+          </Avatar>
+        </UserHoverCard>
         {isEditing ? (
           <div className="w-full">
             <Editor

@@ -234,7 +234,7 @@ export const getChannelsAndMembers = query({
 
 export const getMutualWorkspaces = query({
   args: {
-    userId: v.id("workspaces"),
+    userId: v.id("users"),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -268,7 +268,7 @@ export const getMutualWorkspaces = query({
 
     const otherUserMembers = await ctx.db
       .query("members")
-      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .withIndex("by_user_id", (q) => q.eq("userId", args.userId))
       .collect();
 
     const otherUserWorkspaceIds = otherUserMembers.map((m) => m.workspaceId);
