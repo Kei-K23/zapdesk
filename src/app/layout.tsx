@@ -7,6 +7,7 @@ import Modals from "@/components/modals/modals";
 import JotaiProvider from "@/providers/jotai-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/providers/theme-provider";
+import Sidebar from "@/components/sidebar";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

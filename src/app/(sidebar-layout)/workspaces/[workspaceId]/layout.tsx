@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "@/features/workspaces/components/sidebar";
 import Toolbar from "@/features/workspaces/components/toolbar";
 import React from "react";
 
@@ -13,9 +12,9 @@ import WorkspaceSidebar from "@/features/workspaces/components/workspace-sidebar
 import { usePanel } from "@/hooks/use-panel";
 import { Loader } from "lucide-react";
 import Thread from "@/features/messages/components/thread";
-import { Id } from "../../../../convex/_generated/dataModel";
 import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
 import MemberProfilePanel from "@/features/workspaces/components/member-profile-panel";
+import { Id } from "../../../../../convex/_generated/dataModel";
 
 export default function WorkspaceIdPageLayout({
   children,
@@ -32,7 +31,6 @@ export default function WorkspaceIdPageLayout({
     <div className="h-full">
       <Toolbar />
       <div className="flex h-[calc(100vh-40px)]">
-        <Sidebar />
         <ResizablePanelGroup
           direction="horizontal"
           autoSaveId={"jr-slack-panel"}

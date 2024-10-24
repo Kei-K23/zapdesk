@@ -40,7 +40,7 @@ export default function MemberItem({
         </Avatar>
         <div className="flex items-center gap-x-1">
           <span
-            className={cn("text-[16px] truncate", isActive && "font-semibold")}
+            className={cn("text-[15px] truncate", isActive && "font-semibold")}
           >
             {name}
           </span>

@@ -142,7 +142,7 @@ export default function MessageItem({
         <ConfirmDialog />
         <div
           className={cn(
-            "flex items-start gap-3 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
+            "flex items-start gap-3 px-1 py-2 transition-all group relative hover:bg-neutral-700/40",
             isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
             deleteMessagePending &&
               "bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-200"
@@ -154,7 +154,7 @@ export default function MessageItem({
               isEditing && "opacity-0 group-hover:opacity-0"
             )}
           >
-            <button className="w-14 text-xs text-muted-foreground">
+            <button className="w-14 text-[10px] text-muted-foreground">
               {format(new Date(createdAt!), "hh:mm a")}
             </button>
           </div>
@@ -240,7 +240,7 @@ export default function MessageItem({
             <div className="flex items-center gap-x-2">
               <span
                 onClick={() => onOpenMemberProfile(memberId as string)}
-                className="text-[16px] md:text-lg truncate hover:underline cursor-pointer"
+                className="text-[15px] md:text-[17px] truncate hover:underline cursor-pointer"
               >
                 {authorName}
               </span>
