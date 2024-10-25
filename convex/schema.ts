@@ -12,6 +12,7 @@ const schema = defineSchema({
   members: defineTable({
     userId: v.id("users"),
     workspaceId: v.id("workspaces"),
+    image: v.optional(v.id("_storage")),
     role: v.union(
       v.literal("admin"),
       v.literal("member"),
@@ -30,6 +31,12 @@ const schema = defineSchema({
     memberOneId: v.id("members"), // Represent sender
     memberTwoId: v.id("members"), // Represent receiver
   }).index("by_workspace_id", ["workspaceId"]),
+  friendships: defineTable({
+    followerId: v.id("users"),
+    followingId: v.id("users"),
+  })
+    .index("by_follower_id", ["followerId"])
+    .index("by_following_id", ["followingId"]),
   messages: defineTable({
     body: v.string(),
     image: v.optional(v.id("_storage")),

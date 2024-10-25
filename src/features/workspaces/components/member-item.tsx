@@ -33,6 +33,7 @@ export default function MemberItem({
   const { data: mutualWorkspaces } = useGetMutualWorkspaces({
     userId,
   });
+  const currentAuthUser = currentUser?._id === userId;
 
   return (
     <Button
@@ -45,7 +46,8 @@ export default function MemberItem({
         <UserHoverCard
           name={name}
           avatar={avatar}
-          workspaces={currentUser?._id === userId ? [] : mutualWorkspaces}
+          workspaces={currentAuthUser ? [] : mutualWorkspaces}
+          isCurrentAuthUser={currentAuthUser}
         >
           <Avatar className="size-7 hover:opacity-75 transition-all mr-2 rounded-md">
             <AvatarImage src={avatar} alt={name} />
@@ -55,11 +57,21 @@ export default function MemberItem({
           </Avatar>
         </UserHoverCard>
         <div className="flex items-center gap-x-1">
-          <span
-            className={cn("text-[15px] truncate", isActive && "font-semibold")}
+          <UserHoverCard
+            name={name}
+            avatar={avatar}
+            workspaces={currentAuthUser ? [] : mutualWorkspaces}
+            isCurrentAuthUser={currentAuthUser}
           >
-            {name}
-          </span>
+            <span
+              className={cn(
+                "text-[15px] truncate",
+                isActive && "font-semibold"
+              )}
+            >
+              {name}
+            </span>
+          </UserHoverCard>
           <RoleIndicator role={role} />
         </div>
       </Link>

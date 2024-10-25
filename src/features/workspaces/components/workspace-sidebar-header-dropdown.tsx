@@ -7,10 +7,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, PaintbrushIcon, Send } from "lucide-react";
+import { ChevronDown, PaintbrushIcon, Send, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import PreferencesWorkspaceModal from "@/components/modals/preferences-workspace-modal";
 import InviteNewMemberModal from "@/components/modals/invite-new-member-modal";
+import useDeleteMember from "../mutation/use-delete-member";
+import useConfirm from "@/hooks/use-confirm";
+import useGetCurrentMember from "../query/use-get-current-member";
+import useWorkspaceId from "../hooks/use-workspace-id";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { MdOutlineTimeToLeave } from "react-icons/md";
 
 type WorkspaceSidebarHeaderDropdownProps = {
   workspace: Doc<"workspaces">;
@@ -21,13 +28,59 @@ export default function WorkspaceSidebarHeaderDropdown({
   workspace,
   memberRole,
 }: WorkspaceSidebarHeaderDropdownProps) {
+  const { toast } = useToast();
+  const router = useRouter();
+  const workspaceId = useWorkspaceId();
+  const [isOpen, setIsOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [inviteMemberOpen, setInviteMemberOpen] = useState(false);
+  const { data: currentMember, isLoading: currentMemberLoading } =
+    useGetCurrentMember({ workspaceId });
+
+  const [LeaveMemberConfirmDialog, leaveMemberConfirm] = useConfirm(
+    "Are your sure?",
+    "You are leaving the workspace. This process cannot be undo."
+  );
+  const {
+    mutate: deleteMemberMutation,
+    isPending: deleteMemberMutationLoading,
+  } = useDeleteMember();
 
   const isMember = memberRole === "member";
+  const isPending = currentMemberLoading || deleteMemberMutationLoading;
+
+  const handleLeaveMember = async () => {
+    const ok = await leaveMemberConfirm();
+    if (!ok) return;
+
+    if (!currentMember || currentMember?.role === "admin") {
+      return;
+    }
+
+    deleteMemberMutation(
+      {
+        workspaceId,
+        memberId: currentMember._id,
+      },
+      {
+        onSuccess: () => {
+          toast({ title: "Successfully left the workspace" });
+
+          // Redirect to workspace
+          router.replace("/workspaces");
+        },
+        onError: () => {
+          toast({
+            title: "Error when leaving the workspace",
+          });
+        },
+      }
+    );
+  };
 
   return (
     <>
+      <LeaveMemberConfirmDialog />
       <PreferencesWorkspaceModal
         workspace={workspace}
         open={preferencesOpen}
@@ -38,14 +91,19 @@ export default function WorkspaceSidebarHeaderDropdown({
         open={inviteMemberOpen}
         setOpen={setInviteMemberOpen}
       />
-      <DropdownMenu>
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
         <DropdownMenuTrigger asChild className="outline-none">
           <Button
             variant={"transp"}
-            className="flex items-center gap-1 outline-none"
+            className="flex items-center gap-1 outline-none transition-all"
+            onClick={() => setIsOpen((prev) => !prev)}
           >
             <span className="text-sm font-bold">{workspace?.name}</span>
-            <ChevronDown className="size-4" />
+            {isOpen ? (
+              <X className="size-4" />
+            ) : (
+              <ChevronDown className="size-4" />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" side="bottom" className="w-60 p-2">
@@ -56,6 +114,7 @@ export default function WorkspaceSidebarHeaderDropdown({
           <Separator className="my-2" />
           {!isMember && (
             <DropdownMenuItem
+              disabled={isPending}
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setInviteMemberOpen(true)}
             >
@@ -65,11 +124,22 @@ export default function WorkspaceSidebarHeaderDropdown({
           )}
           {!isMember && (
             <DropdownMenuItem
+              disabled={isPending}
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setPreferencesOpen(true)}
             >
               <PaintbrushIcon className="size-4" />
               <p className="font-semibold">Preferences</p>
+            </DropdownMenuItem>
+          )}
+          {currentMember?.role !== "admin" && (
+            <DropdownMenuItem
+              disabled={isPending}
+              className="flex items-center gap-2 cursor-pointer bg-destructive focus:bg-destructive/90"
+              onClick={handleLeaveMember}
+            >
+              <MdOutlineTimeToLeave className="size-4" />
+              <p className="font-semibold">Leave server</p>
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

@@ -92,6 +92,7 @@ export default function MessageItem({
   const { mutate: toggleReactionMutation } = useToggleReaction();
 
   const isPending = updateMessagePending || deleteMessagePending;
+  const currentAuthUser = currentUser?._id === userId;
 
   const handleUpdateMessage = ({ body, image }: EditorValue) => {
     updateMessageMutation(
@@ -225,7 +226,8 @@ export default function MessageItem({
         <UserHoverCard
           name={authorName}
           avatar={authorImage}
-          workspaces={currentUser?._id === userId ? [] : mutualWorkspaces}
+          workspaces={currentAuthUser ? [] : mutualWorkspaces}
+          isCurrentAuthUser={currentAuthUser}
         >
           <Avatar
             className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
@@ -250,12 +252,16 @@ export default function MessageItem({
         ) : (
           <div>
             <div className="flex items-center gap-x-2">
-              <span
-                onClick={() => onOpenMemberProfile(memberId as string)}
-                className="text-[15px] md:text-[17px] truncate hover:underline cursor-pointer"
+              <UserHoverCard
+                name={authorName}
+                avatar={authorImage}
+                workspaces={currentAuthUser ? [] : mutualWorkspaces}
+                isCurrentAuthUser={currentAuthUser}
               >
-                {authorName}
-              </span>
+                <span className="text-[15px] md:text-[17px] truncate hover:underline cursor-pointer">
+                  {authorName}
+                </span>
+              </UserHoverCard>
               <RoleIndicator role={role!} />
               <Hint label={formatFulltime(new Date(createdAt!))}>
                 <button className="text-sm text-muted-foreground">
