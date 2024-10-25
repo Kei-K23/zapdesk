@@ -40,7 +40,7 @@ export default function UserHoverCard({
               <Button variant={"outline"} size={"sm"}>
                 follow
               </Button>
-              <Button variant={"outline"} size={"sm"}>
+              <Button variant={"ghost"} size={"sm"} className="px-1">
                 <MoreVertical className="size-4" />
               </Button>
             </div>

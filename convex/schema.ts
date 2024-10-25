@@ -36,7 +36,8 @@ const schema = defineSchema({
     followingId: v.id("users"),
   })
     .index("by_follower_id", ["followerId"])
-    .index("by_following_id", ["followingId"]),
+    .index("by_following_id", ["followingId"])
+    .index("by_follower_id_following_id", ["followerId", "followingId"]),
   messages: defineTable({
     body: v.string(),
     image: v.optional(v.id("_storage")),
