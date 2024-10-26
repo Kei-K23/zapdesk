@@ -11,35 +11,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Doc } from "../../../../convex/_generated/dataModel";
 
-type User = {
-  name: string;
-  image: string;
-  email: string;
-  isPublishEmail: boolean;
-  bio: string;
-  role: string;
-  githubLink: string;
-  personalLink: string;
-  twitterLink: string;
-  youTubeLink: string;
-  igLink: string;
-  phone: string;
-  isAnonymous: boolean;
-  followers: number;
-  following: number;
-};
-
-type EditUserProfileModalProps = {
-  user: User;
-  onSave: (updatedUser: User) => void;
-};
+interface EditUserProfileModalProps {
+  user: Doc<"users">;
+  onSave: (updatedUser: Doc<"users">) => void;
+}
 
 export function EditUserProfileModal({
   user,
   onSave,
 }: EditUserProfileModalProps) {
-  const [editedUser, setEditedUser] = useState<User>(user);
+  const [editedUser, setEditedUser] = useState<Doc<"users">>(user);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -73,7 +56,7 @@ export function EditUserProfileModal({
               <Input
                 id="name"
                 name="name"
-                value={editedUser.name}
+                value={editedUser?.name}
                 onChange={handleInputChange}
               />
             </div>
@@ -82,7 +65,7 @@ export function EditUserProfileModal({
               <Input
                 id="email"
                 name="email"
-                value={editedUser.email}
+                value={editedUser?.email}
                 onChange={handleInputChange}
               />
             </div>
@@ -93,14 +76,14 @@ export function EditUserProfileModal({
               <Input
                 id="role"
                 name="role"
-                value={editedUser.role}
+                value={editedUser?.role}
                 onChange={handleInputChange}
               />
             </div>
             <div className="w-1/2 flex items-center space-x-2">
               <Switch
                 id="isPublishEmail"
-                checked={editedUser.isPublishEmail}
+                checked={editedUser?.isPublishEmail}
                 onCheckedChange={handleSwitchChange}
               />
               <Label htmlFor="isPublishEmail">Publish Email</Label>
@@ -111,7 +94,7 @@ export function EditUserProfileModal({
             <Textarea
               id="bio"
               name="bio"
-              value={editedUser.bio}
+              value={editedUser?.bio}
               onChange={handleInputChange}
             />
           </div>
@@ -121,7 +104,7 @@ export function EditUserProfileModal({
               <Input
                 id="githubLink"
                 name="githubLink"
-                value={editedUser.githubLink}
+                value={editedUser?.githubLink}
                 onChange={handleInputChange}
               />
             </div>
@@ -130,7 +113,7 @@ export function EditUserProfileModal({
               <Input
                 id="personalLink"
                 name="personalLink"
-                value={editedUser.personalLink}
+                value={editedUser?.personalLink}
                 onChange={handleInputChange}
               />
             </div>
@@ -141,7 +124,7 @@ export function EditUserProfileModal({
               <Input
                 id="twitterLink"
                 name="twitterLink"
-                value={editedUser.twitterLink}
+                value={editedUser?.twitterLink}
                 onChange={handleInputChange}
               />
             </div>
@@ -150,7 +133,7 @@ export function EditUserProfileModal({
               <Input
                 id="youTubeLink"
                 name="youTubeLink"
-                value={editedUser.youTubeLink}
+                value={editedUser?.youTubeLink}
                 onChange={handleInputChange}
               />
             </div>
@@ -161,7 +144,7 @@ export function EditUserProfileModal({
               <Input
                 id="igLink"
                 name="igLink"
-                value={editedUser.igLink}
+                value={editedUser?.igLink}
                 onChange={handleInputChange}
               />
             </div>
@@ -170,7 +153,7 @@ export function EditUserProfileModal({
               <Input
                 id="phone"
                 name="phone"
-                value={editedUser.phone}
+                value={editedUser?.phone}
                 onChange={handleInputChange}
               />
             </div>
