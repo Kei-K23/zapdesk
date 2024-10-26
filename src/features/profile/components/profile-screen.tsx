@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
-import { useState } from "react";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import ProfileContainer from "./profile-container";
 
@@ -23,23 +22,13 @@ const initialUser = {
 };
 
 export default function ProfileScreen() {
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [user, setUser] = useState<Doc<"users">>(initialUser as Doc<"users">);
-
-  const handleSaveProfile = (updatedUser: Doc<"users">) => {
-    setUser(updatedUser);
-    // Here you would typically send the updated user data to your backend
-    console.log("Profile updated:", updatedUser);
-  };
-
   //   const { data: followersData, isLoading: followersDataLoading } =
   //     useGetFollowers({ userId: user?._id! });
 
   return (
     <ProfileContainer
       isCurrentUserSelf={true}
-      user={user}
-      handleSaveProfile={handleSaveProfile}
+      user={initialUser as Doc<"users">}
       isLoading={false}
       followers={[]}
       following={[]}

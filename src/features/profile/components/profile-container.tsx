@@ -22,7 +22,6 @@ interface ProfileContainerProps {
   isCurrentUserSelf: boolean;
   followers: Doc<"users">[];
   following: Doc<"users">[];
-  handleSaveProfile: (updatedUser: Doc<"users">) => void;
 }
 
 export default function ProfileContainer({
@@ -32,7 +31,6 @@ export default function ProfileContainer({
   isCurrentUserSelf,
   followers,
   following,
-  handleSaveProfile,
 }: ProfileContainerProps) {
   // This fetch query only happen currentAuthUser exist and isCurrentUserSelf is not true, So there is no will be raise null error for currentAuthUser
   const { data: relationship, isLoading: relationshipLoading } =
@@ -118,7 +116,7 @@ export default function ProfileContainer({
         </CardContent>
 
         <CardFooter className="flex justify-between">
-          <EditUserProfileModal user={user!} onSave={handleSaveProfile} />
+          <EditUserProfileModal user={user!} />
           <Button variant="outline">Share Profile</Button>
         </CardFooter>
       </Card>
