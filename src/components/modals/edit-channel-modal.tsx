@@ -1,5 +1,5 @@
 import { Input } from "../ui/input";
-import { FormEvent, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -23,6 +23,11 @@ export default function EditChannelModal({
   const [name, setName] = useState<string>(value);
 
   const { mutate, isPending } = useUpdateChannel();
+
+  const handelOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\s+/g, "-").toLocaleLowerCase();
+    setName(value);
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -70,7 +75,7 @@ export default function EditChannelModal({
             required
             value={name}
             minLength={3}
-            onChange={(e) => setName(e.target.value)}
+            onChange={handelOnChange}
           />
           <div className="mt-4 flex justify-end">
             <Button disabled={isPending}>Save</Button>
