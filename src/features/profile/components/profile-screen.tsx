@@ -32,10 +32,17 @@ export default function ProfileScreen() {
     console.log("Profile updated:", updatedUser);
   };
 
-  //   const { data: user, isLoading: userLoading } = useCurrentUser();
-
   //   const { data: followersData, isLoading: followersDataLoading } =
   //     useGetFollowers({ userId: user?._id! });
 
-  return <ProfileContainer user={user} handleSaveProfile={handleSaveProfile} />;
+  return (
+    <ProfileContainer
+      isCurrentUserSelf={true}
+      user={user}
+      handleSaveProfile={handleSaveProfile}
+      isLoading={false}
+      followers={[]}
+      following={[]}
+    />
+  );
 }

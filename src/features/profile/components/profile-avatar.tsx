@@ -11,7 +11,7 @@ export default function ProfileAvatar({ user }: ProfileAvatarProps) {
     <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
       <Avatar className="w-24 h-24">
         <AvatarImage src={user?.image} alt={user?.name} />
-        <AvatarFallback>
+        <AvatarFallback className="text-3xl font-semibold">
           {user?.name
             ?.split(" ")
             .map((n) => n[0])

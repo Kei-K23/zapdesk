@@ -7,15 +7,17 @@ interface ProfileFriendshipSectionProps {
   following: Doc<"users">[];
 }
 
-export default function ProfileFriendshipSection() {
+export default function ProfileFriendshipSection({
+  followers,
+  following,
+}: ProfileFriendshipSectionProps) {
   return (
     <div className="mt-1 flex items-center gap-x-0.5 text-muted-foreground text-sm">
       <div className="flex items-center gap-x-0.5">
         <Users className="size-4 mr-1" />
         <div>
           <strong className="text-neutral-100 text-[16px]">
-            {/* {followersData?.length} */}
-            100
+            {followers?.length}
           </strong>{" "}
           followers
         </div>
@@ -25,8 +27,7 @@ export default function ProfileFriendshipSection() {
       </div>
       <div>
         <strong className="text-neutral-100 text-[16px]">
-          {/* {followingData?.length} */}
-          40
+          {following?.length}
         </strong>{" "}
         following
       </div>
