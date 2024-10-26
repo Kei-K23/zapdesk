@@ -17,7 +17,8 @@ export default function WorkspacePage() {
       !userData ||
       !workspacesData ||
       workspacesDataLoading ||
-      userDataLoading
+      userDataLoading ||
+      !workspacesData[0]
     ) {
       return;
     }

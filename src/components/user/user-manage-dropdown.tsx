@@ -17,6 +17,7 @@ import { useToast } from "@/hooks/use-toast";
 interface UserManageDropdownProps {
   children: React.ReactNode;
   authorId: Id<"members">;
+  authorUserId: Id<"users">;
   authorRole: "admin" | "member" | "moderator" | undefined;
   currentAuthMember?: Doc<"members">;
 }
@@ -24,6 +25,7 @@ interface UserManageDropdownProps {
 export default function UserManageDropdown({
   children,
   authorId,
+  authorUserId,
   authorRole,
   currentAuthMember,
 }: UserManageDropdownProps) {
@@ -114,6 +116,7 @@ export default function UserManageDropdown({
           <DropdownMenuItem
             disabled={isPending}
             className="flex items-center gap-2 cursor-pointer"
+            onClick={() => router.replace(`/profile/${authorUserId}`)}
           >
             <User className="size-4" />
             <p className="font-semibold">View Full Profile</p>

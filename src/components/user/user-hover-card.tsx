@@ -120,6 +120,7 @@ export default function UserHoverCard({
               currentAuthMember={currentAuthMember}
               authorId={authorId}
               authorRole={authorRole}
+              authorUserId={userId}
             >
               <Button
                 variant={"ghost"}

@@ -23,8 +23,8 @@ export default function Sidebar() {
           label="Home"
           hintLabel="Home"
           icon={Home}
-          isActive={pathname === "/"}
-          handleClick={() => router.push(`/`)}
+          isActive={pathname === "/profile"}
+          handleClick={() => router.push(`/profile`)}
         />
         <SidebarButton
           label="WS"
