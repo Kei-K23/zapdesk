@@ -1,8 +1,5 @@
-"use client";
-
-import { useCurrentUser } from "@/features/auth/query/use-current-user";
+import ProfileScreen from "@/features/profile/components/profile-screen";
 
 export default function CurrentAuthUserHome() {
-  const { data: currentUser, isLoading: currentUserLoading } = useCurrentUser();
-  return <div>{currentUser?.name}</div>;
+  return <ProfileScreen />;
 }
