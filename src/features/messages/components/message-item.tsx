@@ -224,6 +224,7 @@ export default function MessageItem({
         )}
       >
         <UserHoverCard
+          userId={userId}
           name={authorName}
           avatar={authorImage}
           workspaces={currentAuthUser ? [] : mutualWorkspaces}
@@ -253,6 +254,7 @@ export default function MessageItem({
           <div>
             <div className="flex items-center gap-x-2">
               <UserHoverCard
+                userId={userId}
                 name={authorName}
                 avatar={authorImage}
                 workspaces={currentAuthUser ? [] : mutualWorkspaces}

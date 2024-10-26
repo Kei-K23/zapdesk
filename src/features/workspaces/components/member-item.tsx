@@ -44,6 +44,7 @@ export default function MemberItem({
     >
       <Link href={`/workspaces/${workspaceId}/members/${id}`}>
         <UserHoverCard
+          userId={userId}
           name={name}
           avatar={avatar}
           workspaces={currentAuthUser ? [] : mutualWorkspaces}
@@ -58,6 +59,7 @@ export default function MemberItem({
         </UserHoverCard>
         <div className="flex items-center gap-x-1">
           <UserHoverCard
+            userId={userId}
             name={name}
             avatar={avatar}
             workspaces={currentAuthUser ? [] : mutualWorkspaces}
