@@ -34,16 +34,44 @@ import {
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import useGetFollowers from "@/features/friendships/query/use-get-followers";
 import useGetFollowings from "@/features/friendships/query/use-get-followings";
+import { EditUserProfileModal } from "./edit-user-profile-modal";
+
+// Mock user data based on the provided schema
+const initialUser = {
+  name: "Jane Doe",
+  image: "/placeholder.svg?height=128&width=128",
+  email: "jane.doe@example.com",
+  isPublishEmail: true,
+  bio: "Passionate developer and tech enthusiast. Always learning, always coding.",
+  role: "Senior Software Engineer",
+  githubLink: "https://github.com/janedoe",
+  personalLink: "https://janedoe.com",
+  twitterLink: "https://twitter.com/janedoe",
+  youTubeLink: "https://youtube.com/janedoe",
+  igLink: "https://instagram.com/janedoe",
+  phone: "+1 (555) 123-4567",
+  isAnonymous: false,
+  followers: 1234,
+  following: 567,
+};
 
 export default function ProfileScreen() {
   const { theme, setTheme } = useTheme();
   const [isFollowing, setIsFollowing] = useState(false);
-  const { data: user, isLoading: userLoading } = useCurrentUser();
+  const [user, setUser] = useState(initialUser);
 
-  const { data: followersData, isLoading: followersDataLoading } =
-    useGetFollowers({ userId: user?._id! });
-  const { data: followingData, isLoading: followingDataLoading } =
-    useGetFollowings({ userId: user?._id! });
+  const handleSaveProfile = (updatedUser: typeof user) => {
+    setUser(updatedUser);
+    // Here you would typically send the updated user data to your backend
+    console.log("Profile updated:", updatedUser);
+  };
+
+  //   const { data: user, isLoading: userLoading } = useCurrentUser();
+
+  //   const { data: followersData, isLoading: followersDataLoading } =
+  //     useGetFollowers({ userId: user?._id! });
+  //   const { data: followingData, isLoading: followingDataLoading } =
+  //     useGetFollowings({ userId: user?._id! });
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -93,7 +121,8 @@ export default function ProfileScreen() {
               <Users className="size-4 mr-1" />
               <div>
                 <strong className="text-neutral-100 text-[16px]">
-                  {followersData?.length}
+                  {/* {followersData?.length} */}
+                  100
                 </strong>{" "}
                 followers
               </div>
@@ -103,7 +132,8 @@ export default function ProfileScreen() {
             </div>
             <div>
               <strong className="text-neutral-100 text-[16px]">
-                {followingData?.length}
+                {/* {followingData?.length} */}
+                40
               </strong>{" "}
               following
             </div>
@@ -170,7 +200,7 @@ export default function ProfileScreen() {
           </Tabs>
         </CardContent>
         <CardFooter className="flex justify-between">
-          <Button variant="outline">Edit Profile</Button>
+          <EditUserProfileModal user={user} onSave={handleSaveProfile} />
           <Button variant="outline">Share Profile</Button>
         </CardFooter>
       </Card>
