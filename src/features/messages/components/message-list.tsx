@@ -93,6 +93,7 @@ export default function MessageList({
                 memberId={message?.memberId}
                 authorImage={message?.user?.image}
                 authorName={message?.user?.name}
+                authorBio={message?.user?.bio}
                 role={message?.member?.role}
                 body={message?.body}
                 image={message?.image}

@@ -90,6 +90,7 @@ export default function WorkspaceSidebar() {
             id={member.member._id}
             userId={member.user._id}
             name={member.user?.name || ""}
+            authorBio={member?.user?.bio}
             avatar={member.user?.image || ""}
             role={member.member.role}
             isActive={member.member._id === memberId}

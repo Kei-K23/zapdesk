@@ -20,6 +20,7 @@ interface UserHoverCardProps {
   userId: Id<"users">;
   name: string;
   avatar?: string;
+  bio?: string;
   workspaces?: Doc<"workspaces">[];
 }
 
@@ -28,6 +29,7 @@ export default function UserHoverCard({
   name,
   avatar,
   workspaces,
+  bio,
   userId,
   isCurrentAuthUser,
 }: UserHoverCardProps) {
@@ -88,7 +90,7 @@ export default function UserHoverCard({
   return (
     <HoverCard>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent>
+      <HoverCardContent className="w-[380px]">
         <div className="flex items-start justify-between gap-x-4">
           <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
             <AvatarImage src={avatar} alt={name} />
@@ -122,6 +124,9 @@ export default function UserHoverCard({
             {name}
           </span>
         </div>
+        <p className="text-muted-foreground text-sm my-1.5 text-wrap">
+          {bio ?? "No bio provided"}
+        </p>
         <div className="mt-1 flex items-center gap-x-0.5 text-muted-foreground text-sm">
           <div className="flex items-center gap-x-0.5">
             <Users className="size-4 mr-1" />

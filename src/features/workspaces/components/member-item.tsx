@@ -13,6 +13,7 @@ import { useCurrentUser } from "@/features/auth/query/use-current-user";
 interface MemberItemProps {
   name: string;
   avatar: string;
+  authorBio?: string;
   role: "admin" | "member" | "moderator";
   id: string;
   userId: Id<"users">;
@@ -22,6 +23,7 @@ interface MemberItemProps {
 export default function MemberItem({
   name,
   avatar,
+  authorBio,
   id,
   role,
   userId,
@@ -44,6 +46,7 @@ export default function MemberItem({
     >
       <Link href={`/workspaces/${workspaceId}/members/${id}`}>
         <UserHoverCard
+          bio={authorBio}
           userId={userId}
           name={name}
           avatar={avatar}
@@ -59,6 +62,7 @@ export default function MemberItem({
         </UserHoverCard>
         <div className="flex items-center gap-x-1">
           <UserHoverCard
+            bio={authorBio}
             userId={userId}
             name={name}
             avatar={avatar}

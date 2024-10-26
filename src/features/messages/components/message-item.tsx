@@ -34,6 +34,7 @@ interface MessageItemProps {
   role?: "admin" | "member" | "moderator";
   authorImage?: string;
   authorName?: string;
+  authorBio?: string;
   body?: Doc<"messages">["body"];
   image?: string | undefined | null;
   reactions?: Array<
@@ -60,6 +61,7 @@ export default function MessageItem({
   userId,
   authorImage,
   authorName = "Member",
+  authorBio,
   role,
   body,
   image,
@@ -224,6 +226,7 @@ export default function MessageItem({
         )}
       >
         <UserHoverCard
+          bio={authorBio}
           userId={userId}
           name={authorName}
           avatar={authorImage}
@@ -254,6 +257,7 @@ export default function MessageItem({
           <div>
             <div className="flex items-center gap-x-2">
               <UserHoverCard
+                bio={authorBio}
                 userId={userId}
                 name={authorName}
                 avatar={authorImage}
