@@ -35,6 +35,7 @@ interface MessageItemProps {
   authorImage?: string;
   authorName?: string;
   authorBio?: string;
+  currentAuthMember?: Doc<"members">;
   body?: Doc<"messages">["body"];
   image?: string | undefined | null;
   reactions?: Array<
@@ -63,6 +64,7 @@ export default function MessageItem({
   authorName = "Member",
   authorBio,
   role,
+  currentAuthMember,
   body,
   image,
   reactions,
@@ -229,9 +231,12 @@ export default function MessageItem({
           bio={authorBio}
           userId={userId}
           name={authorName}
+          authorId={memberId!}
+          currentAuthMember={currentAuthMember}
           avatar={authorImage}
           workspaces={currentAuthUser ? [] : mutualWorkspaces}
           isCurrentAuthUser={currentAuthUser}
+          authorRole={role}
         >
           <Avatar
             className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
@@ -261,8 +266,11 @@ export default function MessageItem({
                 userId={userId}
                 name={authorName}
                 avatar={authorImage}
+                authorRole={role}
                 workspaces={currentAuthUser ? [] : mutualWorkspaces}
                 isCurrentAuthUser={currentAuthUser}
+                authorId={memberId!}
+                currentAuthMember={currentAuthMember}
               >
                 <span className="text-[15px] md:text-[17px] truncate hover:underline cursor-pointer">
                   {authorName}

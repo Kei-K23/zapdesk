@@ -99,6 +99,7 @@ export default function MessageList({
                 image={message?.image}
                 reactions={message?.reactions}
                 isAuthor={message.memberId === currentMemberData?._id}
+                currentAuthMember={currentMemberData!}
                 isCompact={isCompact}
                 isEditing={editingId === message?._id}
                 hideThreadButton={variant === "thread"}

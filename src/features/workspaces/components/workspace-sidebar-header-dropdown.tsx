@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown, PaintbrushIcon, Send, X } from "lucide-react";
+import { ChevronDown, DoorOpen, PaintbrushIcon, Send, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import PreferencesWorkspaceModal from "@/components/modals/preferences-workspace-modal";
 import InviteNewMemberModal from "@/components/modals/invite-new-member-modal";
@@ -17,7 +17,6 @@ import useGetCurrentMember from "../query/use-get-current-member";
 import useWorkspaceId from "../hooks/use-workspace-id";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { MdOutlineTimeToLeave } from "react-icons/md";
 
 type WorkspaceSidebarHeaderDropdownProps = {
   workspace: Doc<"workspaces">;
@@ -138,7 +137,7 @@ export default function WorkspaceSidebarHeaderDropdown({
               className="flex items-center gap-2 cursor-pointer bg-destructive focus:bg-destructive/90"
               onClick={handleLeaveMember}
             >
-              <MdOutlineTimeToLeave className="size-4" />
+              <DoorOpen className="size-4" />
               <p className="font-semibold">Leave server</p>
             </DropdownMenuItem>
           )}

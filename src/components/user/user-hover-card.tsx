@@ -13,6 +13,7 @@ import useGetRelationship from "@/features/friendships/query/use-get-relationshi
 import useRemoveFriendship from "@/features/friendships/mutation/use-remove-friendship";
 import useGetFollowers from "@/features/friendships/query/use-get-followers";
 import useGetFollowings from "@/features/friendships/query/use-get-followings";
+import UserManageDropdown from "./user-manage-dropdown";
 
 interface UserHoverCardProps {
   children: React.ReactNode;
@@ -20,6 +21,9 @@ interface UserHoverCardProps {
   userId: Id<"users">;
   name: string;
   avatar?: string;
+  authorId: Id<"members">;
+  authorRole: "admin" | "member" | "moderator" | undefined;
+  currentAuthMember?: Doc<"members">;
   bio?: string;
   workspaces?: Doc<"workspaces">[];
 }
@@ -32,6 +36,9 @@ export default function UserHoverCard({
   bio,
   userId,
   isCurrentAuthUser,
+  authorId,
+  authorRole,
+  currentAuthMember,
 }: UserHoverCardProps) {
   const {
     mutate: createFriendshipMutation,
@@ -98,8 +105,8 @@ export default function UserHoverCard({
               {fallbackAvatar}
             </AvatarFallback>
           </Avatar>
-          {!isCurrentAuthUser && (
-            <div className="flex items-center gap-x-1">
+          <div className="flex items-center gap-x-1">
+            {!isCurrentAuthUser && (
               <Button
                 onClick={handleFriendship}
                 variant={"outline"}
@@ -108,6 +115,12 @@ export default function UserHoverCard({
               >
                 {!!relationship ? "Unfollow" : "Follow"}
               </Button>
+            )}
+            <UserManageDropdown
+              currentAuthMember={currentAuthMember}
+              authorId={authorId}
+              authorRole={authorRole}
+            >
               <Button
                 variant={"ghost"}
                 size={"sm"}
@@ -116,8 +129,8 @@ export default function UserHoverCard({
               >
                 <MoreVertical className="size-4" />
               </Button>
-            </div>
-          )}
+            </UserManageDropdown>
+          </div>
         </div>
         <div className="flex items-center gap-x-1 mt-2">
           <span className={"text-[16px] md:text-lg font-semibold truncate"}>

@@ -94,6 +94,8 @@ export default function WorkspaceSidebar() {
             avatar={member.user?.image || ""}
             role={member.member.role}
             isActive={member.member._id === memberId}
+            authorId={member.member._id}
+            currentAuthMember={currentMember}
           />
         ))}
       </WorkspaceSection>

@@ -7,13 +7,15 @@ import RoleIndicator from "@/components/role-indicator";
 import { cn } from "@/lib/utils";
 import UserHoverCard from "@/components/user/user-hover-card";
 import useGetMutualWorkspaces from "../query/use-get-mutual-workspaces";
-import { Id } from "../../../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
 
 interface MemberItemProps {
   name: string;
   avatar: string;
   authorBio?: string;
+  authorId: Id<"members">;
+  currentAuthMember: Doc<"members">;
   role: "admin" | "member" | "moderator";
   id: string;
   userId: Id<"users">;
@@ -24,6 +26,8 @@ export default function MemberItem({
   name,
   avatar,
   authorBio,
+  authorId,
+  currentAuthMember,
   id,
   role,
   userId,
@@ -49,9 +53,12 @@ export default function MemberItem({
           bio={authorBio}
           userId={userId}
           name={name}
+          authorRole={role}
           avatar={avatar}
           workspaces={currentAuthUser ? [] : mutualWorkspaces}
           isCurrentAuthUser={currentAuthUser}
+          authorId={authorId}
+          currentAuthMember={currentAuthMember}
         >
           <Avatar className="size-7 hover:opacity-75 transition-all mr-2 rounded-md">
             <AvatarImage src={avatar} alt={name} />
@@ -65,9 +72,12 @@ export default function MemberItem({
             bio={authorBio}
             userId={userId}
             name={name}
+            authorRole={role}
             avatar={avatar}
             workspaces={currentAuthUser ? [] : mutualWorkspaces}
             isCurrentAuthUser={currentAuthUser}
+            authorId={authorId}
+            currentAuthMember={currentAuthMember}
           >
             <span
               className={cn(
