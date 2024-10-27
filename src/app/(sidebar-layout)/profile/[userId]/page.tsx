@@ -43,6 +43,7 @@ export default function UserProfileIdPage({ params }: UserProfileIdPagePros) {
 
   return (
     <ProfileContainer
+      isShowBackBtn
       isCurrentUserSelf={currentAuthUser?._id === user?._id}
       user={user}
       currentAuthUser={currentAuthUser!}

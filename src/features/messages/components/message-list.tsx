@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GetMessagesReturnType } from "../query/use-get-messages";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import MessageItem from "./message-item";
@@ -45,6 +45,7 @@ export default function MessageList({
 }: MessageListProps) {
   const workspaceId = useWorkspaceId();
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const { data: currentMemberData } = useGetCurrentMember({ workspaceId });
 
@@ -64,8 +65,17 @@ export default function MessageList({
     {} as Record<string, typeof data>
   );
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [data]);
+
   return (
-    <div className="pb-4 flex-1 flex flex-col-reverse overflow-y-auto message-scrollbar">
+    <div className="pb-4 flex-1 overflow-y-auto flex flex-col-reverse  message-scrollbar">
+      <div ref={messagesEndRef} className="w-full h-1 bg-red-300" />
       {Object.entries(groupedData || {}).map(([dateKey, data]) => (
         <div key={dateKey}>
           <div className="text-center my-3 relative">
@@ -133,7 +143,6 @@ export default function MessageList({
           }
         }}
       />
-
       {isLoadingMore && (
         <div className="text-center my-3 relative">
           <hr className="absolute top-1/2 left-0 right-0 border-t border-neutral-600" />

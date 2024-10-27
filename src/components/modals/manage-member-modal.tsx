@@ -44,8 +44,16 @@ export default function ManageMemberModal() {
       {
         onSuccess: () => {
           toast({ title: "Member role updated successfully" });
+          setManageModalStore({
+            open: false,
+            memberId: null,
+            role: undefined,
+            currentAuthMemberRole: undefined,
+          });
         },
-        onError: () => {
+        onError: (e) => {
+          console.log(e);
+
           toast({ title: "Error when updating member role" });
         },
       }
@@ -83,7 +91,9 @@ export default function ManageMemberModal() {
               <SelectContent>
                 <SelectItem value="member">Member</SelectItem>
                 <SelectItem value="moderator">Moderator</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
+                {manageModalStore.currentAuthMemberRole === "admin" && (
+                  <SelectItem value="admin">Admin</SelectItem>
+                )}
               </SelectContent>
             </Select>
           </div>

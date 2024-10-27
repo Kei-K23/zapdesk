@@ -194,7 +194,7 @@ export const updateMember = mutation({
       )
       .unique();
 
-    if (!currentMember || currentMember.role !== "admin") {
+    if (!currentMember || currentMember.role === "member") {
       throw new Error("Unauthorized");
     }
 

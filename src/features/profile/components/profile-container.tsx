@@ -24,6 +24,7 @@ interface ProfileContainerProps {
   currentAuthUser?: Doc<"users">;
   isLoading: boolean;
   isCurrentUserSelf: boolean;
+  isShowBackBtn?: boolean;
   followers: Doc<"users">[];
   following: Doc<"users">[];
 }
@@ -33,6 +34,7 @@ export default function ProfileContainer({
   currentAuthUser,
   isLoading,
   isCurrentUserSelf,
+  isShowBackBtn,
   followers,
   following,
 }: ProfileContainerProps) {
@@ -93,13 +95,15 @@ export default function ProfileContainer({
     <div className="container mx-auto p-4 space-y-6">
       <Card className="w-full max-w-3xl mx-auto">
         <CardHeader className="relative">
-          <div className="absolute -left-16 top-0">
-            <Hint label="Back">
-              <Button variant={"ghost"} onClick={router.back}>
-                <ArrowBigLeftDashIcon className="size-6 text-muted-foreground" />
-              </Button>
-            </Hint>
-          </div>
+          {isShowBackBtn && (
+            <div className="absolute -left-16 top-0">
+              <Hint label="Back">
+                <Button variant={"ghost"} onClick={router.back}>
+                  <ArrowBigLeftDashIcon className="size-6 text-muted-foreground" />
+                </Button>
+              </Hint>
+            </div>
+          )}
           <ProfileAvatar user={user} />
         </CardHeader>
 

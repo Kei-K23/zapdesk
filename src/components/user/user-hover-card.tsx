@@ -13,7 +13,7 @@ import useGetRelationship from "@/features/friendships/query/use-get-relationshi
 import useRemoveFriendship from "@/features/friendships/mutation/use-remove-friendship";
 import useGetFollowers from "@/features/friendships/query/use-get-followers";
 import useGetFollowings from "@/features/friendships/query/use-get-followings";
-import UserManageDropdown from "../../features/workspaces/components/user-manage-dropdown";
+import MemberManageDropdown from "@/features/workspaces/components/member-manage-dropdown";
 
 interface UserHoverCardProps {
   children: React.ReactNode;
@@ -116,7 +116,7 @@ export default function UserHoverCard({
                 {!!relationship ? "Unfollow" : "Follow"}
               </Button>
             )}
-            <UserManageDropdown
+            <MemberManageDropdown
               currentAuthMember={currentAuthMember}
               authorId={authorId}
               authorRole={authorRole}
@@ -130,7 +130,7 @@ export default function UserHoverCard({
               >
                 <MoreVertical className="size-4" />
               </Button>
-            </UserManageDropdown>
+            </MemberManageDropdown>
           </div>
         </div>
         <div className="flex items-center gap-x-1 mt-2">

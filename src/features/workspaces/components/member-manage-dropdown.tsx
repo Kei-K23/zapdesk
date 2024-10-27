@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useManageMemberModalStore } from "../store/manage-member-modal-store";
 
-interface UserManageDropdownProps {
+interface MemberManageDropdownProps {
   children: React.ReactNode;
   authorId: Id<"members">;
   authorUserId: Id<"users">;
@@ -22,13 +22,13 @@ interface UserManageDropdownProps {
   currentAuthMember?: Doc<"members">;
 }
 
-export default function UserManageDropdown({
+export default function MemberManageDropdown({
   children,
   authorId,
   authorUserId,
   authorRole,
   currentAuthMember,
-}: UserManageDropdownProps) {
+}: MemberManageDropdownProps) {
   const { toast } = useToast();
   const router = useRouter();
   const workspaceId = useWorkspaceId();
@@ -119,6 +119,7 @@ export default function UserManageDropdown({
             <User className="size-4" />
             <p className="font-semibold">View Full Profile</p>
           </DropdownMenuItem>
+          {/* TODO: Refactor for more clean and concise conditions */}
           {currentAuthMember?.role !== "member" &&
           currentAuthMember?._id !== authorId ? (
             authorRole === "member" &&
@@ -135,6 +136,7 @@ export default function UserManageDropdown({
                       memberId: authorId,
                       role: authorRole,
                       open: true,
+                      currentAuthMemberRole: currentAuthMember?.role,
                     });
                   }}
                 >
@@ -164,6 +166,7 @@ export default function UserManageDropdown({
                         memberId: authorId,
                         role: authorRole,
                         open: true,
+                        currentAuthMemberRole: currentAuthMember?.role,
                       });
                     }}
                   >
