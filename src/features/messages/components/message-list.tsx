@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { GetMessagesReturnType } from "../query/use-get-messages";
 import { differenceInMinutes, format, isToday, isYesterday } from "date-fns";
 import MessageItem from "./message-item";
@@ -46,7 +46,7 @@ export default function MessageList({
   const workspaceId = useWorkspaceId();
   const [editingId, setEditingId] = useState<Id<"messages"> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
+  const isLoadingMoreRef = useRef(false);
   const { data: currentMemberData } = useGetCurrentMember({ workspaceId });
 
   const groupedData = data?.reduce(
@@ -68,14 +68,27 @@ export default function MessageList({
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+  useEffect(() => {
+    if (!isLoadingMoreRef.current && !isLoadingMore && data) {
+      console.log(isLoadingMoreRef.current, isLoadingMore, data);
+      scrollToBottom();
+    }
+  }, [data, isLoadingMore]);
+
+  const handleLoadMore = useCallback(() => {
+    isLoadingMoreRef.current = true;
+    loadMore();
+  }, [loadMore]);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [data]);
+    if (!isLoadingMore) {
+      isLoadingMoreRef.current = false;
+    }
+  }, [isLoadingMore]);
 
   return (
     <div className="pb-4 flex-1 overflow-y-auto flex flex-col-reverse  message-scrollbar">
-      <div ref={messagesEndRef} className="w-full h-1 bg-red-300" />
+      <div ref={messagesEndRef} className="w-full h-1" />
       {Object.entries(groupedData || {}).map(([dateKey, data]) => (
         <div key={dateKey}>
           <div className="text-center my-3 relative">
@@ -131,7 +144,7 @@ export default function MessageList({
             const observer = new IntersectionObserver(
               ([entry]) => {
                 if (entry.isIntersecting && canLoadMore) {
-                  loadMore();
+                  handleLoadMore();
                 }
               },
               {

@@ -17,9 +17,9 @@ import { usePanel } from "@/hooks/use-panel";
 import ThreadBar from "./thread-bar";
 import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
 import RoleIndicator from "@/components/role-indicator";
-import UserHoverCard from "@/components/user/user-hover-card";
 import useGetMutualWorkspaces from "@/features/workspaces/query/use-get-mutual-workspaces";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
+import UserPopoverCard from "@/components/user/user-popover-card";
 
 const Renderer = dynamic(() => import("./renderer"), { ssr: false });
 const Editor = dynamic(() => import("@/components/editor"), { ssr: false });
@@ -227,7 +227,7 @@ export default function MessageItem({
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
         )}
       >
-        <UserHoverCard
+        <UserPopoverCard
           bio={authorBio}
           userId={userId}
           name={authorName}
@@ -238,16 +238,13 @@ export default function MessageItem({
           isCurrentAuthUser={currentAuthUser}
           authorRole={role}
         >
-          <Avatar
-            className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer"
-            onClick={() => onOpenMemberProfile(memberId as string)}
-          >
+          <Avatar className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer">
             <AvatarImage src={authorImage} alt={authorName} />
             <AvatarFallback className="text-white rounded-md text-[16px] md:text-xl bg-indigo-600 font-bold">
               {fallbackAvatar}
             </AvatarFallback>
           </Avatar>
-        </UserHoverCard>
+        </UserPopoverCard>
         {isEditing ? (
           <div className="w-full">
             <Editor
@@ -261,7 +258,7 @@ export default function MessageItem({
         ) : (
           <div>
             <div className="flex items-center gap-x-2">
-              <UserHoverCard
+              <UserPopoverCard
                 bio={authorBio}
                 userId={userId}
                 name={authorName}
@@ -275,7 +272,7 @@ export default function MessageItem({
                 <span className="text-[15px] md:text-[17px] truncate hover:underline cursor-pointer">
                   {authorName}
                 </span>
-              </UserHoverCard>
+              </UserPopoverCard>
               <RoleIndicator role={role!} />
               <Hint label={formatFulltime(new Date(createdAt!))}>
                 <button className="text-sm text-muted-foreground">

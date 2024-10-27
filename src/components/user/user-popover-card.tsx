@@ -1,3 +1,8 @@
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { Button } from "../ui/button";
@@ -9,11 +14,6 @@ import useRemoveFriendship from "@/features/friendships/mutation/use-remove-frie
 import useGetFollowers from "@/features/friendships/query/use-get-followers";
 import useGetFollowings from "@/features/friendships/query/use-get-followings";
 import MemberManageDropdown from "@/features/workspaces/components/member-manage-dropdown";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
 
 interface UserHoverCardProps {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ interface UserHoverCardProps {
   workspaces?: Doc<"workspaces">[];
 }
 
-export default function UserHoverCard({
+export default function UserPopoverCard({
   children,
   name,
   avatar,
@@ -95,9 +95,9 @@ export default function UserHoverCard({
   };
 
   return (
-    <HoverCard>
-      <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent>
+    <Popover>
+      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      <PopoverContent>
         <div className="flex items-start justify-between gap-x-4">
           <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
             <AvatarImage src={avatar} alt={name} />
@@ -170,7 +170,7 @@ export default function UserHoverCard({
             </span>
           </div>
         )}
-      </HoverCardContent>
-    </HoverCard>
+      </PopoverContent>
+    </Popover>
   );
 }
