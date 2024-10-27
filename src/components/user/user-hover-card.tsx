@@ -13,7 +13,7 @@ import useGetRelationship from "@/features/friendships/query/use-get-relationshi
 import useRemoveFriendship from "@/features/friendships/mutation/use-remove-friendship";
 import useGetFollowers from "@/features/friendships/query/use-get-followers";
 import useGetFollowings from "@/features/friendships/query/use-get-followings";
-import UserManageDropdown from "./user-manage-dropdown";
+import UserManageDropdown from "../../features/workspaces/components/user-manage-dropdown";
 
 interface UserHoverCardProps {
   children: React.ReactNode;

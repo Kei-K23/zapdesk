@@ -53,7 +53,6 @@ export default function MemberProfilePanel({
   const { toast } = useToast();
   const { data: memberData, isLoading: memberDataLoading } =
     useGetMember(memberId);
-
   const { data: currentMember, isLoading: currentMemberLoading } =
     useGetCurrentMember({ workspaceId });
 

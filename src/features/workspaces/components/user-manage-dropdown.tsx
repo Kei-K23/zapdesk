@@ -8,11 +8,12 @@ import {
 import useDeleteMember from "@/features/workspaces/mutation/use-delete-member";
 import useUpdateMember from "@/features/workspaces/mutation/use-update-member";
 import useConfirm from "@/hooks/use-confirm";
-import { DoorOpen, Gavel, User } from "lucide-react";
-import { Doc, Id } from "../../../convex/_generated/dataModel";
+import { DoorOpen, Gavel, User, UserCog } from "lucide-react";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import useWorkspaceId from "@/features/workspaces/hooks/use-workspace-id";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { useManageMemberModalStore } from "../store/manage-member-modal-store";
 
 interface UserManageDropdownProps {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ export default function UserManageDropdown({
   const { toast } = useToast();
   const router = useRouter();
   const workspaceId = useWorkspaceId();
+  const [manageModalStore, setManageModalStore] = useManageMemberModalStore();
   const [LeaveMemberConfirmDialog, leaveMemberConfirm] = useConfirm(
     "Are your sure?",
     "You are leaving the workspace. This process cannot be undo."
@@ -68,7 +70,6 @@ export default function UserManageDropdown({
       {
         onSuccess: () => {
           toast({ title: "Member was kicked from this workspace" });
-          // Redirect to workspace
           router.replace("/workspaces");
         },
         onError: () => {
@@ -94,7 +95,6 @@ export default function UserManageDropdown({
       {
         onSuccess: () => {
           toast({ title: "Successfully left the workspace" });
-          // Redirect to workspace
           router.replace("/workspaces");
         },
         onError: () => {
@@ -116,16 +116,34 @@ export default function UserManageDropdown({
           <DropdownMenuItem
             disabled={isPending}
             className="flex items-center gap-2 cursor-pointer"
-            onClick={() => router.replace(`/profile/${authorUserId}`)}
+            onClick={(e) => {
+              e.stopPropagation();
+              router.replace(`/profile/${authorUserId}`);
+            }}
           >
             <User className="size-4" />
             <p className="font-semibold">View Full Profile</p>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
           {currentAuthMember?.role !== "member" &&
           currentAuthMember?._id !== authorId &&
           authorRole === "member" ? (
             <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                disabled={isPending}
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setManageModalStore({
+                    memberId: authorId,
+                    role: authorRole,
+                    open: true,
+                  });
+                }}
+              >
+                <UserCog className="size-4" />
+                <p className="font-semibold">Manage member</p>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 disabled={isPending}
                 className="flex items-center gap-2 cursor-pointer bg-destructive focus:bg-destructive/90"

@@ -64,7 +64,7 @@ export default function WorkspaceSwitcher() {
               >
                 {w?.name.charAt(0).toUpperCase()}
               </Button>
-              <p className="text-[16px] font-[500] line-clamp-1">{w?.name}</p>
+              <p className="text-[15px] font-[500] line-clamp-1">{w?.name}</p>
             </DropdownMenuItem>
           ))
         ) : (
