@@ -97,7 +97,7 @@ export default function UserHoverCard({
   return (
     <HoverCard>
       <HoverCardTrigger asChild>{children}</HoverCardTrigger>
-      <HoverCardContent>
+      <HoverCardContent className="w-[350px]">
         <div className="flex items-start justify-between gap-x-4">
           <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
             <AvatarImage src={avatar} alt={name} />

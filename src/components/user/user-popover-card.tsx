@@ -97,7 +97,7 @@ export default function UserPopoverCard({
   return (
     <Popover>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="w-[350px]">
         <div className="flex items-start justify-between gap-x-4">
           <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md">
             <AvatarImage src={avatar} alt={name} />
