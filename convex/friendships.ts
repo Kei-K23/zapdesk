@@ -3,9 +3,13 @@ import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { Id } from "./_generated/dataModel";
 
-const populateUser = async (ctx: QueryCtx, id: Id<"users">) => {
+const populateUser = async (ctx: QueryCtx, id?: Id<"users">) => {
   try {
-    return await ctx.db.get(id);
+    if (id) {
+      return await ctx.db.get(id);
+    } else {
+      return null;
+    }
   } catch (error) {
     console.error(`Error fetching user with ID ${id}:`, error);
     return null;
@@ -70,7 +74,7 @@ export const getFollowings = query({
 
 export const getRelationship = query({
   args: {
-    userOneId: v.id("users"),
+    userOneId: v.optional(v.id("users")),
     userTwoId: v.id("users"),
   },
   handler: async (ctx, args) => {

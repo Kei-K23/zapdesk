@@ -6,7 +6,7 @@ export default function useGetRelationship({
   userOneId,
   userTwoId,
 }: {
-  userOneId: Id<"users">;
+  userOneId?: Id<"users">;
   userTwoId: Id<"users">;
 }) {
   const data = useQuery(api.friendships.getRelationship, {

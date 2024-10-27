@@ -49,7 +49,7 @@ const schema = defineSchema({
     memberTwoId: v.id("members"), // Represent receiver
   }).index("by_workspace_id", ["workspaceId"]),
   friendships: defineTable({
-    followerId: v.id("users"),
+    followerId: v.optional(v.id("users")),
     followingId: v.id("users"),
   })
     .index("by_follower_id", ["followerId"])

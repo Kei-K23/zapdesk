@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
+import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import { Doc } from "../../../../convex/_generated/dataModel";
-import ProfileContainer from "./profile-container";
+import ProfileContainer, {
+  ProfileContainerSkeleton,
+} from "./profile-container";
+import useGetFollowers from "@/features/friendships/query/use-get-followers";
+import useGetFollowings from "@/features/friendships/query/use-get-followings";
 
 // Mock user data based on the provided schema
 const initialUser = {
@@ -22,16 +27,33 @@ const initialUser = {
 };
 
 export default function ProfileScreen() {
-  //   const { data: followersData, isLoading: followersDataLoading } =
-  //     useGetFollowers({ userId: user?._id! });
+  const { data: currentAuthUser, isLoading: currentAuthUserLoading } =
+    useCurrentUser();
+  const { data: followersData, isLoading: followersDataLoading } =
+    useGetFollowers({ userId: currentAuthUser?._id! });
+  const { data: followingData, isLoading: followingDataLoading } =
+    useGetFollowings({
+      userId: currentAuthUser?._id!,
+    });
+
+  const isLoading =
+    currentAuthUserLoading || followersDataLoading || followingDataLoading;
+
+  if (isLoading) {
+    return <ProfileContainerSkeleton />;
+  }
+
+  if (!currentAuthUser) {
+    return <div>No use found</div>;
+  }
 
   return (
     <ProfileContainer
       isCurrentUserSelf={true}
-      user={initialUser as Doc<"users">}
-      isLoading={false}
-      followers={[]}
-      following={[]}
+      user={currentAuthUser}
+      isLoading={isLoading}
+      followers={followersData ?? []}
+      following={followingData ?? []}
     />
   );
 }
