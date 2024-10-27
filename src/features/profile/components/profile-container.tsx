@@ -128,7 +128,12 @@ export default function ProfileContainer({
             following={following}
           />
           <Separator />
-          <ProfileTags isLoading={isLoading} user={user!} />
+          <ProfileTags
+            isLoading={isLoading}
+            user={user!}
+            followers={followers}
+            following={following}
+          />
         </CardContent>
 
         <CardFooter className="flex justify-between">

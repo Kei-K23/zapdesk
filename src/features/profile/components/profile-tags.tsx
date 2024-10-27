@@ -14,15 +14,24 @@ import {
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 
 interface ProfileTagsProps {
   user: Doc<"users">;
   isLoading: boolean;
+  followers: Doc<"users">[];
+  following: Doc<"users">[];
 }
 
-export default function ProfileTags({ user, isLoading }: ProfileTagsProps) {
+export default function ProfileTags({
+  user,
+  isLoading,
+  followers,
+  following,
+}: ProfileTagsProps) {
   const [tagSelected, setTagSelected] = useState<
-    "about" | "social" | "contact" | ""
+    "about" | "social" | "contact" | "followers" | "following" | ""
   >("about");
 
   return (
@@ -60,6 +69,28 @@ export default function ProfileTags({ user, isLoading }: ProfileTagsProps) {
           )}
         >
           Contact
+        </TabsTrigger>
+        <TabsTrigger
+          disabled={isLoading}
+          onClick={() => setTagSelected("followers")}
+          value="followers"
+          className={cn(
+            "disabled:cursor-not-allowed",
+            tagSelected === "followers" && "underline"
+          )}
+        >
+          Followers
+        </TabsTrigger>
+        <TabsTrigger
+          disabled={isLoading}
+          onClick={() => setTagSelected("following")}
+          value="following"
+          className={cn(
+            "disabled:cursor-not-allowed",
+            tagSelected === "following" && "underline"
+          )}
+        >
+          Following
         </TabsTrigger>
       </TabsList>
       <TabsContent value="about" className="space-y-4">
@@ -152,6 +183,80 @@ export default function ProfileTags({ user, isLoading }: ProfileTagsProps) {
               readOnly
             />
           </div>
+        )}
+      </TabsContent>
+      <TabsContent value="followers" className="space-y-4">
+        {followers.length ? (
+          <div className="space-y-6 mt-5">
+            {followers.map((follower) => (
+              <div
+                key={follower._id}
+                className="border-b border-b-neutral-700 pb-5 flex items-center justify-between gap-x-5"
+              >
+                <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                  <Avatar className="size-14">
+                    <AvatarImage src={follower?.image} alt={follower?.name} />
+                    <AvatarFallback className="text-3xl font-semibold">
+                      {follower?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-left">
+                    <p className="text-[15px] font-semibold">
+                      {follower?.name}
+                    </p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">
+                      {follower?.role}
+                    </p>
+                  </div>
+                </div>
+                <Button variant={"transparent"} size={"sm"}>
+                  Follow
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground my-5 text-center">No followers</p>
+        )}
+      </TabsContent>
+      <TabsContent value="following" className="space-y-4">
+        {following.length ? (
+          <div className="space-y-6 mt-5">
+            {following.map((f) => (
+              <div
+                key={f._id}
+                className="border-b border-b-neutral-700 pb-5 flex items-start justify-between gap-x-5"
+              >
+                <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                  <Avatar className="size-14">
+                    <AvatarImage src={f?.image} alt={f?.name} />
+                    <AvatarFallback className="text-3xl font-semibold">
+                      {f?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="text-left">
+                    <p className="text-[15px] font-semibold">{f?.name}</p>
+                    <p className="text-[13px] font-semibold text-muted-foreground">
+                      {f?.role}
+                    </p>
+                  </div>
+                </div>
+                <Button variant={"transparent"} size={"sm"}>
+                  Follow
+                </Button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-muted-foreground my-5 text-center">
+            No following users
+          </p>
         )}
       </TabsContent>
     </Tabs>
