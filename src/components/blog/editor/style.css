@@ -1,0 +1,119 @@
+.ProseMirror {
+    min-height: 500px;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+/* Basic editor styles */
+.ProseMirror>*+* {
+    margin-top: 0.75em;
+}
+
+.ProseMirror ul,
+.ProseMirror ol {
+    padding: 0 1rem;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3,
+.ProseMirror h4,
+.ProseMirror h5,
+.ProseMirror h6 {
+    line-height: 1.1;
+}
+
+.ProseMirror code {
+    background-color: rgba(97, 97, 97, 0.1);
+    color: #616161;
+}
+
+.ProseMirror pre {
+    background: #0d0d0d;
+    color: #fff;
+    font-family: 'JetBrainsMono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.ProseMirror pre code {
+    color: inherit;
+    padding: 0;
+    background: none;
+    font-size: 0.8rem;
+}
+
+.ProseMirror img {
+    max-width: 100%;
+    height: auto;
+}
+
+.ProseMirror blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(13, 13, 13, 0.1);
+}
+
+.ProseMirror hr {
+    border: none;
+    border-top: 2px solid rgba(13, 13, 13, 0.1);
+    margin: 2rem 0;
+}
+
+/* Code Highlighting */
+.hljs-comment,
+.hljs-quote {
+    color: #616161;
+}
+
+.hljs-variable,
+.hljs-template-variable,
+.hljs-attribute,
+.hljs-tag,
+.hljs-name,
+.hljs-regexp,
+.hljs-link,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class {
+    color: #f98181;
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params {
+    color: #fbbc88;
+}
+
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet {
+    color: #b9f18d;
+}
+
+.hljs-title,
+.hljs-section {
+    color: #faf594;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+    color: #70cff8;
+}
+
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-strong {
+    font-weight: 700;
+}

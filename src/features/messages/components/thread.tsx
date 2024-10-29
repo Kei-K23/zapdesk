@@ -14,6 +14,7 @@ import useGenerateImageUrl from "../mutation/use-generate-image-url";
 import { useToast } from "@/hooks/use-toast";
 import MessageList from "./message-list";
 import { useGetMessages } from "../query/use-get-messages";
+import { useCurrentUser } from "@/features/auth/query/use-current-user";
 
 interface ThreadProps {
   messageId: Id<"messages">;
@@ -44,6 +45,8 @@ export default function Thread({ messageId, onClose }: ThreadProps) {
     });
   const { data: threadMessage, isLoading: threadMessageLoading } =
     useGetMessage(messageId);
+  const { data: currentUserData, isLoading: currentUserDataLoading } =
+    useCurrentUser();
 
   const { mutate: createMessageMutation } = useCreateMessage();
   const { mutate: generateImageUrlMutation } = useGenerateImageUrl();
@@ -130,6 +133,7 @@ export default function Thread({ messageId, onClose }: ThreadProps) {
 
   const parentMessageItem = () => (
     <MessageItem
+      userId={currentUserData?._id!}
       key={threadMessage?._id}
       id={threadMessage?._id}
       memberId={threadMessage?.memberId}
@@ -147,7 +151,11 @@ export default function Thread({ messageId, onClose }: ThreadProps) {
     />
   );
 
-  if (threadMessageLoading || currentMemberDataLoading) {
+  if (
+    threadMessageLoading ||
+    currentMemberDataLoading ||
+    currentUserDataLoading
+  ) {
     return (
       <div className="flex-1 h-full flex flex-col justify-center items-center">
         <Loader2 className="size-4 animate-spin text-muted-foreground" />
