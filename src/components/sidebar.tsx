@@ -6,7 +6,6 @@ import SidebarButton from "../features/workspaces/components/sidebar-button";
 import { Home, Pen } from "lucide-react";
 import { FaChalkboard } from "react-icons/fa";
 import { usePathname, useRouter } from "next/navigation";
-import Hint from "@/components/hint";
 import { useGetWorkspaces } from "../features/workspaces/query/user-get-workspaces";
 
 export default function Sidebar() {
@@ -17,7 +16,7 @@ export default function Sidebar() {
   const isWorkspaces = pathname.includes("/workspaces");
 
   return (
-    <aside className="w-16 bg-neutral-900/50 border-r-[0.5px] border-r-neutral-800 flex flex-col items-center pt-5 h-full">
+    <aside className="w-16 bg-neutral-900/50 border-r-[0.5px] border-r-neutral-800 flex flex-col items-center pt-5 h-full fixed">
       <div className="mt-4 space-y-4">
         <SidebarButton
           label="Home"
@@ -37,8 +36,8 @@ export default function Sidebar() {
           label="Blog"
           hintLabel="Blog Posts"
           icon={Pen}
-          isActive={pathname === "/blog-posts"}
-          handleClick={() => router.push(`/blog-posts`)}
+          isActive={pathname === "/blogs"}
+          handleClick={() => router.push(`/blogs`)}
         />
         <SidebarButton
           label="WB"

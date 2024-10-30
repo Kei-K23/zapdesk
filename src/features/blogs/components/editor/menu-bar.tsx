@@ -18,18 +18,25 @@ import {
   Undo,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-type MenuBarProps = {
+interface MenuBarProps {
+  isLoading: boolean;
   editor: Editor | null;
-};
+}
 
-export function MenuBar({ editor }: MenuBarProps) {
+export function MenuBar({ editor, isLoading }: MenuBarProps) {
   if (!editor) {
     return null;
   }
 
   return (
-    <div className="border border-input bg-transparent rounded-t-lg p-1 flex flex-wrap gap-1">
+    <div
+      className={cn(
+        "border border-input bg-transparent rounded-t-lg p-1 flex flex-wrap gap-1",
+        isLoading && "pointer-events-none cursor-not-allowed opacity-50"
+      )}
+    >
       <Button
         variant="ghost"
         size="icon"

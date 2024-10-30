@@ -9,7 +9,7 @@ export default function SidebarLayout({
   return (
     <div className="flex flex-row w-full h-full">
       <Sidebar />
-      <div className="flex-1 w-full">{children}</div>
+      <div className="flex-1 w-full ml-16">{children}</div>
     </div>
   );
 }
