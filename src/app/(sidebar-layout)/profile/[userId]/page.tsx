@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
-import { use } from "react";
-
 import { useGetUser } from "@/features/auth/query/use-get-user";
 import { Id } from "../../../../../convex/_generated/dataModel";
 import ProfileContainer, {
