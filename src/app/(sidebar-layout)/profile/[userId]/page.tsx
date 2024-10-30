@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
-"use client";;
+"use client";
 import { use } from "react";
 
 import { useGetUser } from "@/features/auth/query/use-get-user";
@@ -12,13 +12,12 @@ import useGetFollowings from "@/features/friendships/query/use-get-followings";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
 
 interface UserProfileIdPagePros {
-  params: Promise<{
+  params: {
     userId: string;
-  }>;
+  };
 }
 
-export default function UserProfileIdPage(props: UserProfileIdPagePros) {
-  const params = use(props.params);
+export default function UserProfileIdPage({ params }: UserProfileIdPagePros) {
   const { data: user, isLoading: userLoading } = useGetUser(
     params.userId as Id<"users">
   );

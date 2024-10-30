@@ -1,12 +1,11 @@
 import JoinCodeScreen from "@/features/join/components/join-code-screen";
 
 interface JoinCodePageProps {
-  params: Promise<{
+  params: {
     joinCode: string;
-  }>;
+  };
 }
 
-export default async function JoinCodePage(props: JoinCodePageProps) {
-  const params = await props.params;
+export default async function JoinCodePage({ params }: JoinCodePageProps) {
   return <JoinCodeScreen joinCode={params.joinCode} />;
 }
