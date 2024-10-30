@@ -75,6 +75,13 @@ const schema = defineSchema({
       "parentMessageId",
       "conversationId",
     ]),
+  blogs: defineTable({
+    title: v.string(),
+    content: v.string(),
+    image: v.optional(v.id("_storage")),
+    userId: v.id("users"),
+    updatedAt: v.optional(v.number()),
+  }).index("by_user_id", ["userId"]),
   reactions: defineTable({
     memberId: v.id("members"),
     workspaceId: v.id("workspaces"),
