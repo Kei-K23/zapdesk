@@ -20,6 +20,8 @@ import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
+import Hint from "@/components/hint";
+import { ArrowBigLeftDashIcon } from "lucide-react";
 
 const lowlight = createLowlight(common);
 
@@ -99,7 +101,14 @@ export function BlogPostEditor() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <div className="w-full max-w-3xl mx-auto ">
+      <div className="w-full max-w-3xl mx-auto">
+        <div className="fixed top-4 left-80">
+          <Hint label="Back">
+            <Button variant={"ghost"} onClick={() => router.replace("/blogs")}>
+              <ArrowBigLeftDashIcon className="size-6 text-muted-foreground" />
+            </Button>
+          </Hint>
+        </div>
         <h2 className="text-2xl">Create New Blog</h2>
         <div className="space-y-4 mt-5">
           <div className="space-y-2">
