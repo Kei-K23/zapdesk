@@ -41,18 +41,27 @@ export default function BlogPostIdPageScreen({
             </Button>
           </Hint>
         </div>
-        <h2>{blogData?.blog?.title}</h2>
-        <p>{blogData?.blog?.description}</p>
-        <div className="flex items-center space-x-2">
-          <Avatar className="size-8">
+        <h2 className="font-bold text-2xl">{blogData?.blog?.title}</h2>
+        <p className="text-muted-foreground">{blogData?.blog?.description}</p>
+        <div className="flex items-center space-x-2 my-4">
+          <Avatar className="size-12">
             <AvatarImage src={blogData?.user?.image} />
             <AvatarFallback className="text-white rounded-md text-[17px] bg-indigo-600 font-bold">
               {fallbackAvatar}
             </AvatarFallback>
           </Avatar>
-          <span className="text-sm font-bold">{blogData?.user?.name}</span>
+          <div className="flex flex-col">
+            <span className="text-[16px] font-bold">
+              {blogData?.user?.name}
+            </span>
+            <span className="text-sm text-muted-foreground">
+              {blogData?.user?.role}
+            </span>
+          </div>
         </div>
-        <ContentDisplay content={JSON.parse(blogData?.blog?.content!)} />
+        <div className="mb-5 mt-8">
+          <ContentDisplay content={JSON.parse(blogData?.blog?.content!)} />
+        </div>
       </div>
     </div>
   );

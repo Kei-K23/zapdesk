@@ -48,7 +48,7 @@ export function ContentDisplay({ content }: ContentDisplayProps) {
 
   return (
     <div className="border rounded-lg p-4 bg-card">
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="min-h-[150px]" />
     </div>
   );
 }

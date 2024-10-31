@@ -138,10 +138,10 @@ export function BlogPostEditor() {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
-          <div className="min-h-[500px]">
+          <div className="min-h-[150px]">
             <div className="border rounded-lg">
               <MenuBar isLoading={isLoading} editor={editor} />
-              <div className="min-h-[500px] p-4">
+              <div className="min-h-[150px] p-4">
                 <EditorContent
                   disabled={isLoading}
                   editor={editor}

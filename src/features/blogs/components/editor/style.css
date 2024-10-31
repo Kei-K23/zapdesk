@@ -66,6 +66,9 @@
 }
 
 /* Tiptap Default editor */
+.tiptap {
+    min-height: auto;
+}
 
 /* List styles */
 .tiptap ul {
