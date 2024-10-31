@@ -129,7 +129,7 @@ export function MenuBar({ editor, isLoading }: MenuBarProps) {
       >
         <Quote className="h-4 w-4" />
       </Button>
-      <Button
+      {/* <Button
         variant="ghost"
         size="icon"
         onClick={() => {
@@ -158,7 +158,7 @@ export function MenuBar({ editor, isLoading }: MenuBarProps) {
         className={editor.isActive("link") ? "bg-muted" : ""}
       >
         <Link className="h-4 w-4" />
-      </Button>
+      </Button> */}
       <Button
         variant="ghost"
         size="icon"

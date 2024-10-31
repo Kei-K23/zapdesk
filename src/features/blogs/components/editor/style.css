@@ -65,6 +65,85 @@
     margin: 2rem 0;
 }
 
+/* Tiptap Default editor */
+
+/* List styles */
+.tiptap ul {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+    list-style: disc;
+}
+
+.tiptap ol {
+    padding: 0 1rem;
+    margin: 1.25rem 1rem 1.25rem 0.4rem;
+    list-style: decimal;
+}
+
+.tiptap ol li p {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.tiptap ul li p {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+
+/* Heading styles */
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+    line-height: 1.1;
+    margin-top: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-wrap: pretty;
+}
+
+.tiptap h1,
+.tiptap h2 {
+    margin-top: 1.6rem;
+    margin-bottom: 1rem;
+}
+
+.tiptap h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.tiptap h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.tiptap h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.tiptap blockquote {
+    border-left: 3px solid gray;
+    margin: 1.5rem 0;
+    padding-left: 1rem;
+}
+
+.tiptap hr {
+    border: none;
+    border-top: 1px solid gray;
+    margin: 2rem 0;
+}
+
 /* Code Highlighting */
 .hljs-comment,
 .hljs-quote {
