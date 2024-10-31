@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import { useGetBlogs } from "../query/use-get-blogs";
+import BlogPostCard from "./blog-post-card";
 
 export default function BlogPostScreen() {
   const { data: blogsData, isLoading: blogsDataLoading } = useGetBlogs();
@@ -13,8 +14,10 @@ export default function BlogPostScreen() {
   }
 
   return (
-    <div>
-      {blogsData?.map((blog) => <div key={blog._id}>{blog.title}</div>)}
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {blogsData?.map((data) => (
+        <BlogPostCard key={data.blog._id} blog={data.blog} user={data.user} />
+      ))}
     </div>
   );
 }

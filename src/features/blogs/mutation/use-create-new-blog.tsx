@@ -6,6 +6,7 @@ import { Id } from "../../../../convex/_generated/dataModel";
 type RequestType = {
   title: string;
   content: string;
+  description: string;
   userId: Id<"users">;
   image?: Id<"_storage">;
 };

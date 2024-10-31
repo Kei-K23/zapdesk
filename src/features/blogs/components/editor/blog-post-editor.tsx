@@ -19,6 +19,7 @@ import "./style.css";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea";
 
 const lowlight = createLowlight(common);
 
@@ -26,6 +27,7 @@ export function BlogPostEditor() {
   const { toast } = useToast();
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
   const { data: currentUser, isLoading: currentUserLoading } = useCurrentUser();
 
   const editor = useEditor({
@@ -73,6 +75,7 @@ export function BlogPostEditor() {
     createNewBlogMutation(
       {
         title,
+        description,
         content: JSON.stringify(content),
         userId: currentUser._id,
       },
@@ -80,6 +83,7 @@ export function BlogPostEditor() {
         onSuccess: () => {
           toast({ title: "Successfully create the blog" });
           setTitle("");
+          setDescription("");
           editor.destroy();
           router.replace("/blogs");
         },
@@ -97,7 +101,7 @@ export function BlogPostEditor() {
     <div className="container mx-auto p-4 space-y-6">
       <div className="w-full max-w-3xl mx-auto ">
         <h2 className="text-2xl">Create New Blog</h2>
-        <div className="space-y-4">
+        <div className="space-y-4 mt-5">
           <div className="space-y-2">
             <Label htmlFor="title">Title</Label>
             <Input
@@ -107,6 +111,17 @@ export function BlogPostEditor() {
               required
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              disabled={isLoading}
+              id="description"
+              placeholder="Awesome description"
+              required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <div className="min-h-[500px]">

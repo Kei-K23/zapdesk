@@ -28,7 +28,11 @@ export const getBlogs = query({
       if (user) {
         finalData.push({
           blog,
-          user,
+          user: {
+            name: user.name,
+            email: user.email,
+            image: user.image,
+          },
         });
       }
     }
@@ -53,13 +57,17 @@ export const getBlogById = query({
     }
 
     const user = await populateUser(ctx, blog.userId);
-    if (user) {
+    if (!user) {
       return null;
     }
 
     return {
       blog,
-      user,
+      user: {
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      },
     };
   },
 });
@@ -68,6 +76,7 @@ export const createBlog = mutation({
   args: {
     title: v.string(),
     content: v.string(),
+    description: v.string(),
     userId: v.id("users"),
     image: v.optional(v.id("_storage")),
   },
@@ -80,6 +89,7 @@ export const createBlog = mutation({
 
     return await ctx.db.insert("blogs", {
       title: args.title.trim(),
+      description: args.description.trim(),
       content: args.content.trim(),
       userId: args.userId,
       image: args.image,

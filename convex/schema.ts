@@ -77,11 +77,22 @@ const schema = defineSchema({
     ]),
   blogs: defineTable({
     title: v.string(),
+    description: v.string(),
     content: v.string(),
     image: v.optional(v.id("_storage")),
     userId: v.id("users"),
     updatedAt: v.optional(v.number()),
   }).index("by_user_id", ["userId"]),
+  tags: defineTable({
+    name: v.string(),
+  }).index("by_name", ["name"]),
+  blogsTags: defineTable({
+    tagId: v.id("tags"),
+    blogId: v.id("blogs"),
+  })
+    .index("by_blog_id", ["blogId"])
+    .index("by_tag_id", ["tagId"])
+    .index("by_blog_id_tag_id", ["blogId", "tagId"]),
   reactions: defineTable({
     memberId: v.id("members"),
     workspaceId: v.id("workspaces"),
