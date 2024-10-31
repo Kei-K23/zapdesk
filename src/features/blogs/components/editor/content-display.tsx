@@ -31,7 +31,9 @@ export function ContentDisplay({ content }: ContentDisplayProps) {
       Typography,
       CodeBlockLowlight.extend({
         addNodeView() {
-          return ReactNodeViewRenderer(CodeBlockComponent);
+          return ReactNodeViewRenderer((c) =>
+            CodeBlockComponent({ isDisabled: true, ...c })
+          );
         },
       }).configure({ lowlight }),
     ],

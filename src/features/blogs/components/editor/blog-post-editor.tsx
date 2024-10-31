@@ -50,7 +50,9 @@ export function BlogPostEditor() {
       Typography,
       CodeBlockLowlight.extend({
         addNodeView() {
-          return ReactNodeViewRenderer(CodeBlockComponent);
+          return ReactNodeViewRenderer((c) =>
+            CodeBlockComponent({ isDisabled: true, ...c })
+          );
         },
       }).configure({ lowlight }),
     ],

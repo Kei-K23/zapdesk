@@ -20,7 +20,7 @@ export default function BlogPostScreen() {
   }
 
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="p-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {blogsData?.map((data) => (
         <BlogPostCard key={data.blog._id} blog={data.blog} user={data.user} />
       ))}

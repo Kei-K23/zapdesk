@@ -40,7 +40,7 @@ export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
   }, [blog.updatedAt]);
 
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
+    <Card className="overflow-hidden transition-shadow hover:shadow-indigo-500/50 hover:shadow-lg">
       <CardHeader className="p-0">
         {blog.image && (
           <div className="relative h-48 w-full">
@@ -55,7 +55,11 @@ export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
         )}
       </CardHeader>
       <CardContent className="p-4">
-        <CardTitle className="mb-2 line-clamp-2">{blog.title}</CardTitle>
+        <CardTitle className="mb-2 line-clamp-2">
+          <Link href={`/blogs/${blog._id}`} className="hover:underline">
+            {blog.title}
+          </Link>
+        </CardTitle>
         <p className="mb-4 text-sm text-muted-foreground line-clamp-3">
           {blog.description}
         </p>
@@ -77,13 +81,6 @@ export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
           )}
         </div>
       </CardContent>
-      <CardFooter className="p-4 pt-0">
-        <Button asChild variant="ghost" className="w-full">
-          <Link href={`/blogs/${blog._id}`}>
-            Read More <ChevronRightIcon className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 }
