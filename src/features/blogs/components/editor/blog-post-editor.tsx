@@ -1,13 +1,13 @@
 "use client";
 
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, ReactNodeViewRenderer } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import Typography from "@tiptap/extension-typography";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { common, createLowlight } from "lowlight";
+import { all, createLowlight } from "lowlight";
 import { MenuBar } from "./menu-bar";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -22,8 +22,9 @@ import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import Hint from "@/components/hint";
 import { ArrowBigLeftDashIcon } from "lucide-react";
+import { CodeBlockComponent } from "./code-block-component";
 
-const lowlight = createLowlight(common);
+const lowlight = createLowlight(all);
 
 export function BlogPostEditor() {
   const { toast } = useToast();
@@ -47,9 +48,11 @@ export function BlogPostEditor() {
         placeholder: "Write something amazing...",
       }),
       Typography,
-      CodeBlockLowlight.configure({
-        lowlight,
-      }),
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockComponent);
+        },
+      }).configure({ lowlight }),
     ],
     content: "",
     editorProps: {

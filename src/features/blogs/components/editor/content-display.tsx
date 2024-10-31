@@ -1,13 +1,16 @@
-import { JSONContent } from "@tiptap/react";
+import { JSONContent, ReactNodeViewRenderer } from "@tiptap/react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { common, createLowlight } from "lowlight";
+import { all, createLowlight } from "lowlight";
+import { CodeBlockComponent } from "./code-block-component";
 
-const lowlight = createLowlight(common);
+import "./style.css";
+
+const lowlight = createLowlight(all);
 
 interface ContentDisplayProps {
   content: JSONContent;
@@ -26,9 +29,11 @@ export function ContentDisplay({ content }: ContentDisplayProps) {
         openOnClick: true,
       }),
       Typography,
-      CodeBlockLowlight.configure({
-        lowlight,
-      }),
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(CodeBlockComponent);
+        },
+      }).configure({ lowlight }),
     ],
     content,
     editable: false,

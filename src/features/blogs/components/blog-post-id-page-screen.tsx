@@ -4,7 +4,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useGetBlog } from "../query/use-get-blog";
-import { ContentDisplay } from "./content-display";
+import { ContentDisplay } from "./editor/content-display";
 import { ArrowBigLeftDashIcon, Loader2 } from "lucide-react";
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
