@@ -1,6 +1,11 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
+import { Id } from "./_generated/dataModel";
+
+const populateUser = async (ctx: QueryCtx, id: Id<"users">) => {
+  return await ctx.db.get(id);
+};
 
 export const getBlogs = query({
   args: {},
@@ -11,13 +16,24 @@ export const getBlogs = query({
       return [];
     }
 
-    const blogs = await ctx.db.query("blogs").collect();
+    const blogs = await ctx.db.query("blogs").order("desc").collect();
 
     if (!blogs) {
       return [];
     }
 
-    return blogs;
+    const finalData = [];
+    for (const blog of blogs) {
+      const user = await populateUser(ctx, blog.userId);
+      if (user) {
+        finalData.push({
+          blog,
+          user,
+        });
+      }
+    }
+
+    return finalData;
   },
 });
 
@@ -31,8 +47,20 @@ export const getBlogById = query({
     if (!userId) {
       return null;
     }
+    const blog = await ctx.db.get(args.id);
+    if (!blog) {
+      return null;
+    }
 
-    return await ctx.db.get(args.id);
+    const user = await populateUser(ctx, blog.userId);
+    if (user) {
+      return null;
+    }
+
+    return {
+      blog,
+      user,
+    };
   },
 });
 
