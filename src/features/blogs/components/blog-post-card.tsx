@@ -4,10 +4,10 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarIcon } from "lucide-react";
-import { Doc } from "../../../../convex/_generated/dataModel";
+import { BlogType } from "../type";
 
 interface BlogPostCardProps {
-  blog: Doc<"blogs">;
+  blog: BlogType;
   user: {
     name?: string;
     email?: string;

@@ -87,7 +87,7 @@ export default function BlogPostIdPageScreen({
               </span>
             </div>
           </div>
-          <ManageBlogPostDropdown />
+          <ManageBlogPostDropdown id={blogData?.blog?._id} />
         </div>
         <div className="mb-5 mt-8">
           <ContentDisplay content={JSON.parse(blogData?.blog?.content!)} />

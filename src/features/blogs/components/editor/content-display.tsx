@@ -1,4 +1,4 @@
-import { JSONContent, ReactNodeViewRenderer } from "@tiptap/react";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
@@ -13,7 +13,7 @@ import "./style.css";
 const lowlight = createLowlight(all);
 
 interface ContentDisplayProps {
-  content: JSONContent;
+  content: string;
 }
 
 export function ContentDisplay({ content }: ContentDisplayProps) {

@@ -1,4 +1,6 @@
-import React from "react";
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+"use client";
+
 import { BlogPostEditor } from "./editor/blog-post-editor";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useGetBlog } from "../query/use-get-blog";
@@ -12,7 +14,11 @@ export default function BlogPostEditScreen({ id }: BlogPostEditScreenProps) {
 
   return (
     <div>
-      <BlogPostEditor blog={blogData} isPending={blogDataLoading} />
+      <BlogPostEditor
+        blog={blogData}
+        content={JSON.parse(blogData?.blog?.content!)}
+        isPending={blogDataLoading}
+      />
     </div>
   );
 }

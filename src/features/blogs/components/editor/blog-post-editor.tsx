@@ -1,6 +1,12 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 "use client";
 
-import { useEditor, EditorContent, ReactNodeViewRenderer } from "@tiptap/react";
+import {
+  useEditor,
+  EditorContent,
+  ReactNodeViewRenderer,
+  Content,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -12,7 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useCreateNewBlog from "../../mutation/use-create-new-blog";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import useGenerateImageUrl from "@/features/messages/mutation/use-generate-image-url";
 import "./style.css";
@@ -24,22 +30,13 @@ import Hint from "@/components/hint";
 import { ArrowBigLeftDashIcon, ImageIcon, X } from "lucide-react";
 import { CodeBlockComponent } from "./code-block-component";
 import Image from "next/image";
-import { Id } from "../../../../../convex/_generated/dataModel";
+import { BlogType } from "../../type";
 
 const lowlight = createLowlight(all);
 
 interface BlogPostEditorProps {
   blog?: {
-    blog: {
-      image: string | null | undefined;
-      _id: Id<"blogs">;
-      _creationTime: number;
-      updatedAt?: number | undefined;
-      title: string;
-      content: string;
-      userId: Id<"users">;
-      description: string;
-    } | null;
+    blog: BlogType | null;
     user: {
       name?: string;
       email?: string;
@@ -47,14 +44,21 @@ interface BlogPostEditorProps {
       role?: string;
     } | null;
   } | null;
+  content?: Content;
   isPending?: boolean;
 }
 
-export function BlogPostEditor({ blog, isPending }: BlogPostEditorProps) {
+export function BlogPostEditor({
+  blog,
+  isPending,
+  content,
+}: BlogPostEditorProps) {
   const { toast } = useToast();
   const router = useRouter();
-  const [title, setTitle] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
+  const [title, setTitle] = useState<string>(blog?.blog?.title || "");
+  const [description, setDescription] = useState<string>(
+    blog?.blog?.description || ""
+  );
   const { data: currentUser, isLoading: currentUserLoading } = useCurrentUser();
   const imageElementRef = useRef<HTMLInputElement | null>(null);
   const [image, setImage] = useState<File | null>(null);
@@ -81,7 +85,7 @@ export function BlogPostEditor({ blog, isPending }: BlogPostEditorProps) {
         },
       }).configure({ lowlight }),
     ],
-    content: "",
+    content,
     editorProps: {
       attributes: {
         class:
@@ -102,7 +106,8 @@ export function BlogPostEditor({ blog, isPending }: BlogPostEditorProps) {
   const isLoading =
     createNewBlogMutationLoading ||
     currentUserLoading ||
-    generateImageUrlMutationLoading;
+    generateImageUrlMutationLoading ||
+    !!isPending;
 
   const isDisabled =
     !isLoading &&
@@ -177,6 +182,13 @@ export function BlogPostEditor({ blog, isPending }: BlogPostEditorProps) {
 
   // Disabled the editor when loading the data
   editor?.setEditable(!isLoading);
+
+  useEffect(() => {
+    if (blog?.blog) {
+      setTitle(blog?.blog?.title);
+      setDescription(blog?.blog?.description);
+    }
+  }, [blog]);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -278,7 +290,7 @@ export function BlogPostEditor({ blog, isPending }: BlogPostEditorProps) {
             variant={"primary"}
             className="w-full disabled:cursor-not-allowed"
           >
-            Create
+            {!!blog ? "Save" : "Create"}
           </Button>
         </div>
       </div>

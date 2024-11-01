@@ -6,8 +6,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pen, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-export default function ManageBlogPostDropdown() {
+interface ManageBlogPostDropdownProps {
+  id?: Id<"blogs">;
+}
+
+export default function ManageBlogPostDropdown({
+  id,
+}: ManageBlogPostDropdownProps) {
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -16,7 +26,10 @@ export default function ManageBlogPostDropdown() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
+        <DropdownMenuItem
+          onClick={() => router.replace(`/blogs/${id}/edit`)}
+          className="flex items-center gap-2 cursor-pointer"
+        >
           <Pen className="size-4" />
           <p className="font-semibold">Edit</p>
         </DropdownMenuItem>
