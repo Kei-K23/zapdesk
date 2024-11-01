@@ -39,6 +39,7 @@ export const getBlogs = query({
         email: string | undefined;
         image: string | undefined;
         role: string | undefined;
+        id: Id<"users">;
       };
     }> = [];
     for (const blog of blogs) {
@@ -59,6 +60,7 @@ export const getBlogs = query({
             email: user.email,
             image: user.image,
             role: user.role,
+            id: user._id,
           },
         });
       }
@@ -100,6 +102,7 @@ export const getBlogById = query({
         email: user.email,
         image: user.image,
         role: user.role,
+        id: user._id,
       },
     };
   },
@@ -133,6 +136,7 @@ export const createBlog = mutation({
 export const deleteBlog = mutation({
   args: {
     id: v.id("blogs"),
+    userId: v.id("users"),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -141,6 +145,23 @@ export const deleteBlog = mutation({
       throw new Error("Unauthorized");
     }
 
+    const existingBlog = await ctx.db.get(args.id);
+
+    if (!existingBlog) {
+      throw new Error("Blog not found to update");
+    }
+
+    if (existingBlog.userId !== args.userId) {
+      throw new Error("Unauthorized");
+    }
+    // Delete the image storage
+    if (existingBlog.image) {
+      await ctx.storage.delete(existingBlog.image);
+    }
+
+    // TODO: Delete all related data e.g likes, comments
+
+    // Delete the blog
     await ctx.db.delete(args.id);
 
     return args.id;
@@ -160,6 +181,16 @@ export const updateBlog = mutation({
     const userId = await getAuthUserId(ctx);
 
     if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const existingBlog = await ctx.db.get(args.id);
+
+    if (!existingBlog) {
+      throw new Error("Blog not found to update");
+    }
+
+    if (existingBlog.userId !== args.userId) {
       throw new Error("Unauthorized");
     }
 

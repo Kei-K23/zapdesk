@@ -32,6 +32,7 @@ import { CodeBlockComponent } from "./code-block-component";
 import Image from "next/image";
 import { BlogType } from "../../type";
 import useUpdateBlog from "../../mutation/use-update-blog";
+import { Id } from "../../../../../convex/_generated/dataModel";
 
 const lowlight = createLowlight(all);
 
@@ -43,6 +44,7 @@ interface BlogPostEditorProps {
       email?: string;
       image?: string;
       role?: string;
+      id: Id<"users">;
     } | null;
   } | null;
   content?: Content;

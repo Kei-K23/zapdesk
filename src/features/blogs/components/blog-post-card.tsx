@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { CalendarIcon } from "lucide-react";
 import { BlogType } from "../type";
+import { format } from "date-fns";
 
 interface BlogPostCardProps {
   blog: BlogType;
@@ -16,21 +16,7 @@ interface BlogPostCardProps {
 }
 
 export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
-  const [formattedDate, setFormattedDate] = useState<string>("");
   const fallbackAvatar = user?.name?.charAt(0).toUpperCase();
-
-  useEffect(() => {
-    if (blog.updatedAt) {
-      const date = new Date(blog.updatedAt);
-      setFormattedDate(
-        date.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      );
-    }
-  }, [blog.updatedAt]);
 
   return (
     <Card className="overflow-hidden transition-shadow hover:shadow-indigo-500/50 hover:shadow-lg flex flex-col h-full">
@@ -68,12 +54,22 @@ export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
               {user.name}
             </span>
           </div>
-          {blog.updatedAt && (
+          <div>
             <div className="flex items-center text-sm text-muted-foreground">
               <CalendarIcon className="mr-1 h-4 w-4" />
-              <span className="truncate">{formattedDate}</span>
+              <span className="truncate">
+                {format(new Date(blog._creationTime), "MMMM do, yyyy")}
+              </span>
             </div>
-          )}
+            {/* {blog.updatedAt && (
+              <div className="flex items-center text-sm text-muted-foreground">
+                <CalendarIcon className="mr-1 h-4 w-4" />
+                <span className="truncate">
+                  {format(new Date(blog.updatedAt), "MMMM do, yyyy")}
+                </span>
+              </div>
+            )} */}
+          </div>
         </div>
       </CardContent>
     </Card>
