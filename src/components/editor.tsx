@@ -1,12 +1,6 @@
 import Quill, { QuillOptions } from "quill";
 import "quill/dist/quill.snow.css";
-import {
-  MutableRefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { RefObject, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "./ui/button";
 import { PiTextAa } from "react-icons/pi";
 import { ImageIcon, Smile, X } from "lucide-react";
@@ -27,8 +21,8 @@ interface EditorProps {
   placeholder?: string;
   defaultValue?: Delta | Op[];
   disabled?: boolean;
-  innerRef?: MutableRefObject<Quill | null>;
-  imageRef?: MutableRefObject<HTMLInputElement | null>;
+  innerRef?: RefObject<Quill | null>;
+  imageRef?: RefObject<HTMLInputElement | null>;
   variant?: "create" | "update";
   image?: File | null;
   onSubmit?: ({ image, body }: EditorValue) => void;

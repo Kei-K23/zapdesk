@@ -25,9 +25,16 @@ export const getBlogs = query({
     const finalData = [];
     for (const blog of blogs) {
       const user = await populateUser(ctx, blog.userId);
+      const image = blog.image
+        ? await ctx.storage.getUrl(blog.image)
+        : undefined;
+
       if (user) {
         finalData.push({
-          blog,
+          blog: {
+            ...blog,
+            image,
+          },
           user: {
             name: user.name,
             email: user.email,
@@ -56,6 +63,7 @@ export const getBlogById = query({
     if (!blog) {
       return null;
     }
+    const image = blog.image ? await ctx.storage.getUrl(blog.image) : undefined;
 
     const user = await populateUser(ctx, blog.userId);
     if (!user) {
@@ -63,7 +71,10 @@ export const getBlogById = query({
     }
 
     return {
-      blog,
+      blog: {
+        ...blog,
+        image,
+      },
       user: {
         name: user.name,
         email: user.email,

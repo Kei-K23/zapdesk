@@ -81,7 +81,6 @@ export default function MessageItem({
 }: MessageItemProps) {
   const { toast } = useToast();
   const { onOpenMessage, parentMessageId, onClose } = usePanel();
-  const { onOpenMemberProfile } = useMemberProfilePanel();
   const { data: currentUser } = useCurrentUser();
   const { data: mutualWorkspaces } = useGetMutualWorkspaces({ userId });
   const [ConfirmDialog, confirm] = useConfirm(

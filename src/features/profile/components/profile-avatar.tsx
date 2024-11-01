@@ -21,7 +21,9 @@ export default function ProfileAvatar({ user }: ProfileAvatarProps) {
       </Avatar>
       <div className="text-center sm:text-left">
         <CardTitle className="text-2xl">{user?.name}</CardTitle>
-        <CardDescription>{user?.role}</CardDescription>
+        <CardDescription className="text-[16px] font-semibold text-muted-foreground">
+          {user?.role}
+        </CardDescription>
       </div>
     </div>
   );

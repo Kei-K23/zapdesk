@@ -2,7 +2,6 @@
 
 import { useEditor, EditorContent, ReactNodeViewRenderer } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import Typography from "@tiptap/extension-typography";
@@ -13,25 +12,52 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import useCreateNewBlog from "../../mutation/use-create-new-blog";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
+import useGenerateImageUrl from "@/features/messages/mutation/use-generate-image-url";
 import "./style.css";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import Hint from "@/components/hint";
-import { ArrowBigLeftDashIcon } from "lucide-react";
+import { ArrowBigLeftDashIcon, ImageIcon, X } from "lucide-react";
 import { CodeBlockComponent } from "./code-block-component";
+import Image from "next/image";
+import { Id } from "../../../../../convex/_generated/dataModel";
 
 const lowlight = createLowlight(all);
 
-export function BlogPostEditor() {
+interface BlogPostEditorProps {
+  blog?: {
+    blog: {
+      image: string | null | undefined;
+      _id: Id<"blogs">;
+      _creationTime: number;
+      updatedAt?: number | undefined;
+      title: string;
+      content: string;
+      userId: Id<"users">;
+      description: string;
+    } | null;
+    user: {
+      name?: string;
+      email?: string;
+      image?: string;
+      role?: string;
+    } | null;
+  } | null;
+  isPending?: boolean;
+}
+
+export function BlogPostEditor({ blog, isPending }: BlogPostEditorProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const { data: currentUser, isLoading: currentUserLoading } = useCurrentUser();
+  const imageElementRef = useRef<HTMLInputElement | null>(null);
+  const [image, setImage] = useState<File | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -40,7 +66,6 @@ export function BlogPostEditor() {
           levels: [1, 2, 3],
         },
       }),
-      Image,
       Link.configure({
         openOnClick: false,
       }),
@@ -51,7 +76,7 @@ export function BlogPostEditor() {
       CodeBlockLowlight.extend({
         addNodeView() {
           return ReactNodeViewRenderer((c) =>
-            CodeBlockComponent({ isDisabled: true, ...c })
+            CodeBlockComponent({ isDisabled: false, ...c })
           );
         },
       }).configure({ lowlight }),
@@ -69,21 +94,70 @@ export function BlogPostEditor() {
     mutate: createNewBlogMutation,
     isPending: createNewBlogMutationLoading,
   } = useCreateNewBlog();
+  const {
+    mutate: generateImageUrlMutation,
+    isPending: generateImageUrlMutationLoading,
+  } = useGenerateImageUrl();
 
-  const isLoading = createNewBlogMutationLoading || currentUserLoading;
+  const isLoading =
+    createNewBlogMutationLoading ||
+    currentUserLoading ||
+    generateImageUrlMutationLoading;
 
-  const handleOnSave = () => {
+  const isDisabled =
+    !isLoading &&
+    !!title &&
+    !!!editor?.isEmpty &&
+    !!description &&
+    image !== null;
+
+  const handleOnSave = async () => {
+    let uploadImage;
     if (!editor) return;
     // Get the editor JSON value
 
     const content = editor.getJSON();
-    if (!title || !content || !currentUser?._id) return;
+    if (!title || !content || !currentUser?._id || !image) return;
+
+    // Image upload here
+    if (image) {
+      const imageUploadUrl = await generateImageUrlMutation(
+        {},
+        {
+          throwError: true,
+        }
+      );
+
+      if (!imageUploadUrl) {
+        throw new Error("Cannot upload image");
+      }
+
+      const result = await fetch(imageUploadUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": image.type,
+        },
+        body: image,
+      });
+
+      if (!result.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const { storageId } = await result.json();
+
+      if (!storageId) {
+        throw new Error("Failed to upload image");
+      }
+      uploadImage = storageId;
+    }
 
     createNewBlogMutation(
       {
         title,
         description,
         content: JSON.stringify(content),
+        image: uploadImage,
         userId: currentUser._id,
       },
       {
@@ -138,6 +212,7 @@ export function BlogPostEditor() {
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
+
           <div className="min-h-[150px]">
             <div className="border rounded-lg">
               <MenuBar isLoading={isLoading} editor={editor} />
@@ -150,9 +225,55 @@ export function BlogPostEditor() {
               </div>
             </div>
           </div>
+          {!!!image && (
+            <>
+              <Button
+                size={"iconSm"}
+                variant={"ghost"}
+                disabled={isLoading}
+                onClick={() => {
+                  imageElementRef?.current?.click();
+                }}
+              >
+                <ImageIcon className="size-10" />
+              </Button>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setImage?.(e.target.files![0])}
+                ref={imageElementRef}
+                className="hidden"
+              />
+            </>
+          )}
+          {!!image && (
+            <div className="p-2">
+              <div className="relative size-[100px] rounded-md flex items-center justify-center group/image">
+                <Hint label="Remove image">
+                  <button
+                    onClick={() => {
+                      setImage?.(null);
+                      if (imageElementRef.current) {
+                        imageElementRef.current!.value = "";
+                      }
+                    }}
+                    className="bg-neutral-200 hidden group-hover/image:flex rounded-full p-0.5 hover:bg-neutral-200/90 transition-all absolute z-10 -top-2 -right-1"
+                  >
+                    <X className="size-4 text-black" />
+                  </button>
+                </Hint>
+                <Image
+                  src={URL.createObjectURL(image)}
+                  alt="uploaded image"
+                  fill
+                  className="object-cover rounded-xl overflow-hidden"
+                />
+              </div>
+            </div>
+          )}
           <Button
             onClick={handleOnSave}
-            disabled={isLoading}
+            disabled={isLoading || !isDisabled}
             type="submit"
             variant={"primary"}
             className="w-full disabled:cursor-not-allowed"
