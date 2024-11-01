@@ -31,6 +31,7 @@ import { ArrowBigLeftDashIcon, ImageIcon, X } from "lucide-react";
 import { CodeBlockComponent } from "./code-block-component";
 import Image from "next/image";
 import { BlogType } from "../../type";
+import useUpdateBlog from "../../mutation/use-update-blog";
 
 const lowlight = createLowlight(all);
 
@@ -61,7 +62,9 @@ export function BlogPostEditor({
   );
   const { data: currentUser, isLoading: currentUserLoading } = useCurrentUser();
   const imageElementRef = useRef<HTMLInputElement | null>(null);
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<File | string | null | undefined>(
+    blog?.blog?.image || null
+  );
 
   const editor = useEditor({
     extensions: [
@@ -98,6 +101,8 @@ export function BlogPostEditor({
     mutate: createNewBlogMutation,
     isPending: createNewBlogMutationLoading,
   } = useCreateNewBlog();
+  const { mutate: updateBlogMutation, isPending: updateBlogMutationLoading } =
+    useUpdateBlog();
   const {
     mutate: generateImageUrlMutation,
     isPending: generateImageUrlMutationLoading,
@@ -105,6 +110,7 @@ export function BlogPostEditor({
 
   const isLoading =
     createNewBlogMutationLoading ||
+    updateBlogMutationLoading ||
     currentUserLoading ||
     generateImageUrlMutationLoading ||
     !!isPending;
@@ -126,46 +132,65 @@ export function BlogPostEditor({
 
     // Image upload here
     if (image) {
-      const imageUploadUrl = await generateImageUrlMutation(
-        {},
-        {
-          throwError: true,
+      if (image instanceof File) {
+        const imageUploadUrl = await generateImageUrlMutation(
+          {},
+          {
+            throwError: true,
+          }
+        );
+
+        if (!imageUploadUrl) {
+          throw new Error("Cannot upload image");
         }
-      );
 
-      if (!imageUploadUrl) {
-        throw new Error("Cannot upload image");
+        const result = await fetch(imageUploadUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": image.type,
+          },
+          body: image,
+        });
+
+        if (!result.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const { storageId } = await result.json();
+
+        if (!storageId) {
+          throw new Error("Failed to upload image");
+        }
+        uploadImage = storageId;
       }
-
-      const result = await fetch(imageUploadUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": image.type,
-        },
-        body: image,
-      });
-
-      if (!result.ok) {
-        throw new Error("Failed to upload image");
-      }
-
-      const { storageId } = await result.json();
-
-      if (!storageId) {
-        throw new Error("Failed to upload image");
-      }
-      uploadImage = storageId;
     }
 
-    createNewBlogMutation(
-      {
-        title,
-        description,
-        content: JSON.stringify(content),
-        image: uploadImage,
-        userId: currentUser._id,
-      },
-      {
+    const blogData = {
+      title,
+      description,
+      content: JSON.stringify(content),
+      image: uploadImage ?? blog?.blog?.imageSecret,
+      userId: currentUser._id,
+    };
+
+    if (blog?.blog?._id) {
+      updateBlogMutation(
+        { id: blog?.blog?._id, ...blogData },
+        {
+          onSuccess: () => {
+            toast({ title: "Successfully updated the blog" });
+            setTitle("");
+            setDescription("");
+            editor.destroy();
+            router.replace(`/blogs/${blog?.blog?._id}`);
+          },
+          onError: (e) => {
+            toast({ title: "Error when updating blog" });
+          },
+        }
+      );
+    } else {
+      createNewBlogMutation(blogData, {
         onSuccess: () => {
           toast({ title: "Successfully create the blog" });
           setTitle("");
@@ -176,8 +201,8 @@ export function BlogPostEditor({
         onError: () => {
           toast({ title: "Error when creating blog" });
         },
-      }
-    );
+      });
+    }
   };
 
   // Disabled the editor when loading the data
@@ -187,15 +212,28 @@ export function BlogPostEditor({
     if (blog?.blog) {
       setTitle(blog?.blog?.title);
       setDescription(blog?.blog?.description);
+      setImage(blog?.blog?.image);
+      editor?.commands.setContent(JSON.parse(blog.blog.content));
     }
-  }, [blog]);
+  }, [blog, editor]);
 
   return (
     <div className="container mx-auto p-4 space-y-6">
       <div className="w-full max-w-3xl mx-auto">
         <div className="fixed top-4 left-80">
           <Hint label="Back">
-            <Button variant={"ghost"} onClick={() => router.replace("/blogs")}>
+            <Button
+              variant={"ghost"}
+              onClick={() => {
+                if (blog?.blog?._id) {
+                  // In edit page
+                  router.replace(`/blogs/${blog?.blog?._id}`);
+                } else {
+                  // In create page
+                  router.replace("/blogs");
+                }
+              }}
+            >
               <ArrowBigLeftDashIcon className="size-6 text-muted-foreground" />
             </Button>
           </Hint>
@@ -258,6 +296,7 @@ export function BlogPostEditor({
               />
             </>
           )}
+
           {!!image && (
             <div className="p-2">
               <div className="relative size-[100px] rounded-md flex items-center justify-center group/image">
@@ -275,7 +314,11 @@ export function BlogPostEditor({
                   </button>
                 </Hint>
                 <Image
-                  src={URL.createObjectURL(image)}
+                  src={
+                    typeof image === "string"
+                      ? image
+                      : URL.createObjectURL(image)
+                  }
                   alt="uploaded image"
                   fill
                   className="object-cover rounded-xl overflow-hidden"

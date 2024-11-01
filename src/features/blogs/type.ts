@@ -9,4 +9,5 @@ export type BlogType = {
   title: string;
   description: string;
   content: string;
+  imageSecret: Id<"_storage"> | undefined;
 };

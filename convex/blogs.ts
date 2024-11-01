@@ -22,7 +22,25 @@ export const getBlogs = query({
       return [];
     }
 
-    const finalData = [];
+    const finalData: Array<{
+      blog: {
+        image: string | null | undefined;
+        _id: Id<"blogs">;
+        _creationTime: number;
+        updatedAt?: number | undefined;
+        userId: Id<"users">;
+        title: string;
+        description: string;
+        content: string;
+        imageSecret: Id<"_storage"> | undefined;
+      };
+      user: {
+        name: string | undefined;
+        email: string | undefined;
+        image: string | undefined;
+        role: string | undefined;
+      };
+    }> = [];
     for (const blog of blogs) {
       const user = await populateUser(ctx, blog.userId);
       const image = blog.image
@@ -34,6 +52,7 @@ export const getBlogs = query({
           blog: {
             ...blog,
             image,
+            imageSecret: blog.image,
           },
           user: {
             name: user.name,
@@ -74,6 +93,7 @@ export const getBlogById = query({
       blog: {
         ...blog,
         image,
+        imageSecret: blog.image,
       },
       user: {
         name: user.name,
@@ -110,7 +130,7 @@ export const createBlog = mutation({
   },
 });
 
-export const deleteChannel = mutation({
+export const deleteBlog = mutation({
   args: {
     id: v.id("blogs"),
   },
@@ -127,11 +147,12 @@ export const deleteChannel = mutation({
   },
 });
 
-export const updateChannel = mutation({
+export const updateBlog = mutation({
   args: {
     id: v.id("blogs"),
     title: v.string(),
     content: v.string(),
+    description: v.string(),
     userId: v.id("users"),
     image: v.optional(v.id("_storage")),
   },
@@ -145,8 +166,10 @@ export const updateChannel = mutation({
     await ctx.db.patch(args.id, {
       title: args.title.trim(),
       content: args.content.trim(),
+      description: args.description.trim(),
       userId: args.userId,
       image: args.image,
+      updatedAt: Date.now(),
     });
 
     return args.id;
