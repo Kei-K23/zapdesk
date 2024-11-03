@@ -1,7 +1,7 @@
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { v } from "convex/values";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 
 const populateUser = async (ctx: QueryCtx, id: Id<"users">) => {
   return await ctx.db.get(id);
@@ -41,12 +41,18 @@ export const getBlogs = query({
         role: string | undefined;
         id: Id<"users">;
       };
+      likes: Doc<"blogLikes">[];
     }> = [];
     for (const blog of blogs) {
       const user = await populateUser(ctx, blog.userId);
       const image = blog.image
         ? await ctx.storage.getUrl(blog.image)
         : undefined;
+
+      const blogLikes = await ctx.db
+        .query("blogLikes")
+        .withIndex("by_blog_id", (q) => q.eq("blogId", blog._id))
+        .collect();
 
       if (user) {
         finalData.push({
@@ -62,6 +68,7 @@ export const getBlogs = query({
             role: user.role,
             id: user._id,
           },
+          likes: blogLikes ?? [],
         });
       }
     }

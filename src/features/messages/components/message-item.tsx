@@ -15,7 +15,6 @@ import useToggleReaction from "../mutation/use-toggle-reaction";
 import Reactions from "./reactions";
 import { usePanel } from "@/hooks/use-panel";
 import ThreadBar from "./thread-bar";
-import { useMemberProfilePanel } from "@/hooks/use-member-profile-panel";
 import RoleIndicator from "@/components/role-indicator";
 import useGetMutualWorkspaces from "@/features/workspaces/query/use-get-mutual-workspaces";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";

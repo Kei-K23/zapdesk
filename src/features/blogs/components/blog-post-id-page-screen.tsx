@@ -27,6 +27,8 @@ import { useGetBlogLikes } from "../query/use-get-blog-likes";
 import useCreateBlogLike from "../mutation/use-create-blog-like";
 import useDeleteBlogLike from "../mutation/use-delete-blog-like";
 import { useToast } from "@/hooks/use-toast";
+import Editor from "@/components/editor";
+import CommentEditor from "./comment-editor";
 
 interface BlogPostIdPageScreenProps {
   id: string;
@@ -240,6 +242,7 @@ export default function BlogPostIdPageScreen({
           <ContentDisplay content={JSON.parse(blogData?.blog?.content!)} />
         </div>
       </div>
+      <CommentEditor />
     </div>
   );
 }

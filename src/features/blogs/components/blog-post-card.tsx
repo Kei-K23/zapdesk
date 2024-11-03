@@ -2,9 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Flame } from "lucide-react";
 import { BlogType } from "../type";
 import { format } from "date-fns";
+import { Doc } from "../../../../convex/_generated/dataModel";
+import { Separator } from "@/components/ui/separator";
 
 interface BlogPostCardProps {
   blog: BlogType;
@@ -13,9 +15,10 @@ interface BlogPostCardProps {
     email?: string;
     image?: string;
   };
+  likes: Doc<"blogLikes">[];
 }
 
-export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
+export default function BlogPostCard({ blog, user, likes }: BlogPostCardProps) {
   const fallbackAvatar = user?.name?.charAt(0).toUpperCase();
 
   return (
@@ -42,7 +45,8 @@ export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
         <p className="mb-4 text-[15px] text-muted-foreground line-clamp-2 flex-grow">
           {blog.description}
         </p>
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-neutral-700">
+        <Separator className="w-full h-[1.5px] my-4" />
+        <div className="flex items-center justify-between mt-auto">
           <div className="flex items-center space-x-2">
             <Avatar className="size-10">
               <AvatarImage src={user.image} />
@@ -70,6 +74,31 @@ export default function BlogPostCard({ blog, user }: BlogPostCardProps) {
               </div>
             )} */}
           </div>
+        </div>
+        {!!likes?.length && <Separator className="w-full h-[1.5px] my-4" />}
+        <div>
+          {!!likes?.length && (
+            <div className={"flex items-center"}>
+              <svg width="0" height="0">
+                <linearGradient
+                  id="flame-gradient"
+                  x1="100%"
+                  y1="100%"
+                  x2="0%"
+                  y2="0%"
+                >
+                  <stop stopColor="#ff0000" offset="0%" />
+                  <stop stopColor="#fdcf58" offset="100%" />
+                </linearGradient>
+              </svg>
+              <Flame
+                style={{
+                  stroke: "url(#flame-gradient)",
+                }}
+              />{" "}
+              <span>{likes?.length}</span>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>

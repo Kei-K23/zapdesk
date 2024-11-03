@@ -22,7 +22,12 @@ export default function BlogPostScreen() {
   return (
     <div className="p-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {blogsData?.map((data) => (
-        <BlogPostCard key={data.blog._id} blog={data.blog} user={data.user} />
+        <BlogPostCard
+          key={data.blog._id}
+          blog={data.blog}
+          user={data.user}
+          likes={data.likes}
+        />
       ))}
       <Hint label="Create New Blog">
         <Button
