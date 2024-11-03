@@ -62,7 +62,7 @@ export const createBlogLike = mutation({
       )
       .unique();
 
-    if (!existingBlogLike) {
+    if (existingBlogLike) {
       throw new Error("User is already liked the blog");
     }
 

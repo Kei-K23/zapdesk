@@ -5,7 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useGetBlog } from "../query/use-get-blog";
 import { ContentDisplay } from "./editor/content-display";
-import { ArrowBigLeftDashIcon, CalendarIcon, Loader2 } from "lucide-react";
+import {
+  ArrowBigLeftDashIcon,
+  CalendarIcon,
+  Flame,
+  Loader2,
+  Plus,
+} from "lucide-react";
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -15,6 +21,12 @@ import ManageBlogPostDropdown from "./manage-blog-post-dropdown";
 import { format } from "date-fns";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { useGetBlogLike } from "../query/use-get-blog-like";
+import { useGetBlogLikes } from "../query/use-get-blog-likes";
+import useCreateBlogLike from "../mutation/use-create-blog-like";
+import useDeleteBlogLike from "../mutation/use-delete-blog-like";
+import { useToast } from "@/hooks/use-toast";
 
 interface BlogPostIdPageScreenProps {
   id: string;
@@ -23,6 +35,7 @@ interface BlogPostIdPageScreenProps {
 export default function BlogPostIdPageScreen({
   id,
 }: BlogPostIdPageScreenProps) {
+  const { toast } = useToast();
   const [deleteBlogLoading, setDeleteBlogLoading] = useState(false);
   const router = useRouter();
   const { data: blogData, isLoading: blogDataLoading } = useGetBlog(
@@ -30,7 +43,63 @@ export default function BlogPostIdPageScreen({
   );
   const { data: userData, isLoading: userDataLoading } = useCurrentUser();
   const fallbackAvatar = blogData?.user?.name?.charAt(0).toUpperCase();
-  const isLoading = blogDataLoading || userDataLoading || deleteBlogLoading;
+  const {
+    data: blogLikeDataForCurrentUser,
+    isLoading: blogLikeDataForCurrentUserLoading,
+  } = useGetBlogLike(id as Id<"blogs">);
+  const { data: blogLikesData, isLoading: blogLikesDataLoading } =
+    useGetBlogLikes(id as Id<"blogs">);
+
+  const {
+    mutate: createBlogLikeMutation,
+    isPending: createBlogLikeMutationLoading,
+  } = useCreateBlogLike();
+
+  const {
+    mutate: deleteBlogLikeMutation,
+    isPending: deleteBlogLikeMutationLoading,
+  } = useDeleteBlogLike();
+
+  const isLoading =
+    blogDataLoading ||
+    userDataLoading ||
+    deleteBlogLoading ||
+    blogLikeDataForCurrentUserLoading ||
+    blogLikesDataLoading;
+
+  const isPending =
+    createBlogLikeMutationLoading || deleteBlogLikeMutationLoading;
+
+  const handelToggleLike = () => {
+    if (!id) return;
+
+    if (!!blogLikeDataForCurrentUser) {
+      // Delete the blog like
+      deleteBlogLikeMutation(
+        {
+          blogId: id as Id<"blogs">,
+          id: blogLikeDataForCurrentUser._id,
+        },
+        {
+          onError: () => {
+            toast({ title: "Error when removing the like" });
+          },
+        }
+      );
+    } else {
+      // Create new blog like for the current user
+      createBlogLikeMutation(
+        {
+          blogId: id as Id<"blogs">,
+        },
+        {
+          onError: (e) => {
+            toast({ title: "Error when creating the like" });
+          },
+        }
+      );
+    }
+  };
 
   useEffect(() => {
     if (isLoading) return;
@@ -103,14 +172,47 @@ export default function BlogPostIdPageScreen({
               </span>
             </div>
           </div>
-          {userData?._id === blogData?.user?.id && (
-            <ManageBlogPostDropdown
-              id={blogData?.blog?._id}
-              userId={blogData?.user?.id}
-              deleteBlogLoading={deleteBlogLoading}
-              setDeleteBlogLoading={setDeleteBlogLoading}
-            />
-          )}
+          <div className="flex items-center justify-center gap-x-2">
+            <Button
+              size={"icon"}
+              variant={"ghost"}
+              className={cn("w-16 flex items-center")}
+              disabled={isPending || isLoading}
+              onClick={handelToggleLike}
+            >
+              <svg width="0" height="0">
+                <linearGradient
+                  id="flame-gradient"
+                  x1="100%"
+                  y1="100%"
+                  x2="0%"
+                  y2="0%"
+                >
+                  <stop stopColor="#ff0000" offset="0%" />
+                  <stop stopColor="#fdcf58" offset="100%" />
+                </linearGradient>
+              </svg>
+              <Flame
+                style={{
+                  stroke: !!blogLikeDataForCurrentUser
+                    ? "url(#flame-gradient)"
+                    : "",
+                }}
+              />{" "}
+              {blogLikesData?.length && blogLikesData?.length > 0 ? (
+                <span>{blogLikesData?.length}</span>
+              ) : null}
+              {!!blogLikeDataForCurrentUser && <Plus className="size-3" />}
+            </Button>
+            {userData?._id === blogData?.user?.id && (
+              <ManageBlogPostDropdown
+                id={blogData?.blog?._id}
+                userId={blogData?.user?.id}
+                deleteBlogLoading={deleteBlogLoading}
+                setDeleteBlogLoading={setDeleteBlogLoading}
+              />
+            )}
+          </div>
         </div>
         {blogData?.blog?._creationTime && (
           <div>
