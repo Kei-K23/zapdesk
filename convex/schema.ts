@@ -117,6 +117,16 @@ const schema = defineSchema({
       "blogId",
       "parentCommentId",
     ]),
+  blogCommentLikes: defineTable({
+    blogId: v.id("blogs"),
+    commentId: v.id("comments"),
+    userId: v.id("users"),
+  })
+    .index("by_blog_comment_id_user_id", ["blogId", "commentId", "userId"])
+    .index("by_blog_comment_id", ["blogId", "commentId"])
+    .index("by_comment_user_id", ["commentId", "userId"])
+    .index("by_comment_id", ["commentId"])
+    .index("by_user_id", ["userId"]),
   reactions: defineTable({
     memberId: v.id("members"),
     workspaceId: v.id("workspaces"),
