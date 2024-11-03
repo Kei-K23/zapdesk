@@ -15,7 +15,7 @@ type Options = {
   throwError?: boolean;
 };
 
-export default function useUpdateBlogComment() {
+export default function useDeleteBlogComment() {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] = useState<

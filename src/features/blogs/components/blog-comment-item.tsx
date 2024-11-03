@@ -10,6 +10,8 @@ import { format, isToday, isYesterday } from "date-fns";
 import dynamic from "next/dynamic";
 import React from "react";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
+import { EditorValue } from "@/components/editor";
+import useUpdateBlogComment from "../mutation/use-update-blog-comment";
 
 const Renderer = dynamic(
   () => import("@/features/messages/components/renderer"),
@@ -22,6 +24,7 @@ const formatFulltime = (date: Date) =>
 
 interface BlogCommentItemProps {
   id?: Id<"comments">;
+  blogId?: Id<"blogs">;
   userId: Id<"users">;
   authorImage?: string;
   authorName?: string;
@@ -37,6 +40,7 @@ interface BlogCommentItemProps {
 
 export default function BlogCommentItem({
   id,
+  blogId,
   userId,
   authorBio,
   body,
@@ -55,7 +59,27 @@ export default function BlogCommentItem({
     "This process will permanently delete the comment and cannot undo."
   );
 
+  const {
+    mutate: updateCommentMutation,
+    isPending: updateCommentMutationLoading,
+  } = useUpdateBlogComment();
+
   const fallbackAvatar = authorName?.charAt(0).toUpperCase();
+
+  const handleUpdateComment = ({ body, image }: EditorValue) => {
+    updateCommentMutation(
+      { id: id!, body, blogId: blogId! },
+      {
+        onSuccess: () => {
+          toast({ title: "Comment updated" });
+          setEditing(null);
+        },
+        onError: (e) => {
+          toast({ title: "Error when updating the comment" });
+        },
+      }
+    );
+  };
 
   return (
     <>
@@ -68,7 +92,7 @@ export default function BlogCommentItem({
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
         )}
       >
-        <Avatar className="size-10 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer">
+        <Avatar className="size-14 hover:opacity-75 transition-all mr-2 rounded-md cursor-pointer">
           <AvatarImage src={authorImage} alt={authorName} />
           <AvatarFallback className="text-white rounded-md text-[16px] md:text-xl bg-indigo-600 font-bold">
             {fallbackAvatar}
@@ -77,8 +101,8 @@ export default function BlogCommentItem({
         {isEditing ? (
           <div className="w-full">
             <Editor
-              onSubmit={() => {}}
-              disabled={false}
+              onSubmit={handleUpdateComment}
+              disabled={updateCommentMutationLoading}
               defaultValue={JSON.parse(body!)}
               onCancel={() => setEditing(null)}
               variant="update"

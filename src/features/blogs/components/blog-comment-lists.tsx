@@ -43,6 +43,7 @@ export default function BlogCommentLists({
             <BlogCommentItem
               key={data.comment._id}
               id={data.comment._id}
+              blogId={blogId}
               body={data.comment.body}
               image={data.comment.image}
               userId={currentUserId!}
