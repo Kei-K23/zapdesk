@@ -22,17 +22,20 @@ export const createComment = mutation({
       userId,
       blogId: args.blogId,
       parentCommentId: args.parentCommentId,
-      updatedAt: Date.now(),
     };
 
     return await ctx.db.insert("comments", newComment);
   },
 });
 
-// Delete a comment by comment ID
-export const deleteComment = mutation({
+// Update the comment
+export const updateComment = mutation({
   args: {
-    commentId: v.id("comments"),
+    id: v.id("comments"),
+    body: v.string(),
+    image: v.optional(v.id("_storage")),
+    blogId: v.id("blogs"),
+    parentCommentId: v.optional(v.id("comments")),
   },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -40,15 +43,41 @@ export const deleteComment = mutation({
       throw new Error("Unauthorized");
     }
 
-    const comment = await ctx.db.get(args.commentId);
+    const updatedComment = {
+      body: args.body,
+      image: args.image,
+      userId,
+      blogId: args.blogId,
+      parentCommentId: args.parentCommentId,
+      updatedAt: Date.now(),
+    };
+
+    await ctx.db.patch(args.id, updatedComment);
+
+    return args.id;
+  },
+});
+
+// Delete a comment by comment ID
+export const deleteComment = mutation({
+  args: {
+    id: v.id("comments"),
+  },
+  handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) {
+      throw new Error("Unauthorized");
+    }
+
+    const comment = await ctx.db.get(args.id);
     if (!comment || comment.userId !== userId) {
       throw new Error(
         "Cannot delete comment: Not authorized or comment not found"
       );
     }
 
-    await ctx.db.delete(args.commentId);
-    return args.commentId;
+    await ctx.db.delete(args.id);
+    return args.id;
   },
 });
 

@@ -4,24 +4,22 @@ import { useCallback, useMemo, useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
 
 type RequestType = {
-  body: string;
-  workspaceId: Id<"workspaces">;
   image?: Id<"_storage">;
+  parentCommentId?: Id<"comments">;
+  body: string;
   updatedAt?: number;
-  channelId?: Id<"channels">;
-  parentMessageId?: Id<"messages">;
-  conversationId?: Id<"conversations">;
+  blogId: Id<"blogs">;
 };
-type ResponseType = Id<"messages"> | null;
+type ResponseType = Id<"comments"> | null;
 
 type Options = {
-  onSuccess?: (data: Id<"messages">) => void;
+  onSuccess?: (data: Id<"comments">) => void;
   onError?: (error: Error) => void;
   onSettled?: () => void;
   throwError?: boolean;
 };
 
-export default function useCreateMessage() {
+export default function useCreateBlogComment() {
   const [data, setData] = useState<ResponseType>(null);
   const [error, setError] = useState<Error | null>(null);
   const [status, setStatus] = useState<
@@ -33,7 +31,7 @@ export default function useCreateMessage() {
   const isError = useMemo(() => status === "error", [status]);
   const isSettled = useMemo(() => status === "settled", [status]);
 
-  const mutation = useMutation(api.messages.createMessage);
+  const mutation = useMutation(api.blogComments.createComment);
 
   const mutate = useCallback(
     async (values: RequestType, options?: Options) => {
