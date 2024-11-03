@@ -1,7 +1,6 @@
 import Hint from "@/components/hint";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import MessageThumbnail from "@/features/messages/components/message-thumbnail";
-import MessageToolbar from "@/features/messages/components/message-toolbar";
 import useConfirm from "@/hooks/use-confirm";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -18,6 +17,7 @@ import { useGetBlogCommentLike } from "../query/use-get-blog-comment-like";
 import { useGetBlogCommentLikes } from "../query/use-get-blog-comment-likes";
 import useCreateBlogCommentLike from "../mutation/use-create-blog-comment-like";
 import useDeleteBlogCommentLike from "../mutation/use-delete-blog-comment-like";
+import BlogCommentItemToolbar from "./blog-comment-item-toolbar";
 
 const Renderer = dynamic(
   () => import("@/features/messages/components/renderer"),
@@ -255,13 +255,12 @@ export default function BlogCommentItem({
         )}
 
         {!isEditing && (
-          <MessageToolbar
+          <BlogCommentItemToolbar
             isAuthor={isAuthor}
             isPending={mutationLoading}
             isHideThreadButton={false}
             handleEdit={() => setEditing(id!)}
             handleDelete={handleDeleteMessage}
-            handleReactions={() => {}}
             handleThread={() => {}}
           />
         )}

@@ -7,6 +7,8 @@ import { BlogType } from "../type";
 import { format } from "date-fns";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { Separator } from "@/components/ui/separator";
+import { FaComment } from "react-icons/fa";
+import Hint from "@/components/hint";
 
 interface BlogPostCardProps {
   blog: BlogType;
@@ -16,9 +18,15 @@ interface BlogPostCardProps {
     image?: string;
   };
   likes: Doc<"blogLikes">[];
+  commentsLength: number;
 }
 
-export default function BlogPostCard({ blog, user, likes }: BlogPostCardProps) {
+export default function BlogPostCard({
+  blog,
+  user,
+  likes,
+  commentsLength,
+}: BlogPostCardProps) {
   const fallbackAvatar = user?.name?.charAt(0).toUpperCase();
 
   return (
@@ -75,29 +83,45 @@ export default function BlogPostCard({ blog, user, likes }: BlogPostCardProps) {
             )} */}
           </div>
         </div>
-        {!!likes?.length && <Separator className="w-full h-[1.5px] my-4" />}
-        <div>
+        {(!!likes?.length || !!commentsLength) && (
+          <Separator className="w-full h-[1.5px] my-4" />
+        )}
+        <div className="flex items-center gap-x-4">
           {!!likes?.length && (
-            <div className={"flex items-center"}>
-              <svg width="0" height="0">
-                <linearGradient
-                  id="flame-gradient"
-                  x1="100%"
-                  y1="100%"
-                  x2="0%"
-                  y2="0%"
-                >
-                  <stop stopColor="#ff0000" offset="0%" />
-                  <stop stopColor="#fdcf58" offset="100%" />
-                </linearGradient>
-              </svg>
-              <Flame
-                style={{
-                  stroke: "url(#flame-gradient)",
-                }}
-              />{" "}
-              <span>{likes?.length}</span>
-            </div>
+            <Hint
+              label={`Total ${likes.length > 1 ? "likes : " + likes.length : "like : " + likes.length}`}
+            >
+              <div className={"flex items-center"}>
+                <svg width="0" height="0">
+                  <linearGradient
+                    id="flame-gradient"
+                    x1="100%"
+                    y1="100%"
+                    x2="0%"
+                    y2="0%"
+                  >
+                    <stop stopColor="#ff0000" offset="0%" />
+                    <stop stopColor="#fdcf58" offset="100%" />
+                  </linearGradient>
+                </svg>
+                <Flame
+                  style={{
+                    stroke: "url(#flame-gradient)",
+                  }}
+                />{" "}
+                <span>{likes?.length}</span>
+              </div>
+            </Hint>
+          )}
+          {!!commentsLength && (
+            <Hint
+              label={`Total ${commentsLength > 1 ? "comments : " + commentsLength : "comment : " + commentsLength}`}
+            >
+              <div className={"flex items-center"}>
+                <FaComment className="text-muted-foreground size-5 mr-1" />
+                <span className="text-muted-foreground">{commentsLength}</span>
+              </div>
+            </Hint>
           )}
         </div>
       </CardContent>

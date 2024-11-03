@@ -42,6 +42,7 @@ export const getBlogs = query({
         id: Id<"users">;
       };
       likes: Doc<"blogLikes">[];
+      commentsLength: number;
     }> = [];
     for (const blog of blogs) {
       const user = await populateUser(ctx, blog.userId);
@@ -51,6 +52,11 @@ export const getBlogs = query({
 
       const blogLikes = await ctx.db
         .query("blogLikes")
+        .withIndex("by_blog_id", (q) => q.eq("blogId", blog._id))
+        .collect();
+
+      const comments = await ctx.db
+        .query("blogCommentLikes")
         .withIndex("by_blog_id", (q) => q.eq("blogId", blog._id))
         .collect();
 
@@ -69,6 +75,7 @@ export const getBlogs = query({
             id: user._id,
           },
           likes: blogLikes ?? [],
+          commentsLength: comments.length,
         });
       }
     }

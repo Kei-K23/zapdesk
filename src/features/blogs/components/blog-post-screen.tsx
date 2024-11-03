@@ -27,6 +27,7 @@ export default function BlogPostScreen() {
           blog={data.blog}
           user={data.user}
           likes={data.likes}
+          commentsLength={data.commentsLength}
         />
       ))}
       <Hint label="Create New Blog">

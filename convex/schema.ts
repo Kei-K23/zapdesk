@@ -126,6 +126,7 @@ const schema = defineSchema({
     .index("by_blog_comment_id", ["blogId", "commentId"])
     .index("by_comment_user_id", ["commentId", "userId"])
     .index("by_comment_id", ["commentId"])
+    .index("by_blog_id", ["blogId"])
     .index("by_user_id", ["userId"]),
   reactions: defineTable({
     memberId: v.id("members"),
