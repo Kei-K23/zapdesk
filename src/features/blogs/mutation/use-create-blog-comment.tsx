@@ -2,14 +2,9 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useCallback, useMemo, useState } from "react";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { CreateNewBlogCommentType } from "../type";
 
-type RequestType = {
-  image?: Id<"_storage">;
-  parentCommentId?: Id<"comments">;
-  body: string;
-  updatedAt?: number;
-  blogId: Id<"blogs">;
-};
+type RequestType = CreateNewBlogCommentType;
 type ResponseType = Id<"comments"> | null;
 
 type Options = {

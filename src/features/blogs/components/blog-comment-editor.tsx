@@ -3,8 +3,15 @@ import useGenerateImageUrl from "@/features/messages/mutation/use-generate-image
 import { useToast } from "@/hooks/use-toast";
 import Quill from "quill";
 import { useRef, useState } from "react";
+import useCreateBlogComment from "../mutation/use-create-blog-comment";
+import { CreateNewBlogCommentType } from "../type";
+import { Id } from "../../../../convex/_generated/dataModel";
 
-export default function CommentEditor() {
+interface BlogCommentEditorProps {
+  blogId: Id<"blogs">;
+}
+
+export default function BlogCommentEditor({ blogId }: BlogCommentEditorProps) {
   const [isPending, setIsPending] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [rerenderEditor, setRerenderEditor] = useState(0);
@@ -12,18 +19,24 @@ export default function CommentEditor() {
   const editorRef = useRef<Quill | null>(null);
   const imageElementRef = useRef<HTMLInputElement | null>(null);
 
+  const {
+    mutate: createCommentMutation,
+    isPending: createCommentMutationLoading,
+  } = useCreateBlogComment();
+  const {
+    mutate: generateImageUrlMutation,
+    isPending: generateImageUrlMutationLoading,
+  } = useGenerateImageUrl();
 
-
-  const { mutate: createMessageMutation } = ();
-  const { mutate: generateImageUrlMutation } = useGenerateImageUrl();
+  const isLoading =
+    createCommentMutationLoading || generateImageUrlMutationLoading;
 
   const handleSubmit = async ({ image, body }: EditorValue) => {
     try {
       setIsPending(true);
       editorRef?.current?.enable(false);
-      const value: CreateMessageValue = {
-        workspaceId,
-        channelId,
+      const value: CreateNewBlogCommentType = {
+        blogId,
         body,
         image: undefined,
       };
@@ -62,7 +75,7 @@ export default function CommentEditor() {
       }
 
       // Create the message
-      await createMessageMutation(
+      await createCommentMutation(
         {
           ...value,
         },
@@ -74,7 +87,7 @@ export default function CommentEditor() {
             setImage(null);
           },
           onError: () => {
-            throw new Error("Failed to send message");
+            throw new Error("Error when creating comment");
           },
         }
       );
@@ -83,7 +96,7 @@ export default function CommentEditor() {
       toast({
         title: e.message,
         description:
-          "Something went wrong when sending message. Please try again",
+          "Something went wrong when creating comment. Please try again",
         variant: "destructive",
       });
     } finally {
@@ -99,8 +112,8 @@ export default function CommentEditor() {
         image={image}
         setImage={setImage}
         rerenderEditor={rerenderEditor}
-        disabled={isPending}
-        onSubmit={() => {}}
+        disabled={isPending || isLoading}
+        onSubmit={handleSubmit}
         placeholder={"Write a response"}
         innerRef={editorRef}
         imageRef={imageElementRef}

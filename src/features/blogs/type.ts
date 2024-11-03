@@ -11,3 +11,11 @@ export type BlogType = {
   content: string;
   imageSecret: Id<"_storage"> | undefined;
 };
+
+export type CreateNewBlogCommentType = {
+  image?: Id<"_storage">;
+  parentCommentId?: Id<"comments">;
+  body: string;
+  updatedAt?: number;
+  blogId: Id<"blogs">;
+};
