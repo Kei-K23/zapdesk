@@ -93,6 +93,30 @@ const schema = defineSchema({
     .index("by_blog_id", ["blogId"])
     .index("by_tag_id", ["tagId"])
     .index("by_blog_id_tag_id", ["blogId", "tagId"]),
+  blogLikes: defineTable({
+    blogId: v.id("blogs"),
+    userId: v.id("users"),
+  })
+    .index("by_blog_id_user_id", ["blogId", "userId"])
+    .index("by_blog_id", ["blogId"])
+    .index("by_user_id", ["userId"]),
+  comments: defineTable({
+    body: v.string(),
+    image: v.optional(v.id("_storage")),
+    userId: v.id("users"),
+    blogId: v.id("blogs"),
+    parentCommentId: v.optional(v.id("comments")),
+    updatedAt: v.optional(v.number()),
+  })
+    .index("by_user_id", ["userId"])
+    .index("by_blog_id", ["blogId"])
+    .index("by_parent_comment_id", ["parentCommentId"])
+    .index("by_user_id_blog_id", ["userId", "blogId"])
+    .index("by_user_id_blog_id_parent_id", [
+      "userId",
+      "blogId",
+      "parentCommentId",
+    ]),
   reactions: defineTable({
     memberId: v.id("members"),
     workspaceId: v.id("workspaces"),
