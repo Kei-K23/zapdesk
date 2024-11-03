@@ -81,6 +81,13 @@ export const deleteComment = mutation({
       );
     }
 
+    // TODO: Delete all related comment liked nested comment and if image exist, then delete the image
+
+    // Delete the image
+    if (comment.image) {
+      await ctx.storage.delete(comment.image);
+    }
+
     await ctx.db.delete(args.id);
     return args.id;
   },

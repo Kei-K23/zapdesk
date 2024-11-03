@@ -1,6 +1,5 @@
 import Hint from "@/components/hint";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useCurrentUser } from "@/features/auth/query/use-current-user";
 import MessageThumbnail from "@/features/messages/components/message-thumbnail";
 import MessageToolbar from "@/features/messages/components/message-toolbar";
 import useConfirm from "@/hooks/use-confirm";
@@ -12,6 +11,7 @@ import React from "react";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { EditorValue } from "@/components/editor";
 import useUpdateBlogComment from "../mutation/use-update-blog-comment";
+import useDeleteBlogComment from "../mutation/use-delete-blog-comment";
 
 const Renderer = dynamic(
   () => import("@/features/messages/components/renderer"),
@@ -63,8 +63,14 @@ export default function BlogCommentItem({
     mutate: updateCommentMutation,
     isPending: updateCommentMutationLoading,
   } = useUpdateBlogComment();
+  const {
+    mutate: deleteCommentMutation,
+    isPending: deleteCommentMutationLoading,
+  } = useDeleteBlogComment();
 
   const fallbackAvatar = authorName?.charAt(0).toUpperCase();
+  const mutationLoading =
+    updateCommentMutationLoading || deleteCommentMutationLoading;
 
   const handleUpdateComment = ({ body, image }: EditorValue) => {
     updateCommentMutation(
@@ -74,8 +80,25 @@ export default function BlogCommentItem({
           toast({ title: "Comment updated" });
           setEditing(null);
         },
-        onError: (e) => {
+        onError: () => {
           toast({ title: "Error when updating the comment" });
+        },
+      }
+    );
+  };
+
+  const handleDeleteMessage = async () => {
+    const ok = await confirm();
+    if (!ok) return;
+
+    deleteCommentMutation(
+      { id: id! },
+      {
+        onSuccess: () => {
+          toast({ title: "Comment deleted" });
+        },
+        onError: () => {
+          toast({ title: "Error when deleting the comment" });
         },
       }
     );
@@ -88,7 +111,7 @@ export default function BlogCommentItem({
         className={cn(
           "flex items-start gap-x-1 px-5 py-2 transition-all group relative hover:bg-neutral-700/40",
           isEditing && "bg-indigo-700/40 hover:bg-indigo-700/40",
-          false &&
+          deleteCommentMutationLoading &&
             "bg-rose-500/50 hover:bg-rose-500/50 transform transition-all scale-y-0 origin-bottom duration-300"
         )}
       >
@@ -102,7 +125,7 @@ export default function BlogCommentItem({
           <div className="w-full">
             <Editor
               onSubmit={handleUpdateComment}
-              disabled={updateCommentMutationLoading}
+              disabled={mutationLoading}
               defaultValue={JSON.parse(body!)}
               onCancel={() => setEditing(null)}
               variant="update"
@@ -134,10 +157,10 @@ export default function BlogCommentItem({
         {!isEditing && (
           <MessageToolbar
             isAuthor={isAuthor}
-            isPending={false}
+            isPending={mutationLoading}
             isHideThreadButton={false}
             handleEdit={() => setEditing(id!)}
-            handleDelete={() => {}}
+            handleDelete={handleDeleteMessage}
             handleReactions={() => {}}
             handleThread={() => {}}
           />
