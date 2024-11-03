@@ -1,6 +1,11 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { Id } from "./_generated/dataModel";
+
+const populateUser = async (ctx: QueryCtx, userId: Id<"users">) => {
+  return await ctx.db.get(userId);
+};
 
 // Create a new comment
 export const createComment = mutation({
@@ -92,10 +97,29 @@ export const getCommentsByBlogId = query({
       return [];
     }
 
-    return await ctx.db
+    const finalData = [];
+
+    const comments = await ctx.db
       .query("comments")
       .withIndex("by_blog_id", (q) => q.eq("blogId", args.blogId))
       .order("desc")
       .collect();
+
+    for (const comment of comments) {
+      const author = await populateUser(ctx, comment.userId);
+      const image = comment.image
+        ? await ctx.storage.getUrl(comment.image)
+        : undefined;
+
+      finalData.push({
+        comment: {
+          ...comment,
+          image,
+        },
+        author,
+      });
+    }
+
+    return finalData;
   },
 });

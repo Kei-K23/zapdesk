@@ -28,6 +28,7 @@ import useCreateBlogLike from "../mutation/use-create-blog-like";
 import useDeleteBlogLike from "../mutation/use-delete-blog-like";
 import { useToast } from "@/hooks/use-toast";
 import BlogCommentEditor from "./blog-comment-editor";
+import BlogCommentLists from "./blog-comment-lists";
 
 interface BlogPostIdPageScreenProps {
   id: string;
@@ -242,6 +243,10 @@ export default function BlogPostIdPageScreen({
         </div>
       </div>
       <BlogCommentEditor blogId={id as Id<"blogs">} />
+      <BlogCommentLists
+        blogId={id as Id<"blogs">}
+        currentUserId={userData?._id}
+      />
     </div>
   );
 }
