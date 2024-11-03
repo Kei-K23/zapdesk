@@ -12,6 +12,12 @@ import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { EditorValue } from "@/components/editor";
 import useUpdateBlogComment from "../mutation/use-update-blog-comment";
 import useDeleteBlogComment from "../mutation/use-delete-blog-comment";
+import { Button } from "@/components/ui/button";
+import { Flame, Plus } from "lucide-react";
+import { useGetBlogCommentLike } from "../query/use-get-blog-comment-like";
+import { useGetBlogCommentLikes } from "../query/use-get-blog-comment-likes";
+import useCreateBlogCommentLike from "../mutation/use-create-blog-comment-like";
+import useDeleteBlogCommentLike from "../mutation/use-delete-blog-comment-like";
 
 const Renderer = dynamic(
   () => import("@/features/messages/components/renderer"),
@@ -23,8 +29,8 @@ const formatFulltime = (date: Date) =>
   `${isToday(date) ? "Today" : isYesterday(date) ? "Yesterday" : format(date, "MMM d, yyyy")} at ${format(date, "h:mm:ss a")}`;
 
 interface BlogCommentItemProps {
-  id?: Id<"comments">;
-  blogId?: Id<"blogs">;
+  id: Id<"comments">;
+  blogId: Id<"blogs">;
   userId: Id<"users">;
   authorImage?: string;
   authorName?: string;
@@ -104,6 +110,63 @@ export default function BlogCommentItem({
     );
   };
 
+  const {
+    data: blogCommentLikeDataForCurrentUser,
+    isLoading: blogCommentLikeDataForCurrentUserLoading,
+  } = useGetBlogCommentLike(blogId, id);
+  const { data: blogCommentLikesData, isLoading: blogCommentLikesDataLoading } =
+    useGetBlogCommentLikes(blogId, id);
+
+  const {
+    mutate: createBlogCommentLikeMutation,
+    isPending: createBlogCommentLikeMutationLoading,
+  } = useCreateBlogCommentLike();
+
+  const {
+    mutate: deleteBlogCommentLikeMutation,
+    isPending: deleteBlogCommentLikeMutationLoading,
+  } = useDeleteBlogCommentLike();
+
+  const isLoading =
+    blogCommentLikeDataForCurrentUserLoading || blogCommentLikesDataLoading;
+
+  const isPending =
+    createBlogCommentLikeMutationLoading ||
+    deleteBlogCommentLikeMutationLoading;
+
+  const handelToggleLike = () => {
+    if (!id || !blogId) return;
+
+    if (!!blogCommentLikeDataForCurrentUser) {
+      // Delete the blog comment like
+      deleteBlogCommentLikeMutation(
+        {
+          blogId: blogId,
+          id: blogCommentLikeDataForCurrentUser._id,
+          commentId: id,
+        },
+        {
+          onError: () => {
+            toast({ title: "Error when removing the like" });
+          },
+        }
+      );
+    } else {
+      // Create new blog comment like for the current user
+      createBlogCommentLikeMutation(
+        {
+          blogId: blogId,
+          commentId: id,
+        },
+        {
+          onError: () => {
+            toast({ title: "Error when creating the like" });
+          },
+        }
+      );
+    }
+  };
+
   return (
     <>
       <ConfirmDialog />
@@ -147,6 +210,43 @@ export default function BlogCommentItem({
             <div className="mt-1 flex flex-col w-full">
               <Renderer value={body} />
               {image && <MessageThumbnail image={image} />}
+              <Hint label="Likes">
+                <div
+                  className={cn(
+                    "w-16 flex items-center mt-5 cursor-pointer",
+                    (isPending || isLoading) && "pointer-events-none opacity-70"
+                  )}
+                  onClick={handelToggleLike}
+                >
+                  <svg width="0" height="0">
+                    <linearGradient
+                      id="flame-gradient"
+                      x1="100%"
+                      y1="100%"
+                      x2="0%"
+                      y2="0%"
+                    >
+                      <stop stopColor="#ff0000" offset="0%" />
+                      <stop stopColor="#fdcf58" offset="100%" />
+                    </linearGradient>
+                  </svg>
+                  <Flame
+                    style={{
+                      stroke: !!blogCommentLikeDataForCurrentUser
+                        ? "url(#flame-gradient)"
+                        : "",
+                    }}
+                    className="size-6"
+                  />{" "}
+                  {blogCommentLikesData?.length &&
+                  blogCommentLikesData?.length > 0 ? (
+                    <span>{blogCommentLikesData?.length}</span>
+                  ) : null}
+                  {!!blogCommentLikeDataForCurrentUser && (
+                    <Plus className="size-3" />
+                  )}
+                </div>
+              </Hint>
               {updatedAt && (
                 <span className="text-sm text-muted-foreground">(edited)</span>
               )}
