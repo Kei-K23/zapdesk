@@ -22,7 +22,7 @@ export const getLikes = query({
   },
 });
 
-export const getBlogLikeById = query({
+export const getBlogLikeByBlogAndUserId = query({
   args: {
     blogId: v.id("blogs"),
   },
@@ -55,6 +55,17 @@ export const createBlogLike = mutation({
       throw new Error("Unauthorized");
     }
 
+    const existingBlogLike = await ctx.db
+      .query("blogLikes")
+      .withIndex("by_blog_id_user_id", (q) =>
+        q.eq("blogId", args.blogId).eq("userId", userId)
+      )
+      .unique();
+
+    if (!existingBlogLike) {
+      throw new Error("User is already liked the blog");
+    }
+
     return await ctx.db.insert("blogLikes", {
       userId: userId,
       blogId: args.blogId,
@@ -82,7 +93,7 @@ export const deleteBlogLike = mutation({
       .unique();
 
     if (!existingBlogLike) {
-      throw new Error("Blog not found to update");
+      throw new Error("User is not liked the blog");
     }
 
     if (existingBlogLike.userId !== userId) {
