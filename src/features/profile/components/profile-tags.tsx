@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
+"use client";
+
+import { useState, useCallback, useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,14 +13,16 @@ import {
   Phone,
   Twitter,
   Youtube,
+  UserPlus,
+  UserMinus,
+  Loader2,
 } from "lucide-react";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import useRemoveFriendship from "@/features/friendships/mutation/use-remove-friendship";
-import useCreateFriendship from "@/features/friendships/mutation/use-create-friendship";
+import useToggleFriendship from "@/features/friendships/mutation/use-toggle-friendship";
+import { useToast } from "@/hooks/use-toast";
 
 interface ProfileTagsProps {
   user: Doc<"users">;
@@ -41,318 +45,282 @@ export default function ProfileTags({
   followers,
   following,
 }: ProfileTagsProps) {
-  console.log({ user, currentAuthUser, followers, following });
-
-  const [tagSelected, setTagSelected] = useState<
-    "about" | "social" | "contact" | "followers" | "following" | ""
+  const { toast } = useToast();
+  const [activeTab, setActiveTab] = useState<
+    "about" | "social" | "contact" | "followers" | "following"
   >("about");
 
-  const {
-    mutate: removeRelationshipMutation,
-    isPending: removeRelationshipMutationLoading,
-  } = useRemoveFriendship();
-  const {
-    mutate: createFriendshipMutation,
-    isPending: createFriendshipPending,
-  } = useCreateFriendship();
+  const [followingInProgress, setFollowingInProgress] = useState<
+    Set<Id<"users">>
+  >(new Set());
 
-  const removeRelationship = (id: Id<"users">) => {
-    if (!user && !id) {
-      return;
-    }
+  const { mutate: toggleFollowship, isPending: isToggleFollowshipPending } =
+    useToggleFriendship();
 
-    removeRelationshipMutation(
-      {
-        userOneId: user?._id!,
-        userTwoId: id,
-      },
-      {
-        onSuccess: () => {},
-        onError: () => {},
+  const handleToggleFollow = useCallback(
+    async (targetUserId: Id<"users">) => {
+      if (!currentAuthUser?._id) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to follow users.",
+          variant: "destructive",
+        });
+        return;
       }
-    );
-  };
 
-  const createRelationship = (id: Id<"users">) => {
-    if (!user && !id) {
-      return;
-    }
-
-    createFriendshipMutation(
-      {
-        userOneId: user?._id!,
-        userTwoId: id,
-      },
-      {
-        onSuccess: () => {},
-        onError: () => {},
+      if (targetUserId === currentAuthUser._id) {
+        toast({
+          title: "Invalid action",
+          description: "You cannot follow yourself.",
+          variant: "destructive",
+        });
+        return;
       }
-    );
-  };
 
-  const isPending =
-    removeRelationshipMutationLoading || createFriendshipPending;
+      setFollowingInProgress((prev) => {
+        const next = new Set(prev);
+        next.add(targetUserId);
+        return next;
+      });
+
+      try {
+        await toggleFollowship(
+          {
+            followerId: currentAuthUser._id,
+            followingId: targetUserId,
+          },
+          {
+            onSuccess: () => {
+              const isNowFollowing = !isFollowing(targetUserId);
+              toast({
+                title: isNowFollowing
+                  ? "Followed successfully"
+                  : "Unfollowed successfully",
+                description: isNowFollowing
+                  ? `You are now following ${user.name}`
+                  : `You have unfollowed ${user.name}`,
+              });
+            },
+            onError: (error) => {
+              console.error("Failed to toggle followship:", error);
+              toast({
+                title: "Action failed",
+                description:
+                  "Failed to update follow status. Please try again.",
+                variant: "destructive",
+              });
+            },
+          }
+        );
+      } finally {
+        setFollowingInProgress((prev) => {
+          const next = new Set(prev);
+          next.delete(targetUserId);
+          return next;
+        });
+      }
+    },
+    [currentAuthUser, toggleFollowship, toast, user.name]
+  );
+
+  const isFollowing = useCallback(
+    (userId: Id<"users">) => {
+      return following.some((f) => f.user._id === userId);
+    },
+    [following]
+  );
+
+  const isOwnProfile = useMemo(
+    () => currentAuthUser?._id === user._id,
+    [currentAuthUser?._id, user._id]
+  );
+
+  const renderFollowButton = useCallback(
+    (targetUser: Doc<"users">) => {
+      if (isOwnProfile) return null;
+
+      const isProcessing = followingInProgress.has(targetUser._id);
+      const followingStatus = isFollowing(targetUser._id);
+
+      return (
+        <Button
+          variant={followingStatus ? "destructive" : "default"}
+          size="sm"
+          disabled={isProcessing || isToggleFollowshipPending}
+          onClick={() => handleToggleFollow(targetUser._id)}
+          className="w-28 flex items-center gap-2"
+        >
+          {isProcessing ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : followingStatus ? (
+            <>
+              <UserMinus className="h-4 w-4" />
+              Unfollow
+            </>
+          ) : (
+            <>
+              <UserPlus className="h-4 w-4" />
+              Follow
+            </>
+          )}
+        </Button>
+      );
+    },
+    [
+      isOwnProfile,
+      followingInProgress,
+      isToggleFollowshipPending,
+      handleToggleFollow,
+      isFollowing,
+    ]
+  );
+
+  const renderUserItem = useCallback(
+    (userData: Doc<"users">) => (
+      <div
+        key={userData._id}
+        className="flex items-center justify-between gap-x-5 border-b border-border p-4 hover:bg-muted/50 transition-colors"
+      >
+        <div className="flex items-center gap-x-4">
+          <Avatar className="h-12 w-12">
+            <AvatarImage src={userData.image} alt={userData.name} />
+            <AvatarFallback className="text-xl font-semibold">
+              {userData.name?.[0]?.toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div className="space-y-1">
+            <p className="font-medium leading-none">{userData.name}</p>
+            {userData.role && (
+              <p className="text-sm text-muted-foreground">{userData.role}</p>
+            )}
+          </div>
+        </div>
+        {renderFollowButton(userData)}
+      </div>
+    ),
+    [renderFollowButton]
+  );
+
+  const socialLinks = useMemo(
+    () => [
+      { icon: Github, link: user?.githubLink, label: "GitHub" },
+      { icon: Globe, link: user?.personalLink, label: "Website" },
+      { icon: Twitter, link: user?.twitterLink, label: "Twitter" },
+      { icon: Youtube, link: user?.youTubeLink, label: "YouTube" },
+      { icon: Instagram, link: user?.igLink, label: "Instagram" },
+    ],
+    [user]
+  );
+
+  if (isLoading) {
+    return <div className="animate-pulse">Loading...</div>;
+  }
 
   return (
-    <Tabs defaultValue="about" className="w-full">
-      <TabsList className="w-full justify-start">
-        <TabsTrigger
-          disabled={isLoading}
-          onClick={() => setTagSelected("about")}
-          value="about"
-          className={cn(
-            "disabled:cursor-not-allowed",
-            tagSelected === "about" && "underline"
-          )}
-        >
-          About
-        </TabsTrigger>
-        <TabsTrigger
-          disabled={isLoading}
-          onClick={() => setTagSelected("social")}
-          value="social"
-          className={cn(
-            "disabled:cursor-not-allowed",
-            tagSelected === "social" && "underline"
-          )}
-        >
-          Social
-        </TabsTrigger>
-        <TabsTrigger
-          disabled={isLoading}
-          onClick={() => setTagSelected("contact")}
-          value="contact"
-          className={cn(
-            "disabled:cursor-not-allowed",
-            tagSelected === "contact" && "underline"
-          )}
-        >
-          Contact
-        </TabsTrigger>
-        <TabsTrigger
-          disabled={isLoading}
-          onClick={() => setTagSelected("followers")}
-          value="followers"
-          className={cn(
-            "disabled:cursor-not-allowed",
-            tagSelected === "followers" && "underline"
-          )}
-        >
-          Followers
-        </TabsTrigger>
-        <TabsTrigger
-          disabled={isLoading}
-          onClick={() => setTagSelected("following")}
-          value="following"
-          className={cn(
-            "disabled:cursor-not-allowed",
-            tagSelected === "following" && "underline"
-          )}
-        >
-          Following
-        </TabsTrigger>
+    <Tabs
+      value={activeTab}
+      onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+      className="w-full"
+    >
+      <TabsList className="w-full justify-start border-b rounded-none h-auto p-0">
+        {["about", "social", "contact", "followers", "following"].map((tab) => (
+          <TabsTrigger
+            key={tab}
+            value={tab}
+            className={cn(
+              "rounded-none border-b-2 border-transparent px-4 py-2",
+              activeTab === tab && "border-primary"
+            )}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            {(tab === "followers" || tab === "following") && (
+              <span className="ml-2 text-sm text-muted-foreground">
+                {tab === "followers" ? followers.length : following.length}
+              </span>
+            )}
+          </TabsTrigger>
+        ))}
       </TabsList>
-      <TabsContent value="about" className="space-y-4">
-        <div>
-          <Label>Bio</Label>
-          <Textarea
-            disabled={isLoading}
-            value={user?.bio || "No bio provided"}
-            readOnly
-            className="mt-1 focus-visible:ring-0 resize-none"
-          />
-        </div>
-      </TabsContent>
-      <TabsContent value="social" className="space-y-4">
-        {user?.githubLink && (
-          <div className="flex items-center space-x-2">
-            <Github className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.githubLink}
-              readOnly
-            />
-          </div>
-        )}
-        {user?.personalLink && (
-          <div className="flex items-center space-x-2">
-            <Globe className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.personalLink}
-              readOnly
-            />
-          </div>
-        )}
-        {user?.twitterLink && (
-          <div className="flex items-center space-x-2">
-            <Twitter className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.twitterLink}
-              readOnly
-            />
-          </div>
-        )}
-        {user?.youTubeLink && (
-          <div className="flex items-center space-x-2">
-            <Youtube className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.youTubeLink}
-              readOnly
-            />
-          </div>
-        )}
-        {user?.igLink && (
-          <div className="flex items-center space-x-2">
-            <Instagram className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.igLink}
-              readOnly
-            />
-          </div>
-        )}
-      </TabsContent>
-      <TabsContent value="contact" className="space-y-4">
-        {user?.isPublishEmail && (
-          <div className="flex items-center space-x-2">
-            <Mail className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.email}
-              readOnly
-            />
-          </div>
-        )}
-        {user?.phone && (
-          <div className="flex items-center space-x-2">
-            <Phone className="w-4 h-4" />
-            <Input
-              disabled={isLoading}
-              className="focus-visible:ring-0"
-              value={user?.phone}
-              readOnly
-            />
-          </div>
-        )}
-      </TabsContent>
-      <TabsContent value="followers" className="space-y-4">
-        {followers.length ? (
-          <div className="space-y-6 mt-5">
-            {followers.map((follower, index) => {
-              const existingFriendship = following.some(
-                (f) => f.friendships.followerId === user._id
-              );
 
-              return (
-                <div
-                  key={`${follower.user._id}-${index}`}
-                  className="border-b border-b-neutral-700 pb-5 flex items-center justify-between gap-x-5"
-                >
-                  <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
-                    <Avatar className="size-14">
-                      <AvatarImage
-                        src={follower?.user?.image}
-                        alt={follower?.user?.name}
-                      />
-                      <AvatarFallback className="text-3xl font-semibold">
-                        {follower?.user?.name
-                          ?.split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="text-left">
-                      <p className="text-[15px] font-semibold">
-                        {follower?.user?.name}
-                      </p>
-                      <p className="text-[13px] font-semibold text-muted-foreground">
-                        {follower?.user?.role}
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    variant={"transparent"}
-                    size={"sm"}
-                    onClick={() => {
-                      if (existingFriendship) {
-                        removeRelationship(follower.user?._id);
-                      } else {
-                        createRelationship(follower?.user?._id);
-                      }
-                    }}
-                  >
-                    {existingFriendship ? "Unfollow" : "Follow"}
-                  </Button>
-                </div>
-              );
-            })}
+      <div className="mt-6">
+        <TabsContent value="about">
+          <div className="space-y-4">
+            <div>
+              <Label>Bio</Label>
+              <Textarea
+                value={user?.bio || "No bio provided"}
+                readOnly
+                className="mt-2 resize-none bg-muted"
+              />
+            </div>
           </div>
-        ) : (
-          <p className="text-muted-foreground my-5 text-center">No followers</p>
-        )}
-      </TabsContent>
-      <TabsContent value="following" className="space-y-4">
-        {following.length ? (
-          <div className="space-y-6 mt-5">
-            {following.map((f) => {
-              const fallbackAvatar = f?.user?.name?.charAt(0).toUpperCase();
-              return (
-                <div
-                  key={f.user?._id}
-                  className="border-b border-b-neutral-700 pb-5 flex items-center justify-between gap-x-5"
-                >
-                  <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
-                    <Avatar className="size-14">
-                      <AvatarImage src={f?.user?.image} alt={f?.user?.name} />
-                      <AvatarFallback className="text-3xl font-semibold">
-                        {fallbackAvatar}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="text-left">
-                      <p className="text-[15px] font-semibold">
-                        {f?.user?.name}
-                      </p>
-                      <p className="text-[13px] font-semibold text-muted-foreground">
-                        {f?.user?.role}
-                      </p>
-                    </div>
+        </TabsContent>
+
+        <TabsContent value="social">
+          <div className="space-y-4">
+            {socialLinks.map(
+              ({ icon: Icon, link, label }) =>
+                link && (
+                  <div key={label} className="flex items-center gap-x-2">
+                    <Icon className="h-4 w-4 shrink-0" />
+                    <Input value={link} readOnly className="bg-muted" />
                   </div>
-                  {!!currentAuthUser &&
-                  currentAuthUser._id === user._id ? null : (
-                    <Button
-                      disabled={isPending}
-                      variant={"transparent"}
-                      size={"sm"}
-                      onClick={() => removeRelationship(f.user?._id)}
-                    >
-                      {!!currentAuthUser
-                        ? f?.friendships?.followerId === currentAuthUser?._id
-                          ? "Unfollow"
-                          : "Follow"
-                        : f?.friendships?.followerId === user?._id
-                          ? "Unfollow"
-                          : "Follow"}
-                    </Button>
-                  )}
-                </div>
-              );
-            })}
+                )
+            )}
+            {!socialLinks.some(({ link }) => link) && (
+              <p className="text-muted-foreground text-center py-4">
+                No social links provided
+              </p>
+            )}
           </div>
-        ) : (
-          <p className="text-muted-foreground my-5 text-center">
-            No following users
-          </p>
-        )}
-      </TabsContent>
+        </TabsContent>
+
+        <TabsContent value="contact">
+          <div className="space-y-4">
+            {user?.isPublishEmail && (
+              <div className="flex items-center gap-x-2">
+                <Mail className="h-4 w-4 shrink-0" />
+                <Input value={user.email} readOnly className="bg-muted" />
+              </div>
+            )}
+            {user?.phone && (
+              <div className="flex items-center gap-x-2">
+                <Phone className="h-4 w-4 shrink-0" />
+                <Input value={user.phone} readOnly className="bg-muted" />
+              </div>
+            )}
+            {!user?.isPublishEmail && !user?.phone && (
+              <p className="text-muted-foreground text-center py-4">
+                No contact information available
+              </p>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="followers">
+          <div className="divide-y divide-border">
+            {followers.length > 0 ? (
+              followers.map((follower) => renderUserItem(follower.user))
+            ) : (
+              <p className="text-muted-foreground text-center py-8">
+                No followers yet
+              </p>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="following">
+          <div className="divide-y divide-border">
+            {following.length > 0 ? (
+              following.map((follow) => renderUserItem(follow.user))
+            ) : (
+              <p className="text-muted-foreground text-center py-8">
+                Not following anyone yet
+              </p>
+            )}
+          </div>
+        </TabsContent>
+      </div>
     </Tabs>
   );
 }

@@ -163,3 +163,34 @@ export const remove = mutation({
     }
   },
 });
+
+export const toggleFollowship = mutation({
+  args: {
+    followerId: v.id("users"),
+    followingId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const { followerId, followingId } = args;
+
+    const existingRelationship = await ctx.db
+      .query("friendships")
+      .withIndex("by_follower_id_following_id", (q) =>
+        q.eq("followerId", followerId).eq("followingId", followingId)
+      )
+      .unique();
+
+    if (existingRelationship) {
+      // If the relationship exists, remove it (unfollow)
+      await ctx.db.delete(existingRelationship._id);
+    } else {
+      // If the relationship doesn't exist, create it (follow)
+      await ctx.db.insert("friendships", {
+        followerId,
+        followingId,
+      });
+    }
+
+    // Return the new state (followed or not)
+    return !existingRelationship;
+  },
+});
