@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
-import { Id } from "./_generated/dataModel";
+import { Doc, Id } from "./_generated/dataModel";
 
 const populateUser = async (ctx: QueryCtx, id?: Id<"users">) => {
   try {
@@ -30,13 +30,16 @@ export const getFollowers = query({
         .withIndex("by_following_id", (q) => q.eq("followingId", args.userId))
         .collect();
 
-      const users = [];
+      const data: Array<{
+        user: Doc<"users">;
+        friendships: Doc<"friendships">;
+      }> = [];
       for (const follower of followers) {
         const user = await populateUser(ctx, follower.followerId);
-        if (user) users.push(user);
+        if (user) data.push({ user, friendships: follower });
       }
 
-      return users;
+      return data;
     } catch (error) {
       console.error("Error in getFollowers:", error);
       return null;
@@ -58,13 +61,16 @@ export const getFollowings = query({
         .withIndex("by_follower_id", (q) => q.eq("followerId", args.userId))
         .collect();
 
-      const users = [];
+      const data: Array<{
+        user: Doc<"users">;
+        friendships: Doc<"friendships">;
+      }> = [];
       for (const following of followings) {
         const user = await populateUser(ctx, following.followingId);
-        if (user) users.push(user);
+        if (user) data.push({ user, friendships: following });
       }
 
-      return users;
+      return data;
     } catch (error) {
       console.error("Error in getFollowings:", error);
       return null;

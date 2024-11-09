@@ -25,8 +25,14 @@ interface ProfileContainerProps {
   isLoading: boolean;
   isCurrentUserSelf: boolean;
   isShowBackBtn?: boolean;
-  followers: Doc<"users">[];
-  following: Doc<"users">[];
+  followers: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
+  following: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
 }
 
 export default function ProfileContainer({
@@ -131,6 +137,7 @@ export default function ProfileContainer({
           <ProfileTags
             isLoading={isLoading}
             user={user!}
+            currentAuthUser={currentAuthUser}
             followers={followers}
             following={following}
           />

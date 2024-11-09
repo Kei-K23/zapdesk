@@ -178,7 +178,11 @@ export default function BlogPostIdPageScreen({
             <Button
               size={"icon"}
               variant={"ghost"}
-              className={cn("w-16 flex items-center")}
+              className={cn(
+                "w-16 flex items-center border-2 shadow-lg",
+                !!blogLikeDataForCurrentUser &&
+                  "border-indigo-500 shadow-indigo-500/50"
+              )}
               disabled={isPending || isLoading}
               onClick={handelToggleLike}
             >

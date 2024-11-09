@@ -34,19 +34,25 @@ export default function BlogPostCard({
       <CardHeader className="p-0">
         {blog.image && (
           <div className="relative h-48 w-full">
-            <Image
-              src={blog.image}
-              alt={blog.title}
-              layout="fill"
-              objectFit="cover"
-              className="transition-transform hover:scale-105"
-            />
+            <Link href={`/blogs/${blog._id}`} prefetch>
+              <Image
+                src={blog.image}
+                alt={blog.title}
+                layout="fill"
+                objectFit="cover"
+                className="transition-transform hover:scale-105"
+              />
+            </Link>
           </div>
         )}
       </CardHeader>
       <CardContent className="p-4 flex flex-col flex-grow">
         <CardTitle className="mb-2 line-clamp-2 h-14 overflow-hidden">
-          <Link href={`/blogs/${blog._id}`} className="hover:underline text-lg">
+          <Link
+            href={`/blogs/${blog._id}`}
+            prefetch
+            className="hover:underline text-lg"
+          >
             {blog.title}
           </Link>
         </CardTitle>

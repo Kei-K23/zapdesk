@@ -3,8 +3,14 @@ import React from "react";
 import { Doc } from "../../../../convex/_generated/dataModel";
 
 interface ProfileFriendshipSectionProps {
-  followers: Doc<"users">[];
-  following: Doc<"users">[];
+  followers: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
+  following: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
 }
 
 export default function ProfileFriendshipSection({

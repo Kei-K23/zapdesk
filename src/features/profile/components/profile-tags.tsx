@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,28 +12,86 @@ import {
   Twitter,
   Youtube,
 } from "lucide-react";
-import { Doc } from "../../../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import useRemoveFriendship from "@/features/friendships/mutation/use-remove-friendship";
+import useCreateFriendship from "@/features/friendships/mutation/use-create-friendship";
 
 interface ProfileTagsProps {
   user: Doc<"users">;
+  currentAuthUser?: Doc<"users">;
   isLoading: boolean;
-  followers: Doc<"users">[];
-  following: Doc<"users">[];
+  followers: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
+  following: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
 }
 
 export default function ProfileTags({
   user,
+  currentAuthUser,
   isLoading,
   followers,
   following,
 }: ProfileTagsProps) {
+  console.log({ user, currentAuthUser, followers, following });
+
   const [tagSelected, setTagSelected] = useState<
     "about" | "social" | "contact" | "followers" | "following" | ""
   >("about");
+
+  const {
+    mutate: removeRelationshipMutation,
+    isPending: removeRelationshipMutationLoading,
+  } = useRemoveFriendship();
+  const {
+    mutate: createFriendshipMutation,
+    isPending: createFriendshipPending,
+  } = useCreateFriendship();
+
+  const removeRelationship = (id: Id<"users">) => {
+    if (!user && !id) {
+      return;
+    }
+
+    removeRelationshipMutation(
+      {
+        userOneId: user?._id!,
+        userTwoId: id,
+      },
+      {
+        onSuccess: () => {},
+        onError: () => {},
+      }
+    );
+  };
+
+  const createRelationship = (id: Id<"users">) => {
+    if (!user && !id) {
+      return;
+    }
+
+    createFriendshipMutation(
+      {
+        userOneId: user?._id!,
+        userTwoId: id,
+      },
+      {
+        onSuccess: () => {},
+        onError: () => {},
+      }
+    );
+  };
+
+  const isPending =
+    removeRelationshipMutationLoading || createFriendshipPending;
 
   return (
     <Tabs defaultValue="about" className="w-full">
@@ -188,35 +247,54 @@ export default function ProfileTags({
       <TabsContent value="followers" className="space-y-4">
         {followers.length ? (
           <div className="space-y-6 mt-5">
-            {followers.map((follower) => (
-              <div
-                key={follower._id}
-                className="border-b border-b-neutral-700 pb-5 flex items-center justify-between gap-x-5"
-              >
-                <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Avatar className="size-14">
-                    <AvatarImage src={follower?.image} alt={follower?.name} />
-                    <AvatarFallback className="text-3xl font-semibold">
-                      {follower?.name
-                        ?.split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <p className="text-[15px] font-semibold">
-                      {follower?.name}
-                    </p>
-                    <p className="text-[13px] font-semibold text-muted-foreground">
-                      {follower?.role}
-                    </p>
+            {followers.map((follower, index) => {
+              const existingFriendship = following.some(
+                (f) => f.friendships.followerId === user._id
+              );
+
+              return (
+                <div
+                  key={`${follower.user._id}-${index}`}
+                  className="border-b border-b-neutral-700 pb-5 flex items-center justify-between gap-x-5"
+                >
+                  <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                    <Avatar className="size-14">
+                      <AvatarImage
+                        src={follower?.user?.image}
+                        alt={follower?.user?.name}
+                      />
+                      <AvatarFallback className="text-3xl font-semibold">
+                        {follower?.user?.name
+                          ?.split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="text-left">
+                      <p className="text-[15px] font-semibold">
+                        {follower?.user?.name}
+                      </p>
+                      <p className="text-[13px] font-semibold text-muted-foreground">
+                        {follower?.user?.role}
+                      </p>
+                    </div>
                   </div>
+                  <Button
+                    variant={"transparent"}
+                    size={"sm"}
+                    onClick={() => {
+                      if (existingFriendship) {
+                        removeRelationship(follower.user?._id);
+                      } else {
+                        createRelationship(follower?.user?._id);
+                      }
+                    }}
+                  >
+                    {existingFriendship ? "Unfollow" : "Follow"}
+                  </Button>
                 </div>
-                <Button variant={"transparent"} size={"sm"}>
-                  Follow
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="text-muted-foreground my-5 text-center">No followers</p>
@@ -225,33 +303,49 @@ export default function ProfileTags({
       <TabsContent value="following" className="space-y-4">
         {following.length ? (
           <div className="space-y-6 mt-5">
-            {following.map((f) => (
-              <div
-                key={f._id}
-                className="border-b border-b-neutral-700 pb-5 flex items-start justify-between gap-x-5"
-              >
-                <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
-                  <Avatar className="size-14">
-                    <AvatarImage src={f?.image} alt={f?.name} />
-                    <AvatarFallback className="text-3xl font-semibold">
-                      {f?.name
-                        ?.split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="text-left">
-                    <p className="text-[15px] font-semibold">{f?.name}</p>
-                    <p className="text-[13px] font-semibold text-muted-foreground">
-                      {f?.role}
-                    </p>
+            {following.map((f) => {
+              const fallbackAvatar = f?.user?.name?.charAt(0).toUpperCase();
+              return (
+                <div
+                  key={f.user?._id}
+                  className="border-b border-b-neutral-700 pb-5 flex items-center justify-between gap-x-5"
+                >
+                  <div className="flex flex-row items-start space-y-4 sm:space-y-0 sm:space-x-4">
+                    <Avatar className="size-14">
+                      <AvatarImage src={f?.user?.image} alt={f?.user?.name} />
+                      <AvatarFallback className="text-3xl font-semibold">
+                        {fallbackAvatar}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="text-left">
+                      <p className="text-[15px] font-semibold">
+                        {f?.user?.name}
+                      </p>
+                      <p className="text-[13px] font-semibold text-muted-foreground">
+                        {f?.user?.role}
+                      </p>
+                    </div>
                   </div>
+                  {!!currentAuthUser &&
+                  currentAuthUser._id === user._id ? null : (
+                    <Button
+                      disabled={isPending}
+                      variant={"transparent"}
+                      size={"sm"}
+                      onClick={() => removeRelationship(f.user?._id)}
+                    >
+                      {!!currentAuthUser
+                        ? f?.friendships?.followerId === currentAuthUser?._id
+                          ? "Unfollow"
+                          : "Follow"
+                        : f?.friendships?.followerId === user?._id
+                          ? "Unfollow"
+                          : "Follow"}
+                    </Button>
+                  )}
                 </div>
-                <Button variant={"transparent"} size={"sm"}>
-                  Follow
-                </Button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <p className="text-muted-foreground my-5 text-center">
