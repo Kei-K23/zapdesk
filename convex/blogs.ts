@@ -8,15 +8,28 @@ const populateUser = async (ctx: QueryCtx, id: Id<"users">) => {
 };
 
 export const getBlogs = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    searchQuery: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       return [];
     }
 
-    const blogs = await ctx.db.query("blogs").order("desc").collect();
+    let blogs = [];
+
+    if (!!args.searchQuery) {
+      blogs = await ctx.db
+        .query("blogs")
+        .withSearchIndex("search_title", (q) =>
+          q.search("title", args.searchQuery ?? "")
+        )
+        .collect();
+    } else {
+      blogs = await ctx.db.query("blogs").order("desc").collect();
+    }
 
     if (!blogs) {
       return [];
@@ -56,7 +69,7 @@ export const getBlogs = query({
         .collect();
 
       const comments = await ctx.db
-        .query("blogCommentLikes")
+        .query("comments")
         .withIndex("by_blog_id", (q) => q.eq("blogId", blog._id))
         .collect();
 

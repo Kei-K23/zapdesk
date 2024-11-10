@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ManageBlogPostDropdown from "./manage-blog-post-dropdown";
 import { format } from "date-fns";
 import { useCurrentUser } from "@/features/auth/query/use-current-user";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useGetBlogLike } from "../query/use-get-blog-like";
 import { useGetBlogLikes } from "../query/use-get-blog-likes";
@@ -29,6 +29,8 @@ import useDeleteBlogLike from "../mutation/use-delete-blog-like";
 import { useToast } from "@/hooks/use-toast";
 import BlogCommentEditor from "./blog-comment-editor";
 import BlogCommentLists from "./blog-comment-lists";
+import useGetFollowings from "@/features/friendships/query/use-get-followings";
+import useToggleFriendship from "@/features/friendships/mutation/use-toggle-friendship";
 
 interface BlogPostIdPageScreenProps {
   id: string;
@@ -51,21 +53,25 @@ export default function BlogPostIdPageScreen({
   } = useGetBlogLike(id as Id<"blogs">);
   const { data: blogLikesData, isLoading: blogLikesDataLoading } =
     useGetBlogLikes(id as Id<"blogs">);
-
+  const { data: currentUserFollowing, isLoading: currentUserFollowingLoading } =
+    useGetFollowings({ userId: userData?._id! });
   const {
     mutate: createBlogLikeMutation,
     isPending: createBlogLikeMutationLoading,
   } = useCreateBlogLike();
-
   const {
     mutate: deleteBlogLikeMutation,
     isPending: deleteBlogLikeMutationLoading,
   } = useDeleteBlogLike();
 
+  const { mutate: toggleFollowship, isPending: isToggleFollowshipPending } =
+    useToggleFriendship();
+
   const isLoading =
     blogDataLoading ||
     userDataLoading ||
     deleteBlogLoading ||
+    currentUserFollowingLoading ||
     blogLikeDataForCurrentUserLoading ||
     blogLikesDataLoading;
 
@@ -102,6 +108,68 @@ export default function BlogPostIdPageScreen({
       );
     }
   };
+
+  const isFollowing = useCallback(
+    (userId: Id<"users">) => {
+      return currentUserFollowing?.some((f) => f.user._id === userId);
+    },
+    [currentUserFollowing]
+  );
+
+  const handleToggleFollow = useCallback(
+    async (followerId: Id<"users">, targetUserId: Id<"users">) => {
+      if (!followerId) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to follow users.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (targetUserId === followerId) {
+        toast({
+          title: "Invalid action",
+          description: "You cannot follow yourself.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      try {
+        await toggleFollowship(
+          {
+            followerId: followerId,
+            followingId: targetUserId,
+          },
+          {
+            onSuccess: () => {
+              const isNowFollowing = !isFollowing(targetUserId);
+              toast({
+                title: isNowFollowing
+                  ? "Followed successfully"
+                  : "Unfollowed successfully",
+                description: isNowFollowing
+                  ? `You are now following`
+                  : `You have unfollowed`,
+              });
+            },
+            onError: (error) => {
+              console.error("Failed to toggle followship:", error);
+              toast({
+                title: "Action failed",
+                description:
+                  "Failed to update follow status. Please try again.",
+                variant: "destructive",
+              });
+            },
+          }
+        );
+      } finally {
+      }
+    },
+    [toggleFollowship, toast]
+  );
 
   useEffect(() => {
     if (isLoading) return;
@@ -158,7 +226,7 @@ export default function BlogPostIdPageScreen({
           {blogData?.blog?.description}
         </p>
         <div className="flex items-center justify-between gap-x-6">
-          <div className="flex items-center space-x-2 my-4">
+          <div className="flex items-start space-x-2 my-4">
             <Avatar className="size-12">
               <AvatarImage src={blogData?.user?.image} />
               <AvatarFallback className="text-white rounded-md text-[17px] bg-indigo-600 font-bold">
@@ -173,6 +241,20 @@ export default function BlogPostIdPageScreen({
                 {blogData?.user?.role}
               </span>
             </div>
+            {blogData?.user.id !== userData?._id && (
+              <div>
+                <Button
+                  disabled={isToggleFollowshipPending}
+                  onClick={() =>
+                    handleToggleFollow(userData?._id!, blogData?.user?.id!)
+                  }
+                  size={"sm"}
+                  variant={"outline"}
+                >
+                  {isFollowing(blogData?.user?.id!) ? "Unfollow" : "Follow"}
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex items-center justify-center gap-x-2">
             <Button
@@ -199,6 +281,7 @@ export default function BlogPostIdPageScreen({
                 </linearGradient>
               </svg>
               <Flame
+                className="size-5"
                 style={{
                   stroke: !!blogLikeDataForCurrentUser
                     ? "url(#flame-gradient)"

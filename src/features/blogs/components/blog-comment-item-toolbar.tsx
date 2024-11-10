@@ -1,6 +1,6 @@
 import Hint from "@/components/hint";
 import { Button } from "@/components/ui/button";
-import { MessageSquareText, Pencil, Smile, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface BlogCommentItemToolbarProps {
   isAuthor: boolean;
@@ -22,7 +22,7 @@ export default function BlogCommentItemToolbar({
   return (
     <div className="absolute top-0 right-5">
       <div className="group-hover:opacity-100 opacity-0 transition-opacity border">
-        {!isHideThreadButton && (
+        {/* {!isHideThreadButton && (
           <Hint label="Reply in thread">
             <Button
               variant={"ghost"}
@@ -33,7 +33,7 @@ export default function BlogCommentItemToolbar({
               <MessageSquareText className="size-4" />
             </Button>
           </Hint>
-        )}
+        )} */}
         {isAuthor && (
           <>
             <Hint label="Edit the message">

@@ -82,7 +82,14 @@ const schema = defineSchema({
     image: v.optional(v.id("_storage")),
     userId: v.id("users"),
     updatedAt: v.optional(v.number()),
-  }).index("by_user_id", ["userId"]),
+  })
+    .index("by_user_id", ["userId"])
+    .searchIndex("search_title", {
+      searchField: "title",
+    })
+    .searchIndex("search_description", {
+      searchField: "description",
+    }),
   tags: defineTable({
     name: v.string(),
   }).index("by_name", ["name"]),

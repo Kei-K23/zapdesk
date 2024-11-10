@@ -102,7 +102,7 @@ export default function FriendshipTag({
         });
       }
     },
-    [currentAuthUser, toggleFollowship, toast, user.name]
+    [currentAuthUser, toggleFollowship, toast]
   );
 
   const isFollowing = useCallback(

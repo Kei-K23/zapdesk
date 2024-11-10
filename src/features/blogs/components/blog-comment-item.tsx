@@ -236,7 +236,7 @@ export default function BlogCommentItem({
                         ? "url(#flame-gradient)"
                         : "",
                     }}
-                    className="size-6"
+                    className="size-5"
                   />{" "}
                   {blogCommentLikesData?.length &&
                   blogCommentLikesData?.length > 0 ? (
