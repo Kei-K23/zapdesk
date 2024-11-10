@@ -25,11 +25,16 @@ export default function UserProfileIdPage({ params }: UserProfileIdPagePros) {
     useGetFollowers({ userId: user?._id! });
   const { data: followingData, isLoading: followingDataLoading } =
     useGetFollowings({ userId: user?._id! });
+  const {
+    data: currentAuthUserFollowingData,
+    isLoading: currentAuthUserFollowingDataLoading,
+  } = useGetFollowings({ userId: currentAuthUser?._id! });
 
   const isLoading =
     userLoading ||
     currentAuthUserLoading ||
     followersDataLoading ||
+    currentAuthUserFollowingDataLoading ||
     followingDataLoading;
 
   if (isLoading) {
@@ -39,13 +44,13 @@ export default function UserProfileIdPage({ params }: UserProfileIdPagePros) {
   if (!user) {
     return <div>No use found</div>;
   }
-
   return (
     <ProfileContainer
       isShowBackBtn
       isCurrentUserSelf={currentAuthUser?._id === user?._id}
       user={user}
       currentAuthUser={currentAuthUser!}
+      currentAuthUserFollowing={currentAuthUserFollowingData!}
       isLoading={isLoading}
       followers={followersData!}
       following={followingData!}

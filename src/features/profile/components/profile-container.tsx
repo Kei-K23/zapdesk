@@ -33,6 +33,10 @@ interface ProfileContainerProps {
     user: Doc<"users">;
     friendships: Doc<"friendships">;
   }>;
+  currentAuthUserFollowing?: Array<{
+    user: Doc<"users">;
+    friendships: Doc<"friendships">;
+  }>;
 }
 
 export default function ProfileContainer({
@@ -43,6 +47,7 @@ export default function ProfileContainer({
   isShowBackBtn,
   followers,
   following,
+  currentAuthUserFollowing,
 }: ProfileContainerProps) {
   const router = useRouter();
   // This fetch query only happen currentAuthUser exist and isCurrentUserSelf is not true, So there is no will be raise null error for currentAuthUser
@@ -140,6 +145,7 @@ export default function ProfileContainer({
             currentAuthUser={currentAuthUser}
             followers={followers}
             following={following}
+            currentAuthUserFollowing={currentAuthUserFollowing}
           />
         </CardContent>
 
