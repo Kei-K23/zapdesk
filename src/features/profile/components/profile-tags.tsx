@@ -130,14 +130,20 @@ export default function ProfileTags({
     [following]
   );
 
-  const isOwnProfile = useMemo(
-    () => currentAuthUser?._id === user._id,
-    [currentAuthUser?._id, user._id]
+  const isOwnProfile = useCallback(
+    (targetUserId: Id<"users">) => {
+      if (currentAuthUser) {
+        return currentAuthUser._id === targetUserId;
+      } else if (user) {
+        return user._id === targetUserId;
+      }
+    },
+    [currentAuthUser, user]
   );
 
   const renderFollowButton = useCallback(
     (targetUser: Doc<"users">) => {
-      if (isOwnProfile) return null;
+      if (isOwnProfile(targetUser._id)) return null;
 
       const isProcessing = followingInProgress.has(targetUser._id);
       const followingStatus = isFollowing(targetUser._id);
